@@ -1,1 +1,1 @@
-# alumni-computacao-ufcg
+# Alumni Computacao@UFCG
