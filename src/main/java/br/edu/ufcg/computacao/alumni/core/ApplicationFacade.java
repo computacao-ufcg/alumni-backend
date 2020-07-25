@@ -1,14 +1,15 @@
 package br.edu.ufcg.computacao.alumni.core;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
+import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
-import br.edu.ufcg.computacao.alumni.core.models.AlumnusData;
-import br.edu.ufcg.computacao.alumni.core.models.DateRange;
-import br.edu.ufcg.computacao.alumni.core.models.JobData;
+import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
+import br.edu.ufcg.computacao.alumni.core.models.*;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ApplicationFacade {
     private static final Logger LOGGER = Logger.getLogger(ApplicationFacade.class);
@@ -27,40 +28,71 @@ public class ApplicationFacade {
         }
     }
 
-    public void reload(String token, String filePath) throws Exception {
+    public void reloadUfcgData(String token, String filePath) throws Exception {
         AlumniHolder.getInstance().loadAlumni(filePath);
     }
 
-    public AlumnusData[] getAlumni(String token) throws Exception {
-        return AlumniHolder.getInstance().getAlumni();
+    public Collection<UfcgAlumnusData> getAlumniData(String token) throws Exception {
+        UfcgAlumnusData[] alumni = AlumniHolder.getInstance().getAlumni();
+        Collection<UfcgAlumnusData> alumniCollection = new LinkedList<>();
+
+        for(int i = 0; i < alumni.length; i++) {
+            alumniCollection.add(alumni[i]);
+        }
+        return alumniCollection;
     }
 
     public List<String> getAlumniNames(String token) throws Exception {
-        AlumnusData[] alumni = AlumniHolder.getInstance().getAlumni();
-        List<String> names = new ArrayList<>(alumni.length);
+        UfcgAlumnusData[] alumni = AlumniHolder.getInstance().getAlumni();
+        List<String> alumniNames = new LinkedList<>();
 
-        for (int i = 0; i < alumni.length; i++) {
-            names.add(alumni[i].getFullName());
+        for(int i = 0; i < alumni.length; i++) {
+            alumniNames.add(alumni[i].getFullName());
         }
-        return names;
+        return alumniNames;
     }
 
     public List<CurrentJob> getAlumniCurrentJob(String token) throws Exception {
-        AlumnusData[] alumni = AlumniHolder.getInstance().getAlumni();
-        List<CurrentJob> currentJobs = new ArrayList<>(alumni.length);
+        UfcgAlumnusData[] alumni = AlumniHolder.getInstance().getAlumni();
+        List<CurrentJob> alumniCurrentJob = new LinkedList<>();
 
-        for (int i = 0; i < alumni.length; i++) {
-            CurrentJob currentJob = getAlumnusCurrentJob(alumni[i]);
-            currentJobs.add(currentJob);
+        for(int i = 0; i < alumni.length; i++) {
+            alumniCurrentJob.add(getAlumnusCurrentJob(alumni[i].getFullName(), alumni[i].getLinkedinId()));
         }
-        return currentJobs;
+        return alumniCurrentJob;
     }
 
-    private CurrentJob getAlumnusCurrentJob(AlumnusData alumnus) {
-        String name = alumnus.getFullName();
+    public void reloadLinkedinData(String token, String filePath) throws Exception {
+        LinkedinDataHolder.getInstance().loadLinkedinData(filePath);
+    }
+
+    public Collection<LinkedinAlumnusData> getLinkedinAlumniData(String token) throws Exception {
+        return LinkedinDataHolder.getInstance().getLinkedinAlumniData().values();
+    }
+
+    public List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) throws Exception {
+        Collection<LinkedinAlumnusData> linkedinAlumniData = LinkedinDataHolder.getInstance().getLinkedinAlumniData().values();
+        List<LinkedinNameProfilePair> pairs = new ArrayList<>(linkedinAlumniData.size());
+
+        Iterator<LinkedinAlumnusData> iterator = linkedinAlumniData.iterator();
+        while(iterator.hasNext()) {
+            LinkedinAlumnusData alumnus = iterator.next();
+            pairs.add(new LinkedinNameProfilePair(alumnus.getFullName(), alumnus.getLinkedinProfile()));
+        }
+        return pairs;
+    }
+
+    private CurrentJob getAlumnusCurrentJob(String fullName, String linkedinId) throws Exception {
+        LinkedinAlumnusData alumnus = LinkedinDataHolder.getInstance().getLinkedinAlumniData().get(linkedinId);
+        if (alumnus == null) {
+            return new CurrentJob(fullName, "not available", "not available");
+        }
+        if (!fullName.equals(alumnus.getFullName())) {
+            return new CurrentJob(fullName, "inconsistent profile id", "inconsistent profile id");
+        }
         String job = "";
         String startYear = "";
-        JobData[] jobs = alumnus.getJobs();
+        LinkedinJobData[] jobs = alumnus.getJobs();
         for (int i =0; i < jobs.length; i++) {
             DateRange dateRange = jobs[i].getDateRange();
             if (dateRange.isCurrent()) {
@@ -68,6 +100,6 @@ public class ApplicationFacade {
                 startYear = dateRange.getStartYear();
             }
         }
-        return new CurrentJob(name, job, startYear);
+        return new CurrentJob(fullName, job, startYear);
     }
 }

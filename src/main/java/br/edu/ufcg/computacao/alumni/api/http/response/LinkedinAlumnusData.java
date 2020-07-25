@@ -1,27 +1,30 @@
-package br.edu.ufcg.computacao.alumni.core.models;
+package br.edu.ufcg.computacao.alumni.api.http.response;
+
+import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
+import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-public class AlumnusData {
+public class LinkedinAlumnusData {
     private String fullName;
     private String company;
     private String description;
     private String location;
-    private JobData jobs[];
-    private EducationData education[];
+    private LinkedinJobData jobs[];
+    private LinkedinSchoolData schools[];
     private String email;
     private String linkedinProfile;
     private String twitterId;
 
-    public AlumnusData(String fullName, String company, String description, String location, JobData[] jobs,
-                       EducationData[] education, String email, String linkedinProfile, String twitterId) {
+    public LinkedinAlumnusData(String fullName, String company, String description, String location, LinkedinJobData[] jobs,
+                               LinkedinSchoolData[] schools, String email, String linkedinProfile, String twitterId) {
         this.fullName = fullName;
         this.company = company;
         this.description = description;
         this.location = location;
         this.jobs = jobs;
-        this.education = education;
+        this.schools = schools;
         this.email = email;
         this.linkedinProfile = linkedinProfile;
         this.twitterId = twitterId;
@@ -59,20 +62,20 @@ public class AlumnusData {
         this.location = location;
     }
 
-    public JobData[] getJobs() {
+    public LinkedinJobData[] getJobs() {
         return jobs;
     }
 
-    public void setJobs(JobData[] jobs) {
+    public void setJobs(LinkedinJobData[] jobs) {
         this.jobs = jobs;
     }
 
-    public EducationData[] getEducation() {
-        return education;
+    public LinkedinSchoolData[] getSchools() {
+        return schools;
     }
 
-    public void setEducation(EducationData[] education) {
-        this.education = education;
+    public void setSchools(LinkedinSchoolData[] schools) {
+        this.schools = schools;
     }
 
     public String getEmail() {
@@ -103,7 +106,7 @@ public class AlumnusData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AlumnusData that = (AlumnusData) o;
+        LinkedinAlumnusData that = (LinkedinAlumnusData) o;
         return getLinkedinProfile().equals(that.getLinkedinProfile());
     }
 
@@ -114,13 +117,13 @@ public class AlumnusData {
 
     @Override
     public String toString() {
-        return "AlumnusData{" +
+        return "LinkedinAlumnusData{" +
                 "fullName='" + fullName + '\'' +
                 ", company='" + company + '\'' +
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
                 ", jobs=" + Arrays.toString(jobs) +
-                ", education=" + Arrays.toString(education) +
+                ", schools=" + Arrays.toString(schools) +
                 ", email='" + email + '\'' +
                 ", linkedInProfile='" + linkedinProfile + '\'' +
                 ", twitterId='" + twitterId + '\'' +

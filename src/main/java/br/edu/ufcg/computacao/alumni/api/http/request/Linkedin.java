@@ -1,12 +1,12 @@
 package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
-import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
-import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,54 +20,38 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = Alumni.ENDPOINT)
+@RequestMapping(value = Linkedin.ENDPOINT)
 @Api(description = ApiDocumentation.Alumni.API)
-public class Alumni {
+public class Linkedin {
 
-    protected static final String ENDPOINT = SystemConstants.SERVICE_BASE_ENDPOINT + "alumni";
+    protected static final String ENDPOINT = SystemConstants.SERVICE_BASE_ENDPOINT + "linkedin";
 
-    private static final Logger LOGGER = Logger.getLogger(Alumni.class);
+    private static final Logger LOGGER = Logger.getLogger(Linkedin.class);
 
     @ApiOperation(value = ApiDocumentation.Alumni.DESCRIPTION)
     @GetMapping
-    public ResponseEntity<Collection<UfcgAlumnusData>> getAlumni(
+    public ResponseEntity<Collection<LinkedinAlumnusData>> getLinkedinData(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token) {
         try {
-            Collection<UfcgAlumnusData> ufcgAlumniData = ApplicationFacade.getInstance().getAlumniData(token);
-            return new ResponseEntity<>(ufcgAlumniData, HttpStatus.OK);
+            Collection<LinkedinAlumnusData> linkedinAlumniData = ApplicationFacade.getInstance().getLinkedinAlumniData(token);
+            return new ResponseEntity<>(linkedinAlumniData, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(Messages.INTERNAL_SERVER_ERROR, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @RequestMapping(value = "/names", method = RequestMethod.GET)
+    @RequestMapping(value = "/entries", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_NAMES_OPERATION)
-    public ResponseEntity<List<String>> getAlumniNames(
+    public ResponseEntity<List<LinkedinNameProfilePair>> getLinkedinNameProfilePairs(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws Exception {
 
         try {
-            List<String> alumniNames = ApplicationFacade.getInstance().getAlumniNames(token);
+            List<LinkedinNameProfilePair> alumniNames = ApplicationFacade.getInstance().getLinkedinNameProfilePairs(token);
             return new ResponseEntity<>(alumniNames, HttpStatus.OK);
-        } catch (Exception e) {
-            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
-            throw e;
-        }
-    }
-
-    @RequestMapping(value = "/currentJob", method = RequestMethod.GET)
-    @ApiOperation(value = ApiDocumentation.Alumni.GET_CURRENT_JOB_OPERATION)
-    public ResponseEntity<List<CurrentJob>> getAlumniCurrentJob(
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
-            throws Exception {
-
-        try {
-            List<CurrentJob> currentJobs = ApplicationFacade.getInstance().getAlumniCurrentJob(token);
-            return new ResponseEntity<>(currentJobs, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
@@ -76,13 +60,13 @@ public class Alumni {
 
     @RequestMapping(value = "/reload", method = RequestMethod.PUT)
     @ApiOperation(value = ApiDocumentation.Alumni.RELOAD_OPERATION)
-    public ResponseEntity<Void> reloadAlumni(
+    public ResponseEntity<Void> reloadLinkedin(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws Exception {
 
         try {
-            ApplicationFacade.getInstance().reloadUfcgData(token, SystemConstants.DEFAULT_ALUMNI_INPUT_FILE_PATH);
+            ApplicationFacade.getInstance().reloadLinkedinData(token, SystemConstants.DEFAULT_LINKEDIN_INPUT_FILE_PATH);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

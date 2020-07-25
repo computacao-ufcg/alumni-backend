@@ -3,7 +3,7 @@ package br.edu.ufcg.computacao.alumni.core.parsers;
 import br.edu.ufcg.computacao.alumni.constants.JsonFields;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.models.DateRange;
-import br.edu.ufcg.computacao.alumni.core.models.EducationData;
+import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
 import br.edu.ufcg.computacao.alumni.core.util.FieldLoaderUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -15,7 +15,7 @@ public class EducationParser {
     public EducationParser() {
     }
 
-    public static EducationData parse(String jobJsonString) throws JSONException {
+    public static LinkedinSchoolData parse(String jobJsonString) throws JSONException {
         JSONObject education = new JSONObject(jobJsonString);
         String schoolUrl = FieldLoaderUtil.load(education, JsonFields.SCHOOL_URL);
         String schoolName = FieldLoaderUtil.load(education, JsonFields.SCHOOL_NAME);
@@ -25,6 +25,6 @@ public class EducationParser {
         DateRange dateRange = new DateRange(range);
         String description = FieldLoaderUtil.load(education, JsonFields.DESCRIPTION);
         LOGGER.debug(String.format(Messages.CREATING_EDUCATION_S, schoolName));
-        return new EducationData(schoolUrl, schoolName, degree, field, dateRange, description);
+        return new LinkedinSchoolData(schoolUrl, schoolName, degree, field, dateRange, description);
     }
 }

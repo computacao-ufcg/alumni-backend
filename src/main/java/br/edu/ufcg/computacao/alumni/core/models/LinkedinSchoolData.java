@@ -2,7 +2,7 @@ package br.edu.ufcg.computacao.alumni.core.models;
 
 import java.util.Objects;
 
-public class EducationData {
+public class LinkedinSchoolData {
     private String schoolUrl;
     private String schoolName;
     private String degree;
@@ -10,8 +10,8 @@ public class EducationData {
     private DateRange dateRange;
     private String description;
 
-    public EducationData(String schoolUrl, String schoolName, String degree, String field,
-                         DateRange dateRange, String description) {
+    public LinkedinSchoolData(String schoolUrl, String schoolName, String degree, String field,
+                              DateRange dateRange, String description) {
         this.schoolUrl = schoolUrl;
         this.schoolName = schoolName;
         this.degree = degree;
@@ -72,7 +72,7 @@ public class EducationData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EducationData that = (EducationData) o;
+        LinkedinSchoolData that = (LinkedinSchoolData) o;
         return getSchoolUrl().equals(that.getSchoolUrl());
     }
 
@@ -83,7 +83,7 @@ public class EducationData {
 
     @Override
     public String toString() {
-        return "EducationData{" +
+        return "LinkedinSchoolData{" +
                 "schoolUrl='" + schoolUrl + '\'' +
                 ", schoolName='" + schoolName + '\'' +
                 ", degree='" + degree + '\'' +

@@ -12,4 +12,5 @@ public class Messages {
     public static final String DATERANGE_S = "Date range: %s.";
     public static final String SKIPING_ENTRY_D = "Invalid entry; skiping entry %d.";
     public static final String LOADING_ALUMNI_D_S = "Loading alumnus %d: %s.";
+    public static final String INVALID_INPUT_S = "Invalid input: %s.";
 }

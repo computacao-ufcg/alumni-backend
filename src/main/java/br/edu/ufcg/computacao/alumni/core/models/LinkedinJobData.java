@@ -2,7 +2,7 @@ package br.edu.ufcg.computacao.alumni.core.models;
 
 import java.util.Objects;
 
-public class JobData {
+public class LinkedinJobData {
     private String companyUrl;
     private String companyName;
     private String jobTitle;
@@ -10,8 +10,8 @@ public class JobData {
     private String description;
     private DateRange dateRange;
 
-    public JobData(String companyUrl, String companyName, String jobTitle, String location, String description,
-                   DateRange dateRange) {
+    public LinkedinJobData(String companyUrl, String companyName, String jobTitle, String location, String description,
+                           DateRange dateRange) {
         this.companyUrl = companyUrl;
         this.companyName = companyName;
         this.jobTitle = jobTitle;
@@ -72,8 +72,8 @@ public class JobData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JobData jobData = (JobData) o;
-        return getCompanyUrl().equals(jobData.getCompanyUrl());
+        LinkedinJobData linkedinJobData = (LinkedinJobData) o;
+        return getCompanyUrl().equals(linkedinJobData.getCompanyUrl());
     }
 
     @Override
@@ -83,7 +83,7 @@ public class JobData {
 
     @Override
     public String toString() {
-        return "JobData{" +
+        return "LinkedinJobData{" +
                 "companyUrl='" + companyUrl + '\'' +
                 ", companyName='" + companyName + '\'' +
                 ", jobTitle='" + jobTitle + '\'' +

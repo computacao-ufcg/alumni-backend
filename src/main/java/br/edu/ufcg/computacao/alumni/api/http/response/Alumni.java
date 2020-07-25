@@ -1,22 +1,21 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
-import br.edu.ufcg.computacao.alumni.core.models.AlumnusData;
 import io.swagger.annotations.ApiModelProperty;
 
 public class Alumni {
     @ApiModelProperty(example = ApiDocumentation.Model.ALUMNI)
-    private AlumnusData alumni[];
+    private LinkedinAlumnusData alumni[];
 
-    public Alumni(AlumnusData alumni[]) {
+    public Alumni(LinkedinAlumnusData alumni[]) {
         this.alumni = alumni;
     }
 
-    public AlumnusData[] getAlumni() {
+    public LinkedinAlumnusData[] getAlumni() {
         return alumni;
     }
 
-    public void setAlumni(AlumnusData alumni[]) {
+    public void setAlumni(LinkedinAlumnusData alumni[]) {
         this.alumni = alumni;
     }
 }
