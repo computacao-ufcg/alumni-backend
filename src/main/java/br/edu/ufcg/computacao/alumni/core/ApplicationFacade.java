@@ -87,9 +87,6 @@ public class ApplicationFacade {
         if (alumnus == null) {
             return new CurrentJob(fullName, "not available", "not available");
         }
-        if (!fullName.equals(alumnus.getFullName())) {
-            return new CurrentJob(fullName, "inconsistent profile id", "inconsistent profile id");
-        }
         String job = "";
         String startYear = "";
         LinkedinJobData[] jobs = alumnus.getJobs();
