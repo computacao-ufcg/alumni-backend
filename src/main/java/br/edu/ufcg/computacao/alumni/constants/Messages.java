@@ -13,4 +13,9 @@ public class Messages {
     public static final String SKIPING_ENTRY_D = "Invalid entry; skiping entry %d.";
     public static final String LOADING_ALUMNI_D_S = "Loading alumnus %d: %s.";
     public static final String INVALID_INPUT_S = "Invalid input: %s.";
+    public static final String UNABLE_TO_CLOSE_FILE_S = "Unable to close file: %s.";
+    public static final String THREAD_HAS_BEEN_INTERRUPTED = "Thread has been interrupted.";
+    public static final String COULD_NOT_LOAD_LINKEDIN_DATA = "Could not load Linkedin data.";
+    public static final String LOADING_MATCH_D_S_S = "Loading match %d: %s -> %s.";
+    public static final Object COULD_NOT_LOAD_ALUMNI_DATA = "Could not load Alumni data.";
 }

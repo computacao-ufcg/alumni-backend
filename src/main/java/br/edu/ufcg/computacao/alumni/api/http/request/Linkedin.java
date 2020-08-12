@@ -57,20 +57,4 @@ public class Linkedin {
             throw e;
         }
     }
-
-    @RequestMapping(value = "/reload", method = RequestMethod.PUT)
-    @ApiOperation(value = ApiDocumentation.Alumni.RELOAD_OPERATION)
-    public ResponseEntity<Void> reloadLinkedin(
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
-            throws Exception {
-
-        try {
-            ApplicationFacade.getInstance().reloadLinkedinData(token, SystemConstants.DEFAULT_LINKEDIN_INPUT_FILE_PATH);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
-            throw e;
-        }
-    }
 }

@@ -6,14 +6,14 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class UfcgAlumnusData {
-    private String linkedinId;
+    private String registration;
     private String fullName;
     private Grau[] graus;
 
-    public UfcgAlumnusData(String linkedinId, String fullName, Grau[] graus) {
+    public UfcgAlumnusData(String registration, String fullName, Grau[] graus) {
         this.fullName = fullName;
         this.graus = graus;
-        this.linkedinId = linkedinId;
+        this.registration = registration;
     }
 
     public UfcgAlumnusData(String fullName, Grau[] graus) {
@@ -37,12 +37,12 @@ public class UfcgAlumnusData {
         this.graus = graus;
     }
 
-    public String getLinkedinId() {
-        return linkedinId;
+    public String getRegistration() {
+        return registration;
     }
 
-    public void setLinkedinId(String linkedinId) {
-        this.linkedinId = linkedinId;
+    public void setRegistration(String registration) {
+        this.registration = registration;
     }
 
     @Override
@@ -50,14 +50,14 @@ public class UfcgAlumnusData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UfcgAlumnusData that = (UfcgAlumnusData) o;
-        return getLinkedinId().equals(that.getLinkedinId()) &&
+        return getRegistration().equals(that.getRegistration()) &&
                 getFullName().equals(that.getFullName()) &&
                 Arrays.equals(getGraus(), that.getGraus());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getLinkedinId(), getFullName());
+        int result = Objects.hash(getRegistration(), getFullName());
         result = 31 * result + Arrays.hashCode(getGraus());
         return result;
     }
@@ -65,7 +65,7 @@ public class UfcgAlumnusData {
     @Override
     public String toString() {
         return "UfcgAlumnusData{" +
-                "linkedinId='" + linkedinId + '\'' +
+                "registration='" + registration + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", graus=" + Arrays.toString(graus) +
                 '}';

@@ -3,6 +3,7 @@ package br.edu.ufcg.computacao.alumni;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
+import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
 import org.apache.log4j.Logger;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -15,8 +16,9 @@ public class Main implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         try {
-            LinkedinDataHolder.getInstance();
-            AlumniHolder.getInstance();
+            LinkedinDataHolder.getInstance().start();
+            AlumniHolder.getInstance().start();
+            MatchesHolder.getInstance();
         } catch (Exception e) {
             LOGGER.error(Messages.ERROR_READING_CONFIGURATION_FILE, e);
             System.exit(-1);
