@@ -45,7 +45,7 @@ que se considere impróprio, perigoso, ofensivo ou problemático.
 
 ## Escopo
 
-Este código de Código de Conduta aplica-se para todos os projetos que a organização @OpenDevUFCG do github acolhe, ou qualquer outra presença online ou offline que possua iterações da comunidade, incluindo eventos e meetups.
+Este código de Código de Conduta aplica-se para todos os projetos que a organização computacao-ufcg do github acolhe, ou qualquer outra presença online ou offline que possua iterações da comunidade, incluindo eventos e meetups.
 
 Este Código de Conduta também aplica-se dentro dos espaços do projeto ou
 qualquer espaço público onde alguém represente o mesmo ou a sua
