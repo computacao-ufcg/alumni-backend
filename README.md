@@ -21,6 +21,7 @@ da atuação profissional dos egressos.
 ## Rodando o sistema
 
 - Clone o repositório na branch `matheus/alumni`
+  - Pode ser realizado no terminal com o comando: `git clone -b matheus/alumni https://github.com/computacao-ufcg/pdc-alumni`
 - Entre na pasta raíz do repositório local, e execute o comando `mvn install`
 - Na IDE (Intellij), abra o projeto e realize o build
 - Ao lado direito, verifique a aba `maven` e realize o reload de todos os projetos
