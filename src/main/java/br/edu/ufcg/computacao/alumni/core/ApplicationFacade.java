@@ -7,6 +7,9 @@ import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import org.apache.log4j.Logger;
+import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
+import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
+import java.security.GeneralSecurityException;
 
 import java.util.*;
 
@@ -46,6 +49,8 @@ public class ApplicationFacade {
     public List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) throws Exception {
         return LinkedinDataHolder.getInstance().getLinkedinNameProfilePairs(token);
     }
+
+
 
 
 }
