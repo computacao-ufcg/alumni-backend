@@ -1,9 +1,9 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
-public class PublicKey {
+public class PublicKeyResponse {
     private String publicKey;
 
-    public PublicKey(String publicKey) {
+    public PublicKeyResponse(String publicKey) {
         this.publicKey = publicKey;
     }
 

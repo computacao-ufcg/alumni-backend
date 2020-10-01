@@ -50,7 +50,14 @@ public class ApplicationFacade {
         return LinkedinDataHolder.getInstance().getLinkedinNameProfilePairs(token);
     }
 
-
+    public String getPublicKey() throws Exception {
+        // There is no need to authenticate the user or authorize this operation
+        try {
+            return CryptoUtil.toBase64(ServiceAsymmetricKeysHolder.getInstance().getPublicKey());
+        } catch (GeneralSecurityException e) {
+            throw new GeneralSecurityException(e.getMessage());
+        }
+    }
 
 
 }
