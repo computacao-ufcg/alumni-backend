@@ -37,4 +37,5 @@ src/main/resources/private
 *.db
 
 ### Log files ###
-*.log
+*.log.*
+*.log.

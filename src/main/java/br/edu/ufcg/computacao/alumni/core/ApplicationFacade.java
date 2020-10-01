@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
 import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
 import java.security.GeneralSecurityException;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+
 
 import java.util.*;
 
@@ -51,9 +53,11 @@ public class ApplicationFacade {
     }
 
     public String getPublicKey() throws Exception {
-        // There is no need to authenticate the user or authorize this operation
+        ServiceAsymmetricKeysHolder service = ServiceAsymmetricKeysHolder.getInstance();
+        service.setPublicKeyFilePath(ConfigurationPropertyKeys.ALUMNI_PUBLIC_KEY);
+
         try {
-            return CryptoUtil.toBase64(ServiceAsymmetricKeysHolder.getInstance().getPublicKey());
+            return CryptoUtil.toBase64(service.getPublicKey());
         } catch (GeneralSecurityException e) {
             throw new GeneralSecurityException(e.getMessage());
         }

@@ -26,12 +26,13 @@ public class PublicKey {
         try {
 //            LOGGER.info(Messages.Log.RECEIVING_GET_PUBLIC_KEY_REQUEST);
             String publicKeyValue = ApplicationFacade.getInstance().getPublicKey();
+
             PublicKeyResponse publicKey = new PublicKeyResponse(publicKeyValue);
 
             return new ResponseEntity<>(publicKey, HttpStatus.OK);
         } catch (Exception e) {
 
-//            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw new Exception(e.getMessage());
         }
     }
