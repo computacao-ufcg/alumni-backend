@@ -108,18 +108,17 @@ public class Match {
 				score += getScoreFromName(alumniName, linkedinAlumniFullName);
 				
 				for (LinkedinSchoolData school : schoolData) {
-					String url = school.getSchoolUrl();
-					String degree = school.getDegree();
-					String field = school.getField();
-					String startYear = school.getDateRange().getStartYear();
-					String endYear = school.getDateRange().getEndYear();
-					
-					Curso linkedinCurso = getCurso(field, degree);
+					String linkedinUrl = school.getSchoolUrl();
+					String linkedinDegree = school.getDegree();
+					String linkedinField = school.getField();
+					String linkedinStartYear = school.getDateRange().getStartYear();
+					String linkedinEndYear = school.getDateRange().getEndYear();
+					Curso linkedinCurso = getCurso(linkedinField, linkedinDegree);
 					
 					score += getScoreFromCurso(alumniCursos, linkedinCurso);
-					score += getScoreFromEndYear(alumniEndYears, endYear);
-					score += getScoreFromStartYear(alumniStartYears, startYear);
-					score += getScoreFromSchoolUrl(schoolUrl, url);
+					score += getScoreFromEndYear(alumniEndYears, linkedinEndYear);
+					score += getScoreFromStartYear(alumniStartYears, linkedinStartYear);
+					score += getScoreFromSchoolUrl(schoolUrl, linkedinUrl);
 				}
 				
 				if (score >= 1) {
