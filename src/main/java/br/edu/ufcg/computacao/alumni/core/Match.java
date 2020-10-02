@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
@@ -15,89 +16,74 @@ import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
 
 public class Match {
 	
-	private static Curso getCurso(String field, String degree) {
+	public Match() { }
+	
+	private Curso getCurso(String field, String degree) {
 		field = field.toUpperCase().trim();
 		degree = degree.toUpperCase().trim();
 		
 		if ("".equals(field) || "".equals(degree)) {
 			return null;
 		}
-		
-		if (degree.contains("MASTER") || degree.contains("MSC") && field.contains("COMPUTER")) {
+		if (field.contains("COMPUTER") && (degree.contains("MASTER") || degree.contains("MSC"))) {
 			return Curso.MESTRADO_EM_CIENCIA_DA_COMPUTACAO;
 		}
-		if (degree.contains("MASTER") || degree.contains("MSC") && field.contains("INFORMAT")) {
-			return Curso.MESTRADO_EM_INFOMATICA;
-		}
-		if (degree.contains("BC") || degree.contains("BACHELOR") || degree.contains("BS") && field.contains("COMPUTER")) {
+		if (field.contains("COMPUTER") && (degree.contains("BC") || degree.contains("BACHELOR") || degree.contains("BS"))) {
 			return Curso.GRADUACAO_CIENCIA_DA_COMPUTACAO;
 		}
-		if (degree.contains("BC") || degree.contains("BACHELOR") || degree.contains("BS") && field.contains("")) {
-			return Curso.GRADUACAO_PROCESSAMENTO_DE_DADOS;
-		}
-		if (degree.contains("PH") && field.contains("COMPUT")) {
+		if (field.contains("COMPUT") && degree.contains("PH")) {
 			return Curso.DOUTORADO_EM_CIENCIA_DA_COMPUTACAO;
+		}
+		if (field.contains("INFORMAT") && (degree.contains("MASTER") || degree.contains("MSC"))) {
+			return Curso.MESTRADO_EM_INFOMATICA;
+		}		
+		if (field.contains("") && (degree.contains("BC") || degree.contains("BACHELOR") || degree.contains("BS"))) {
+			return Curso.GRADUACAO_PROCESSAMENTO_DE_DADOS;
 		}
 		return null;
 	}
 	
-	private static int getScoreFromName(String alumniName, String linkedinName) {
+	private int getScoreFromName(String alumniName, String linkedinName) {
 		if (alumniName.equals(linkedinName)) return 1;
 		return 0;
 	}
 	
-	private static int getScoreFromCurso(List<Curso> alumniCursos, Curso linkedinCurso) {
+	private int getScoreFromCurso(List<Curso> alumniCursos, Curso linkedinCurso) {
 		if (linkedinCurso == null) return 0;
 		if (alumniCursos.contains(linkedinCurso)) return 1;
 		return 0;
 	}
 	
-	private static int getScoreFromSchoolUrl(String schoolUrl, String linkedinUrl) {
+	private int getScoreFromSchoolUrl(String schoolUrl, String linkedinUrl) {
+		if (linkedinUrl == null) return 0;
 		if (schoolUrl.equals(linkedinUrl)) return 1;
 		return 0;
 	}
 	
-	private static int getScoreFromStartYear(List<String> alumniStartYears, String linkedinStartYear) {
-		if (alumniStartYears.contains(linkedinStartYear)) return 1;
+	private int getScoreFromYear(List<String> alumniYears, String linkedinYear) {
+		if (linkedinYear == null) return 0;
+		if (alumniYears.contains(linkedinYear)) return 1;
 		return 0;
 	}
 	
-	private static int getScoreFromEndYear(List<String> alumniEndYear, String linkedinEndYear) {
-		if (alumniEndYear.contains(linkedinEndYear)) return 1;
-		return 0;
-	}
-	
-	private static List<String> getEndYears(Grau[] graus) {
+	private <E> List<E> filterGraus(Grau[] graus, Function<Grau, E> f) {
 		return Arrays.asList(graus)
 				.stream()
-				.map(grau -> grau.getSemestreFormatura())
+				.map(f)
 				.collect(Collectors.toList());
 	}
 	
-	private static List<String> getStartYears(Grau[] graus) {
-		return Arrays.asList(graus)
-				.stream()
-				.map(grau -> grau.getSemestreIngresso())
-				.collect(Collectors.toList());
-	}
-	
-	private static List<Curso> getAlumniCursos(Grau[] graus) {
-		return Arrays.asList(graus)
-				.stream()
-				.map(grau -> grau.getCurso())
-				.collect(Collectors.toList());
-	}
-	
-	public static Collection<LinkedinAlumnusData> getMatches(UfcgAlumnusData alumni, String schoolUrl) {
+	public Collection<LinkedinAlumnusData> getMatches(UfcgAlumnusData alumni, String schoolUrl) {
 		try {
 			Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
 			Collection<LinkedinAlumnusData> selectedProfilesList = new LinkedList<>();
 			
 			String alumniName = alumni.getFullName();
 			Grau[] alumniGraus = alumni.getGraus();
-			List<String> alumniStartYears = getStartYears(alumniGraus);
-			List<String> alumniEndYears = getEndYears(alumniGraus);
-			List<Curso> alumniCursos = getAlumniCursos(alumniGraus);
+			
+			List<String> alumniStartYears = filterGraus(alumniGraus, Grau::getSemestreIngresso);
+			List<String> alumniEndYears = filterGraus(alumniGraus, Grau::getSemestreFormatura);
+			List<Curso> alumniCursos = filterGraus(alumniGraus, Grau::getCurso);
 			
 			linkedinProfilesList.forEach(linkedinProfile -> {
 				int score = 0;
@@ -116,8 +102,8 @@ public class Match {
 					Curso linkedinCurso = getCurso(linkedinField, linkedinDegree);
 					
 					score += getScoreFromCurso(alumniCursos, linkedinCurso);
-					score += getScoreFromEndYear(alumniEndYears, linkedinEndYear);
-					score += getScoreFromStartYear(alumniStartYears, linkedinStartYear);
+					score += getScoreFromYear(alumniEndYears, linkedinEndYear);
+					score += getScoreFromYear(alumniStartYears, linkedinStartYear);
 					score += getScoreFromSchoolUrl(schoolUrl, linkedinUrl);
 				}
 				
