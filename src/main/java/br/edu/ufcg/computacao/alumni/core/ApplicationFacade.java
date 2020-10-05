@@ -6,6 +6,7 @@ import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
+import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import org.apache.log4j.Logger;
 import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
 import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
@@ -54,7 +55,8 @@ public class ApplicationFacade {
 
     public String getPublicKey() throws Exception {
         ServiceAsymmetricKeysHolder service = ServiceAsymmetricKeysHolder.getInstance();
-        service.setPublicKeyFilePath(ConfigurationPropertyKeys.ALUMNI_PUBLIC_KEY);
+        service.setPublicKeyFilePath(PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.ALUMNI_PUBLIC_KEY));
+
 
         try {
             return CryptoUtil.toBase64(service.getPublicKey());
