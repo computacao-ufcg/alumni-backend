@@ -28,7 +28,7 @@ public class Match {
 	private final String MESTRADO = "mestrado";
 	private final String DOUTORADO = "doutorado";
 	
-	public Match() throws IOException {
+	private Match() throws IOException {
 		this.props = PropertiesHolder.getInstance();
 	}
 	
