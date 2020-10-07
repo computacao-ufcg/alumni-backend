@@ -100,13 +100,12 @@ public class Match {
 	}
 	
 	private int getMatchesFromCurso(UfcgAlumnusData alumni, Curso curso, LinkedinSchoolData schoolData) {
-		int score = 0;
 		Grau alumniGrauData = getGrauData(alumni.getGraus(), curso);
 		if (alumniGrauData == null) {
 			return 0;
 		}
 		
-		score += 1;
+		int score = 1;
 		score += getScoreFromYear(alumniGrauData.getSemestreIngresso(), schoolData.getDateRange().getStartYear());
 		score += getScoreFromYear(alumniGrauData.getSemestreFormatura(), schoolData.getDateRange().getEndYear());
 		
@@ -123,9 +122,7 @@ public class Match {
 			} else {
 				score += 1;
 			}
-		
 			Curso linkedinCurso = getCurso(linkedinSchool);
-			
 			score += getMatchesFromCurso(alumni, linkedinCurso, linkedinSchool);
 		}
 		return score;
