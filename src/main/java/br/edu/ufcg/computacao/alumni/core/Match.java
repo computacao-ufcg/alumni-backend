@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
@@ -21,12 +23,12 @@ public class Match {
 	
 	private static Match instance;
 	
-	private final String COMPUTACAO = "computacao";
-	private final String INFORMATICA = "informatica";
-	private final String PROC_DADOS = "proc-dados";
-	private final String GRADUACAO = "graduacao";
-	private final String MESTRADO = "mestrado";
-	private final String DOUTORADO = "doutorado";
+	private static final String COMPUTACAO = "computacao";
+	private static final String INFORMATICA = "informatica";
+	private static final String PROC_DADOS = "proc-dados";
+	private static final String GRADUACAO = "graduacao";
+	private static final String MESTRADO = "mestrado";
+	private static final String DOUTORADO = "doutorado";
 	
 	private Match() throws IOException {
 		this.props = PropertiesHolder.getInstance();
@@ -40,7 +42,7 @@ public class Match {
 	}
 	
 	private Set<String> getData(String property) {
-		String[] values = props.getProperty(property).split("");
+		String[] values = props.getProperty(property).split(",");
 		
 		Set<String> set = new HashSet<>();
 		set.addAll(Arrays.asList(values));
@@ -79,10 +81,70 @@ public class Match {
 		}
 		return null;
 	}
+	
+	private String[] filterName(String name) {
+		Set<String> specialNames = new HashSet<>(Arrays.asList(new String[] {"JUNIOR", "JR", "NETO", "SOBRINHO"}));
+		String[] splitedName = name.split(" ");
+		String[] splitedFilteredName = new String[splitedName.length];
+		
+		for (int i = 0; i < splitedName.length; i++) {
+			String nome = splitedName[i];
+			if (!specialNames.contains(nome)) { 
+				splitedFilteredName[i] = nome.toUpperCase();
+			}
+		}
+		return splitedFilteredName;
+	}
+	
+	private int getNamesLength(String[] splitedName) {
+		int cont = 0;
+		for (String nome : splitedName) {
+			cont += nome == null ? 0 : 1;
+		}
+		return cont;
+	}
+	
+	private String getFirstName(String name) {
+		Set<String> specialNames = new HashSet<>(Arrays.asList(new String[] {"JUNIOR", "JR", "NETO", "SOBRINHO"}));
+		String[] splitedName = filterName(name);
+		int cont = 0;
+		
+		for (String nome : splitedName) { 
+			if (specialNames.contains(nome)) {
+				cont++;
+			}
+		}
+		
+		if (getNamesLength(splitedName) - cont <= 4) {
+			return (splitedName[0] + " " + splitedName[1]).trim();
+		} else {
+			return splitedName[0].trim();
+		}
+	}
+	
+	private String getLastName(String name) {
+		List<String> names = Arrays.asList(filterName(name));
+		List<String> firstNameList = Arrays.asList(getFirstName(name).split(" "));
+
+		List<String> lastNameList = names.stream().filter(n -> !firstNameList.contains(n)).collect(Collectors.toList());
+		String lastName = lastNameList.stream().reduce("", (a, b) -> a + " " + b).trim();
+		
+		return lastName;
+	}
 
 	private int getScoreFromName(String alumniName, String linkedinName) {
-		if (alumniName.equals(linkedinName)) return 1;
-		return 0;
+		if (alumniName.equals(linkedinName)) return 100;
+		
+		String alumniFirstName = getFirstName(alumniName);
+		String alumniLastName = getLastName(alumniName);
+		
+		String linkedinFirstName = getFirstName(linkedinName);
+		String linkedinLastName = getLastName(linkedinName);
+		
+		int score = 0;
+		if (alumniFirstName.equals(linkedinFirstName)) score += 60;
+		if (alumniLastName.equals(linkedinLastName)) score += 40;
+		return score;
 	}
 
 	private int getScoreFromYear(String alumniYear, String linkedinYear) {
