@@ -83,14 +83,14 @@ public class Match {
 	}
 	
 	private String[] filterName(String name) {
-		Set<String> specialNames = new HashSet<>(Arrays.asList(new String[] {"JUNIOR", "JR", "NETO", "SOBRINHO"}));
+		Set<String> specialNames = new HashSet<>(Arrays.asList(new String[] {"DE", "DA", "O", "A", "E"}));
 		String[] splitedName = name.split(" ");
 		String[] splitedFilteredName = new String[splitedName.length];
 		
 		for (int i = 0; i < splitedName.length; i++) {
-			String nome = splitedName[i];
+			String nome = splitedName[i].toUpperCase();
 			if (!specialNames.contains(nome)) { 
-				splitedFilteredName[i] = nome.toUpperCase();
+				splitedFilteredName[i] = nome;
 			}
 		}
 		return splitedFilteredName;
