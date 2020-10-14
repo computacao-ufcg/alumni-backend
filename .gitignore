@@ -39,3 +39,4 @@ src/main/resources/private
 ### Log files ###
 *.log.*
 *.log.
+*.log
