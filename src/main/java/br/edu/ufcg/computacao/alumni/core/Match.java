@@ -161,7 +161,8 @@ public class Match {
 				.orElse(null);
 	}
 	
-	private int getMatchesFromCurso(UfcgAlumnusData alumni, Curso curso, LinkedinSchoolData schoolData) {
+	private int getMatchesFromCurso(UfcgAlumnusData alumni, LinkedinSchoolData schoolData, String schoolUrl) {
+		Curso curso = getCurso(schoolData);
 		Grau alumniGrauData = getGrauData(alumni.getGraus(), curso);
 		if (alumniGrauData == null) {
 			return 0;
@@ -170,11 +171,34 @@ public class Match {
 		int score = 1;
 		score += getScoreFromYear(alumniGrauData.getSemestreIngresso(), schoolData.getDateRange().getStartYear());
 		score += getScoreFromYear(alumniGrauData.getSemestreFormatura(), schoolData.getDateRange().getEndYear());
+		score += getScoreFromSchoolData(schoolData, schoolUrl);
 		
 		return score;
 	}
 	
-	private int getScoreFromSchoolData(UfcgAlumnusData alumni, LinkedinSchoolData[] linkedinSchoolData, String schoolUrl) {
+	private boolean isUfpb(int endYear, String schoolName) {
+		Set<String> ufpbSinonimos = new HashSet<>(Arrays.asList(new String[] { "UFPB", "UNIVERSIDADE FEDERAL DA PARAÍBA", "UNIVERSIDADE FEDERAL DA PARAIBA" }));
+		return (endYear >= 1987 && endYear <= 2002) && ufpbSinonimos.contains(schoolName);
+	}
+	
+	private boolean isUfcg(String schoolName) {
+		Set<String> ufcgSinonimos = new HashSet<>(Arrays.asList(new String[] { "UFCG", "UNIVERSIDADE FEDERAL DE CAMPINA GRANDE", "UNIVERSIDADE FEDERAL DE C. GRANDE - UFCG" }));
+		return ufcgSinonimos.contains(schoolName);
+	}
+	
+	private int getScoreFromSchoolData(LinkedinSchoolData linkedinSchoolData, String schoolUrl) {
+		if (linkedinSchoolData.getSchoolUrl().equals(schoolUrl)) return 20;
+		
+		String linkedinSchoolName = linkedinSchoolData.getSchoolName().toUpperCase().trim();
+		int endYear = Integer.parseInt(linkedinSchoolData.getDateRange().getEndYear().trim());
+		
+		if (isUfpb(endYear, linkedinSchoolName) || isUfcg(linkedinSchoolName)) {
+			return 20;
+		}
+		return 0;
+	}
+	
+	private int getScoreFromSchool(UfcgAlumnusData alumni, LinkedinSchoolData[] linkedinSchoolData, String schoolUrl) {
 		int score = 0;
 		for (LinkedinSchoolData linkedinSchool : linkedinSchoolData) {
 			String linkedinSchoolUrl = linkedinSchool.getSchoolUrl();
@@ -182,10 +206,8 @@ public class Match {
 				score = 0;
 				break;
 			} else {
-				score += 1;
+				score += getMatchesFromCurso(alumni, linkedinSchool, schoolUrl);
 			}
-			Curso linkedinCurso = getCurso(linkedinSchool);
-			score += getMatchesFromCurso(alumni, linkedinCurso, linkedinSchool);
 		}
 		return score;
 	}
@@ -203,7 +225,7 @@ public class Match {
 			String linkedinAlumniFullName = linkedinProfile.getFullName().toUpperCase();
 
 			score += getScoreFromName(alumniName, linkedinAlumniFullName);
-			score += getScoreFromSchoolData(alumni, linkedinSchoolData, schoolUrl);
+			score += getScoreFromSchool(alumni, linkedinSchoolData, schoolUrl);
 			
 			if (score >= 1) {
 				selectedProfilesList.add(linkedinProfile);
