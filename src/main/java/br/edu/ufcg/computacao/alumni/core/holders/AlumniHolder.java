@@ -1,9 +1,11 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.CodigoCurso;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
+import br.edu.ufcg.computacao.alumni.core.Match;
 import br.edu.ufcg.computacao.alumni.core.models.Curso;
 import br.edu.ufcg.computacao.alumni.core.models.Grau;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;

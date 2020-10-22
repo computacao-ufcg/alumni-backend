@@ -10,11 +10,8 @@ import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import org.apache.log4j.Logger;
 import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
 import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
-
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-
 
 
 import java.util.*;
@@ -66,16 +63,5 @@ public class ApplicationFacade {
             throw new GeneralSecurityException(e.getMessage());
         }
     }
-    public Collection<LinkedinAlumnusData> getAlumniMatches(UfcgAlumnusData alumni, String schoolUrl) throws Exception {
-        try{
-            return Match.getInstance().getMatches(alumni, schoolUrl);
-        } catch (Exception e){
-            throw new Exception(e.getMessage());
-        }
-
-
-    }
-
-
 
 }
