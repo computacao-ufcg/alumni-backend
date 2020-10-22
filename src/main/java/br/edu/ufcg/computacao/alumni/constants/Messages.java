@@ -19,4 +19,5 @@ public class Messages {
     public static final String LOADING_MATCH_D_S_S = "Loading match %d: %s -> %s.";
     public static final Object COULD_NOT_LOAD_ALUMNI_DATA = "Could not load Alumni data.";
     public static final String MAXIMUM_SIZE_EXCEEDED = "The serialized object is larger than allowed.";
+    public static final String UNABLE_TO_FIND_SYSTEM_USER_CLASS = "Unable to find system user class.";
 }
