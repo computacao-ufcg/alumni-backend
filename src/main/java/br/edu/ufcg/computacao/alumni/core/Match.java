@@ -35,12 +35,6 @@ public class Match {
 	private static final String MESTRADO = "mestrado";
 	private static final String DOUTORADO = "doutorado";
 	
-	public static final String UFPB_URL = "https://www.linkedin.com/school/ufpb/";
-	public static final DateRange UFPB_DATE_RANGE = new DateRange("Range string: Jan 1950, Mar 2002.");
-	
-	public static final String UFCG_URL = "https://www.linkedin.com/school/universidade-federal-de-campina-grande/";
-	public static final DateRange UFCG_DATE_RANGE = new DateRange("Range string: Apr 2002, .");
-	
 	private Match() throws IOException {
 		this.props = PropertiesHolder.getInstance();
 	}
