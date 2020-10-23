@@ -1,13 +1,10 @@
 package br.edu.ufcg.computacao.alumni.core.util;
 
 import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
-import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
 import br.edu.ufcg.computacao.alumni.core.models.SystemUser;
 import org.apache.commons.lang.StringUtils;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
