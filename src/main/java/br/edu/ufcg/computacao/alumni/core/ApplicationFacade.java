@@ -14,8 +14,6 @@ import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
 import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
 import java.security.GeneralSecurityException;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-
-
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 
@@ -59,14 +57,11 @@ public class ApplicationFacade {
     public String getPublicKey() throws Exception {
         ServiceAsymmetricKeysHolder service = ServiceAsymmetricKeysHolder.getInstance();
         service.setPublicKeyFilePath(PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.ALUMNI_PUBLIC_KEY));
-        
+
         try {
             return CryptoUtil.toBase64(service.getPublicKey());
         } catch (GeneralSecurityException e) {
             throw new GeneralSecurityException(e.getMessage());
         }
     }
-
-
-
 }
