@@ -7,18 +7,19 @@ import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
+import br.edu.ufcg.computacao.alumni.core.models.SystemUser;
+import br.edu.ufcg.computacao.alumni.core.util.AuthenticationUtil;
 import org.apache.log4j.Logger;
 import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
 import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
 import java.security.GeneralSecurityException;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-
-
+import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 
 public class ApplicationFacade {
     private static final Logger LOGGER = Logger.getLogger(ApplicationFacade.class);
-
+    private RSAPublicKey asPublicKey;
     private static ApplicationFacade instance;
 
     private ApplicationFacade() {
@@ -57,13 +58,10 @@ public class ApplicationFacade {
         ServiceAsymmetricKeysHolder service = ServiceAsymmetricKeysHolder.getInstance();
         service.setPublicKeyFilePath(PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.ALUMNI_PUBLIC_KEY));
 
-
         try {
             return CryptoUtil.toBase64(service.getPublicKey());
         } catch (GeneralSecurityException e) {
             throw new GeneralSecurityException(e.getMessage());
         }
     }
-
-
 }
