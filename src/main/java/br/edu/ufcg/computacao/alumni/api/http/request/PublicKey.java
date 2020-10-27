@@ -27,7 +27,7 @@ public class PublicKey {
     public ResponseEntity<PublicKeyResponse> getPublicKey() throws Exception {
 
         try {
-//            LOGGER.info(Messages.Log.RECEIVING_GET_PUBLIC_KEY_REQUEST);
+            LOGGER.info(Messages.RECEIVING_GET_PUBLIC_KEY_REQUEST);
             String publicKeyValue = ApplicationFacade.getInstance().getPublicKey();
 
             PublicKeyResponse publicKey = new PublicKeyResponse(publicKeyValue);

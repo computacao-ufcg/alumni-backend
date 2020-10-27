@@ -2,6 +2,7 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
@@ -125,9 +126,9 @@ public class LinkedinDataHolder extends Thread {
         boolean isActive = true;
         while (isActive) {
             try {
-                this.loadLinkedinData(PropertiesHolder.getInstance().getProperty(
-                        ConfigurationPropertyKeys.LINKEDIN_URL_KEY),
-                        SystemConstants.DEFAULT_LINKEDIN_INPUT_FILE_PATH);
+                this.loadLinkedinData(PropertiesHolder.getInstance().
+                                getProperty(ConfigurationPropertyKeys.LINKEDIN_SOURCE_URL_KEY),
+                                ConfigurationPropertyDefaults.DEFAULT_LINKEDIN_INPUT_FILE_NAME);
                 Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));
             } catch (InterruptedException e) {
                 isActive = false;

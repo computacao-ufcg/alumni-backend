@@ -1,0 +1,41 @@
+package br.edu.ufcg.computacao.alumni.core.holders;
+
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+import br.edu.ufcg.computacao.eureca.as.api.http.request.PublicKey;
+import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InternalServerErrorException;
+import br.edu.ufcg.computacao.eureca.common.util.PublicKeyUtil;
+
+import java.io.IOException;
+import java.security.interfaces.RSAPublicKey;
+
+public class EurecaAsPublicKeyHolder {
+    private RSAPublicKey asPublicKey;
+
+    private static EurecaAsPublicKeyHolder instance;
+
+    private EurecaAsPublicKeyHolder() {
+    }
+
+    public static synchronized EurecaAsPublicKeyHolder getInstance() {
+        if (instance == null) {
+            instance = new EurecaAsPublicKeyHolder();
+        }
+        return instance;
+    }
+
+    public RSAPublicKey getAsPublicKey() throws EurecaException {
+        if (this.asPublicKey == null) {
+            String asAddress = null;
+            String asPort = null;
+            try {
+                asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
+                asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
+            } catch (IOException e) {
+                throw new InternalServerErrorException(e.getMessage());
+            }
+            this.asPublicKey = PublicKeyUtil.getPublicKey(asAddress, asPort, PublicKey.PUBLIC_KEY_ENDPOINT);
+        }
+        return this.asPublicKey;
+    }
+}

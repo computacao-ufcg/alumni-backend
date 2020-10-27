@@ -32,7 +32,7 @@ public class Linkedin {
     @GetMapping
     public ResponseEntity<Collection<LinkedinAlumnusData>> getLinkedinData(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token) {
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token) {
         try {
             Collection<LinkedinAlumnusData> linkedinAlumniData = ApplicationFacade.getInstance().getLinkedinAlumniData(token);
             return new ResponseEntity<>(linkedinAlumniData, HttpStatus.OK);
@@ -46,7 +46,7 @@ public class Linkedin {
     @ApiOperation(value = ApiDocumentation.Alumni.GET_NAMES_OPERATION)
     public ResponseEntity<List<LinkedinNameProfilePair>> getLinkedinNameProfilePairs(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws Exception {
 
         try {

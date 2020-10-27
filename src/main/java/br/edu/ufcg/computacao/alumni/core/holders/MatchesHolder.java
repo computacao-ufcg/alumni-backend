@@ -1,7 +1,10 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -16,7 +19,9 @@ public class MatchesHolder {
     private static MatchesHolder instance;
 
     private MatchesHolder() throws Exception {
-        this.loadMatches(SystemConstants.DEFAULT_MATCHES_FILE_PATH);
+        this.loadMatches(HomeDir.getPath() + PropertiesHolder.getInstance().
+                getProperty(ConfigurationPropertyKeys.MATCHES_INPUT_KEY,
+                ConfigurationPropertyDefaults.DEFAULT_MATCHES_FILE_NAME));
     }
 
     public static MatchesHolder getInstance() throws Exception {

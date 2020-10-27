@@ -2,6 +2,7 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;
@@ -11,13 +12,12 @@ import java.util.Properties;
 public class PropertiesHolder {
     private Logger LOGGER = Logger.getLogger(PropertiesHolder.class);
 
-    public static final String PRIVATE_DIRECTORY = "private/";
     private Properties properties;
     private static PropertiesHolder instance;
 
     private PropertiesHolder() throws IOException {
-        String path = Thread.currentThread().getContextClassLoader().getResource("").getPath() + PRIVATE_DIRECTORY;
-        this.properties = readProperties(path + SystemConstants.CONFIG_FILE);
+        String filePath = HomeDir.getPath() + SystemConstants.CONFIG_FILE;
+        this.properties = readProperties(filePath);
     }
 
     public static synchronized PropertiesHolder getInstance() throws IOException {

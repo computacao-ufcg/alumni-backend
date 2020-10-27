@@ -1,14 +1,11 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
-import br.edu.ufcg.computacao.alumni.constants.CodigoCurso;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.alumni.core.Match;
+import br.edu.ufcg.computacao.alumni.constants.*;
 import br.edu.ufcg.computacao.alumni.core.models.Curso;
 import br.edu.ufcg.computacao.alumni.core.models.Grau;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -92,7 +89,7 @@ public class AlumniHolder extends Thread {
         }
     }
 
-    public synchronized Collection<UfcgAlumnusData> getAlumniData(String token) throws Exception {
+    public synchronized Collection<UfcgAlumnusData> getAlumniData() {
         Collection<UfcgAlumnusData> alumniCollection = new LinkedList<>();
 
         for(int i = 0; i < this.alumni.length; i++) {
@@ -101,7 +98,7 @@ public class AlumniHolder extends Thread {
         return alumniCollection;
     }
 
-    public synchronized List<String> getAlumniNames(String token) throws Exception {
+    public synchronized List<String> getAlumniNames() {
         List<String> alumniNames = new LinkedList<>();
 
         for(int i = 0; i < this.alumni.length; i++) {
@@ -110,7 +107,7 @@ public class AlumniHolder extends Thread {
         return alumniNames;
     }
 
-    public List<CurrentJob> getAlumniCurrentJob(String token) throws Exception {
+    public List<CurrentJob> getAlumniCurrentJob() throws Exception {
         List<CurrentJob> alumniCurrentJob = new LinkedList<>();
 
         for(int i = 0; i < this.alumni.length; i++) {
@@ -145,7 +142,10 @@ public class AlumniHolder extends Thread {
 
         while (isActive) {
             try {
-                this.loadAlumni(PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.ALUMNI_INPUT_KEY));
+                String filePath = HomeDir.getPath() + PropertiesHolder.getInstance().
+                        getProperty(ConfigurationPropertyKeys.ALUMNI_INPUT_FILE_KEY,
+                        ConfigurationPropertyDefaults.DEFAULT_ALUMNI_FILE_NAME);
+                this.loadAlumni(filePath);
                 Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));
             } catch (InterruptedException e) {
                 isActive = false;

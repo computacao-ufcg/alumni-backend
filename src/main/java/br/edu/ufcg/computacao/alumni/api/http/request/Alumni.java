@@ -32,7 +32,7 @@ public class Alumni {
     @GetMapping
     public ResponseEntity<Collection<UfcgAlumnusData>> getAlumni(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token) {
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token) {
         try {
             Collection<UfcgAlumnusData> ufcgAlumniData = ApplicationFacade.getInstance().getAlumniData(token);
             return new ResponseEntity<>(ufcgAlumniData, HttpStatus.OK);
@@ -46,7 +46,7 @@ public class Alumni {
     @ApiOperation(value = ApiDocumentation.Alumni.GET_NAMES_OPERATION)
     public ResponseEntity<List<String>> getAlumniNames(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws Exception {
 
         try {
@@ -62,7 +62,7 @@ public class Alumni {
     @ApiOperation(value = ApiDocumentation.Alumni.GET_CURRENT_JOB_OPERATION)
     public ResponseEntity<List<CurrentJob>> getAlumniCurrentJob(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws Exception {
 
         try {
@@ -73,5 +73,4 @@ public class Alumni {
             throw e;
         }
     }
-
 }

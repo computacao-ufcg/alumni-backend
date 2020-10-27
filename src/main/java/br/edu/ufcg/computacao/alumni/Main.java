@@ -1,9 +1,16 @@
 package br.edu.ufcg.computacao.alumni;
 
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
+import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
+import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
+import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
+import br.edu.ufcg.computacao.alumni.core.util.PluginInstantiator;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
+import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
 import org.apache.log4j.Logger;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,6 +23,22 @@ public class Main implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         try {
+            // Setting up asymmetric cryptography
+            String publicKeyFilePath = PropertiesHolder.getInstance().
+                    getProperty(ConfigurationPropertyKeys.ALUMNI_PUBLICKEY_FILE_KEY);
+            String privateKeyFilePath = PropertiesHolder.getInstance().
+                    getProperty(ConfigurationPropertyKeys.ALUMNI_PRIVATEKEY_FILE_KEY);
+            ServiceAsymmetricKeysHolder.getInstance().setPublicKeyFilePath(HomeDir.getPath() + publicKeyFilePath);
+            ServiceAsymmetricKeysHolder.getInstance().setPrivateKeyFilePath(HomeDir.getPath() + privateKeyFilePath);
+
+            // Setting up plugin
+            AuthorizationPlugin authorizationPlugin = PluginInstantiator.getAuthorizationPlugin();
+
+            // Setting up facade
+            ApplicationFacade applicationFacade = ApplicationFacade.getInstance();
+            applicationFacade.setAuthorizationPlugin(authorizationPlugin);
+
+            // Reading input data
             LinkedinDataHolder.getInstance().start();
             AlumniHolder.getInstance().start();
             MatchesHolder.getInstance();
