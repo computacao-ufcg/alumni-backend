@@ -69,9 +69,9 @@ public class MatchesHolder {
     public synchronized void saveMatch(String filePath, String registration, String linkedinId) throws IOException {
     	BufferedWriter csvWriter = new BufferedWriter(new FileWriter(filePath, true));
     	
-    	csvWriter.newLine();
-    	
     	csvWriter.write(registration + "," + linkedinId);
+    	
+    	csvWriter.newLine();
     	csvWriter.close();
     }
     

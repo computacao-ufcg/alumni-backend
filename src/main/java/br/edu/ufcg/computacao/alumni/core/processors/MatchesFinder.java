@@ -9,8 +9,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -24,6 +27,7 @@ import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.models.DateRange;
+import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
 
 public class MatchesFinder extends Thread {
@@ -31,15 +35,14 @@ public class MatchesFinder extends Thread {
 	
 	private static MatchesFinder instance;
 	
-	private Map<String, Collection<LinkedinAlumnusData>> pendingMatches;
-	private Map<String, String> consolidatedMatches;
+	private Collection<PendingMatch> pendingMatches;
 	
 	private SchoolName schoolName;
 	private long lastModificationDate;
 	
 	private MatchesFinder() throws Exception {
-		this.pendingMatches = new HashMap<>();
-		this.loadMatches();
+		this.pendingMatches = new HashSet<>();
+		this.loadSchoolName(PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.SCHOOL_INPUT_KEY));
 	}
 	
 	public static MatchesFinder getInstance() throws Exception {
@@ -50,9 +53,9 @@ public class MatchesFinder extends Thread {
 		}
 		return instance;
 	}
-	
-	private synchronized void loadMatches() throws Exception {
-		this.consolidatedMatches = MatchesHolder.getInstance().getMatches(); 
+
+	public synchronized Collection<PendingMatch> getPendingMatches() {
+		return new LinkedList<>(this.pendingMatches);
 	}
 	
 	private synchronized void loadSchoolName(String filePath) throws IOException {
@@ -74,6 +77,7 @@ public class MatchesFinder extends Thread {
 			schoolNamesList.add(schoolName);
 			dateRangesList.add(dateRange);
 		}
+		
 		csvReader.close();
 		
 		String[] names = new String[schoolNamesList.size()];
@@ -107,19 +111,17 @@ public class MatchesFinder extends Thread {
 		
 		while (isActive) {
 			try {
-				this.loadMatches();
-				this.loadSchoolName(PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.SCHOOL_INPUT_KEY));
-					
+				Map<String, String> consolidatedMatches = MatchesHolder.getInstance().getMatches();
 				Collection<UfcgAlumnusData> alumnus = AlumniHolder.getInstance().getAlumniData("");
 			
 				for (UfcgAlumnusData alumni : alumnus) {
 					String registration = alumni.getRegistration();
 					
-					if (!this.consolidatedMatches.containsKey(registration) && !this.pendingMatches.containsKey(registration)) {
-						Collection<LinkedinAlumnusData> matches = Match.getInstance().getMatches(alumni, schoolName);
+					if (!consolidatedMatches.containsKey(registration) && !this.pendingMatches.contains(new PendingMatch(alumni, new HashMap<>()))) {
+						TreeMap<Integer, Collection<LinkedinAlumnusData>> possibleMatches = Match.getInstance().getMatches(alumni, schoolName);
 						
-						if (!matches.isEmpty()) {
-							this.pendingMatches.put(registration, matches);
+						if (!possibleMatches.isEmpty()) {
+							this.pendingMatches.add(new PendingMatch(alumni, possibleMatches));
 						}
 					}
 				}
