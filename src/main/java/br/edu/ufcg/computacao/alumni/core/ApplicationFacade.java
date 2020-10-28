@@ -14,6 +14,8 @@ import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
 import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
 import java.security.GeneralSecurityException;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+import org.springframework.data.domain.Page;
+
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 
@@ -63,5 +65,9 @@ public class ApplicationFacade {
         } catch (GeneralSecurityException e) {
             throw new GeneralSecurityException(e.getMessage());
         }
+    }
+
+    public Page<LinkedinNameProfilePair> getAlumniMatches(String token, int page) throws Exception {
+        return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPages(token, page);
     }
 }

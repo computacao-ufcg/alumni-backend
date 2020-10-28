@@ -14,6 +14,11 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
@@ -24,7 +29,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class LinkedinDataHolder extends Thread {
+public class LinkedinDataHolder extends Thread{
     private Logger LOGGER = Logger.getLogger(LinkedinDataHolder.class);
 
     private static LinkedinDataHolder instance;
@@ -115,6 +120,19 @@ public class LinkedinDataHolder extends Thread {
 
     public synchronized Collection<LinkedinAlumnusData> getLinkedinAlumniData() {
         return this.linkedinAlumniData.values();
+    }
+
+
+    public synchronized  Page<LinkedinNameProfilePair> getLinkedinAlumniDataPages(String token, int requiredPage) throws Exception {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+        int start = (int) pageable.getOffset();
+
+        int end = (int) ((start + pageable.getPageSize()) > this.linkedinAlumniData.size() ? linkedinAlumniData.size()
+                : (start + pageable.getPageSize()));
+
+        Page<LinkedinNameProfilePair> page
+                = new PageImpl<LinkedinNameProfilePair>(getLinkedinNameProfilePairs(token).subList(start, end), pageable, this.linkedinAlumniData.size());
+        return page;
     }
 
     /**
