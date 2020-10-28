@@ -13,7 +13,6 @@ import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.models.Curso;
@@ -259,10 +258,7 @@ public class Match {
 
 	public Collection<LinkedinAlumnusData> getMatches(UfcgAlumnusData alumni, SchoolName school) throws Exception {
 		LinkedinDataHolder linkedinHolder = LinkedinDataHolder.getInstance();
-		String filePath = HomeDir.getPath() + PropertiesHolder.getInstance().
-						getProperty(ConfigurationPropertyKeys.LINKEDIN_INPUT_FILE_KEY,
-						ConfigurationPropertyDefaults.DEFAULT_LINKEDIN_INPUT_FILE_NAME);
-		linkedinHolder.loadLinkedinData(ConfigurationPropertyKeys.LINKEDIN_SOURCE_URL_KEY, filePath);
+		linkedinHolder.loadLinkedinData();
 
 		Collection<LinkedinAlumnusData> linkedinProfilesList = linkedinHolder.getLinkedinAlumniData();
 		Collection<LinkedinAlumnusData> selectedProfilesList = new LinkedList<>();

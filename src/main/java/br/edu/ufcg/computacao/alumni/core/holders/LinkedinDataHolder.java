@@ -5,12 +5,12 @@ import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.models.DateRange;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
 import br.edu.ufcg.computacao.alumni.core.parsers.AlumnusParser;
 import br.edu.ufcg.computacao.alumni.core.util.ChecksumGenerator;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +34,11 @@ public class LinkedinDataHolder extends Thread {
 
     private LinkedinDataHolder() {
         this.checksum = 0;
+        try {
+            loadLinkedinData();
+        } catch (IOException e) {
+            this.linkedinAlumniData = new HashMap<>();
+        }
     }
 
     private String readInput(String confFilePath) throws IOException {
@@ -50,7 +55,11 @@ public class LinkedinDataHolder extends Thread {
         }
     }
 
-    public synchronized void loadLinkedinData(String linkedinURL, String filePath) throws IOException {
+    public synchronized void loadLinkedinData() throws IOException {
+        String linkedinURL = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.LINKEDIN_SOURCE_URL_KEY);
+        String filePath = HomeDir.getPath() + PropertiesHolder.getInstance().
+                getProperty(ConfigurationPropertyKeys.LINKEDIN_INPUT_FILE_KEY,
+                        ConfigurationPropertyDefaults.DEFAULT_LINKEDIN_INPUT_FILE_NAME);
         // Download linkedin data
         try (BufferedInputStream in = new BufferedInputStream(new URL(linkedinURL).openStream());
              FileOutputStream fileOutputStream = new FileOutputStream(filePath)) {
@@ -126,10 +135,8 @@ public class LinkedinDataHolder extends Thread {
         boolean isActive = true;
         while (isActive) {
             try {
-                this.loadLinkedinData(PropertiesHolder.getInstance().
-                                getProperty(ConfigurationPropertyKeys.LINKEDIN_SOURCE_URL_KEY),
-                                ConfigurationPropertyDefaults.DEFAULT_LINKEDIN_INPUT_FILE_NAME);
-                Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));
+                loadLinkedinData();
+                Thread.sleep(TimeUnit.MINUTES.toMillis(10));
             } catch (InterruptedException e) {
                 isActive = false;
                 LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);
