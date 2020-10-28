@@ -91,4 +91,18 @@ public class Alumni {
             throw e;
         }
     }
+
+    @RequestMapping(value = "/pendingMatches", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Alumni.GET_PENDING_MATCHES_OPERATION)
+    public ResponseEntity<Collection<PendingMatch>> getPendingMatches(
+            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+     {
+        try{
+            Collection<PendingMatch> pendingMatches = ApplicationFacade.getInstance().getAlumniPendingMatches(token);
+            return new ResponseEntity<>(pendingMatches, HttpStatus.OK);
+        } catch (Exception e){
+            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+    }
 }

@@ -6,6 +6,7 @@ import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
+import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.models.SystemUser;
 import br.edu.ufcg.computacao.alumni.core.util.AuthenticationUtil;
@@ -70,4 +71,6 @@ public class ApplicationFacade {
     public Page<LinkedinNameProfilePair> getAlumniMatches(String token, int page) throws Exception {
         return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPages(token, page);
     }
+
+
 }
