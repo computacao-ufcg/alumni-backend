@@ -80,5 +80,9 @@ public class ApplicationFacade {
 
     }
 
+    public void unsetMatch(String token, String registration){
+
+    }
+
 
 }

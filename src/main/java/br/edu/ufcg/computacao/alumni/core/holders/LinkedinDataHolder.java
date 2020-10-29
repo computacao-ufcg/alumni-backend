@@ -127,11 +127,13 @@ public class LinkedinDataHolder extends Thread{
         Pageable pageable= new PageRequest(requiredPage, 10);
         int start = (int) pageable.getOffset();
 
-        int end = (int) ((start + pageable.getPageSize()) > this.linkedinAlumniData.size() ? linkedinAlumniData.size()
+        int end = (int) ((start + pageable.getPageSize()) > this.getLinkedinNameProfilePairs(token).size() ?
+                this.getLinkedinNameProfilePairs(token).size()
                 : (start + pageable.getPageSize()));
 
         Page<LinkedinNameProfilePair> page
-                = new PageImpl<LinkedinNameProfilePair>(getLinkedinNameProfilePairs(token).subList(start, end), pageable, this.linkedinAlumniData.size());
+                = new PageImpl<LinkedinNameProfilePair>(getLinkedinNameProfilePairs(token).subList(start, end), pageable,
+                this.getLinkedinNameProfilePairs(token).size());
         return page;
     }
 

@@ -107,7 +107,7 @@ public class Alumni {
     }
 
     @RequestMapping(value = "/setMatches", method = RequestMethod.PUT)
-    @ApiOperation(value = ApiDocumentation.Alumni.SET_MATCHES_OPERATION)
+    @ApiOperation(value = ApiDocumentation.Alumni.SET_MATCH_OPERATION)
     public void setMatch(
             @RequestBody(required = true) String registration,
             @RequestBody(required = true) String linkedinId,
@@ -119,6 +119,21 @@ public class Alumni {
             LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
         }
+    }
+
+    @RequestMapping(value = "/unsetMatches", method = RequestMethod.PUT)
+    @ApiOperation(value = ApiDocumentation.Alumni.UNSET_MATCH_OPERATION)
+    public void unsetMatch(
+            @RequestBody(required = true) String registration,
+            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+    {
+        try{
+            ApplicationFacade.getInstance().unsetMatch(token, registration);
+        } catch(Exception e){
+            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+
     }
 
 
