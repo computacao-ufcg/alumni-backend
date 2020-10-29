@@ -72,5 +72,13 @@ public class ApplicationFacade {
         return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPages(token, page);
     }
 
+    public Collection<PendingMatch> getAlumniPendingMatches(String token) {
+
+    }
+
+    public void setMatch(String token, String registration, String linkedinId) {
+
+    }
+
 
 }

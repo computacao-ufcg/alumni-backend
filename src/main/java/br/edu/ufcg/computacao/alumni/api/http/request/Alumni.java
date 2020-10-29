@@ -106,5 +106,20 @@ public class Alumni {
         }
     }
 
+    @RequestMapping(value = "/setMatches", method = RequestMethod.PUT)
+    @ApiOperation(value = ApiDocumentation.Alumni.SET_MATCHES_OPERATION)
+    public void setMatch(
+            @RequestBody(required = true) String registration,
+            @RequestBody(required = true) String linkedinId,
+            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+    {
+        try{
+            ApplicationFacade.getInstance().setMatch(token, registration, linkedinId);
+        } catch(Exception e){
+            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+    }
+
 
 }
