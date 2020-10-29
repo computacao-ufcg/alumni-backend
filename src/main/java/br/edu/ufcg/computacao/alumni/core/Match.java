@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.models.Curso;
@@ -258,14 +256,9 @@ public class Match {
 		return score;
 	}
 
-	public TreeMap<Integer, Collection<LinkedinAlumnusData>> getMatches(UfcgAlumnusData alumni, SchoolName school) throws Exception {
-		LinkedinDataHolder linkedinHolder = LinkedinDataHolder.getInstance();
-		linkedinHolder.loadLinkedinData(PropertiesHolder.getInstance().getProperty(
-				ConfigurationPropertyKeys.LINKEDIN_URL_KEY)
-				, SystemConstants.DEFAULT_LINKEDIN_INPUT_FILE_PATH);
-		
-		Collection<LinkedinAlumnusData> linkedinProfilesList = linkedinHolder.getLinkedinAlumniData();
-		Map<Integer, Collection<LinkedinAlumnusData>> selectedProfilesList = new HashMap<>(); // relaciona o score com uma lista  
+	public Map<Integer, Collection<LinkedinAlumnusData>> getMatches(UfcgAlumnusData alumni, SchoolName school) throws Exception {
+		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
+		Map<Integer, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(Collections.reverseOrder()); // relaciona o score com uma lista  
 
 		String alumniName = alumni.getFullName().toUpperCase();
 
@@ -287,7 +280,7 @@ public class Match {
 			}
 		});
 		
-		return new TreeMap<>(selectedProfilesList);
+		return selectedProfilesList;
 	}
 
 }

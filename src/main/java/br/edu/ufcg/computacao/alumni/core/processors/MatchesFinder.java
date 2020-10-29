@@ -8,12 +8,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -113,12 +111,13 @@ public class MatchesFinder extends Thread {
 			try {
 				Map<String, String> consolidatedMatches = MatchesHolder.getInstance().getMatches();
 				Collection<UfcgAlumnusData> alumnus = AlumniHolder.getInstance().getAlumniData("");
+				this.pendingMatches = new LinkedList<>();
 			
 				for (UfcgAlumnusData alumni : alumnus) {
 					String registration = alumni.getRegistration();
 					
-					if (!consolidatedMatches.containsKey(registration) && !this.pendingMatches.contains(new PendingMatch(alumni, new HashMap<>()))) {
-						TreeMap<Integer, Collection<LinkedinAlumnusData>> possibleMatches = Match.getInstance().getMatches(alumni, schoolName);
+					if (!consolidatedMatches.containsKey(registration)) {
+						Map<Integer, Collection<LinkedinAlumnusData>> possibleMatches = Match.getInstance().getMatches(alumni, schoolName);
 						
 						if (!possibleMatches.isEmpty()) {
 							this.pendingMatches.add(new PendingMatch(alumni, possibleMatches));
