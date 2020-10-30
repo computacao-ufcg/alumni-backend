@@ -1,12 +1,15 @@
 package br.edu.ufcg.computacao.alumni.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
@@ -253,12 +256,9 @@ public class Match {
 		return score;
 	}
 
-	public Collection<LinkedinAlumnusData> getMatches(UfcgAlumnusData alumni, SchoolName school) throws Exception {
-		LinkedinDataHolder linkedinHolder = LinkedinDataHolder.getInstance();
-		linkedinHolder.loadLinkedinData();
-
-		Collection<LinkedinAlumnusData> linkedinProfilesList = linkedinHolder.getLinkedinAlumniData();
-		Collection<LinkedinAlumnusData> selectedProfilesList = new LinkedList<>();
+	public Map<Integer, Collection<LinkedinAlumnusData>> getMatches(UfcgAlumnusData alumni, SchoolName school) throws Exception {
+		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
+		Map<Integer, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(Collections.reverseOrder()); // relaciona o score com uma lista  
 
 		String alumniName = alumni.getFullName().toUpperCase();
 
@@ -272,7 +272,11 @@ public class Match {
 			score += getScoreFromSchool(alumni, linkedinSchoolData, school);
 
 			if (score >= 1) {
-				selectedProfilesList.add(linkedinProfile);
+				if (!selectedProfilesList.containsKey(score)) {
+					selectedProfilesList.put(score, new ArrayList<>());
+				}
+				
+				selectedProfilesList.get(score).add(linkedinProfile);
 			}
 		});
 

@@ -24,6 +24,10 @@ public class ApiDocumentation {
         public static final String DESCRIPTION = "Lists information about the alumni.";
         public static final String GET_NAMES_OPERATION = "Lists the names of the alumni.";
         public static final String GET_CURRENT_JOB_OPERATION = "Lists names and current position of alumni.";
+        public static final String GET_MATCHES_OPERATION = "Lists matches between alumni and linkedin alumnus";
+        public static final String GET_PENDING_MATCHES_OPERATION = "Lists alumni pending matches";
+        public static final String SET_MATCH_OPERATION = "set alumus matches";
+        public static final String UNSET_MATCH_OPERATION = "revert setMatch operation";
     }
 
     public static class Version {

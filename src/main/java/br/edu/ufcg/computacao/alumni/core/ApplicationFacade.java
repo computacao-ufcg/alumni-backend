@@ -8,6 +8,7 @@ import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.EurecaAsPublicKeyHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.models.AlumniOperation;
+import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
 import br.edu.ufcg.computacao.eureca.as.core.AuthenticationUtil;
 import br.edu.ufcg.computacao.eureca.as.core.models.SystemUser;
@@ -15,8 +16,9 @@ import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.util.CryptoUtil;
 import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
 import org.apache.log4j.Logger;
-
 import java.security.GeneralSecurityException;
+import org.springframework.data.domain.Page;
+
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 
@@ -87,5 +89,21 @@ public class ApplicationFacade {
         SystemUser requester = AuthenticationUtil.authenticate(keyRSA, token);
         this.authorizationPlugin.isAuthorized(requester, operation);
         return requester;
+    }
+
+    public Page<LinkedinNameProfilePair> getAlumniMatches(String token, int page) throws Exception {
+        return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPages(token, page);
+    }
+
+    public Collection<PendingMatch> getAlumniPendingMatches(String token) {
+        return null;
+    }
+
+    public void setMatch(String token, String registration, String linkedinId) {
+
+    }
+
+    public void unsetMatch(String token, String registration){
+
     }
 }
