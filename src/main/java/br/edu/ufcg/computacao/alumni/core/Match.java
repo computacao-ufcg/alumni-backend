@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.models.Curso;
@@ -21,7 +19,6 @@ import br.edu.ufcg.computacao.alumni.core.models.Grau;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
 import br.edu.ufcg.computacao.alumni.core.models.ParsedName;
 import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
-import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 
 public class Match {
 
@@ -281,5 +278,4 @@ public class Match {
 
 		return selectedProfilesList;
 	}
-
 }
