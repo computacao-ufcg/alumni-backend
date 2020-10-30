@@ -34,4 +34,9 @@ public class ApiDocumentation {
     public class Token {
         public static final String AUTHENTICATION_TOKEN = "Authentication token.";
     }
+
+    public static class PublicKey {
+        public static final String API = "Queries the public key of the service.";
+        public static final String GET_OPERATION = "Returns the public key of the service.";
+    }
 }
