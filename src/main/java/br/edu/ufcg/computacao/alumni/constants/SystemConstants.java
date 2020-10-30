@@ -6,7 +6,7 @@ public class SystemConstants {
     public static final String CONFIG_FILE = "alumni.conf";
     public static final String DEFAULT_LINKEDIN_INPUT_FILE_PATH = "src/main/resources/private/linkedin.input";
     public static final String DEFAULT_MATCHES_FILE_PATH = "src/main/resources/private/matches.db";
-
+    public static final String SCHOOL_NAME_CONFIG_FILE_PATH = "src/main/resources/private/school.conf";
     public static final String TOKEN_STRING_SEPARATOR = "!^!";
     public static final String TOKEN_SEPARATOR = "!%!";
     public static final String PAYLOAD_SEPARATOR  = "!$!";
