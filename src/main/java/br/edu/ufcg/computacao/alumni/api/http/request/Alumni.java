@@ -2,6 +2,8 @@ package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
@@ -11,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -73,5 +76,65 @@ public class Alumni {
             throw e;
         }
     }
+
+    @RequestMapping(value = "/matches", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Alumni.GET_MATCHES_OPERATION)
+    public ResponseEntity<Page<LinkedinNameProfilePair>> getAlumniMatches(
+            @RequestParam(required = true, value = "page") int page,
+            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws Exception {
+        try{
+            Page<LinkedinNameProfilePair> matches = ApplicationFacade.getInstance().getAlumniMatches(token, page);
+            return new ResponseEntity<>(matches, HttpStatus.OK);
+        } catch(Exception e) {
+            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+    }
+
+    @RequestMapping(value = "/pendingMatches", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Alumni.GET_PENDING_MATCHES_OPERATION)
+    public ResponseEntity<Collection<PendingMatch>> getPendingMatches(
+            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+     {
+        try{
+            Collection<PendingMatch> pendingMatches = ApplicationFacade.getInstance().getAlumniPendingMatches(token);
+            return new ResponseEntity<>(pendingMatches, HttpStatus.OK);
+        } catch (Exception e){
+            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+    }
+
+    @RequestMapping(value = "/setMatches", method = RequestMethod.PUT)
+    @ApiOperation(value = ApiDocumentation.Alumni.SET_MATCH_OPERATION)
+    public void setMatch(
+            @RequestBody(required = true) String registration,
+            @RequestBody(required = true) String linkedinId,
+            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+    {
+        try{
+            ApplicationFacade.getInstance().setMatch(token, registration, linkedinId);
+        } catch(Exception e){
+            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+    }
+
+    @RequestMapping(value = "/unsetMatches", method = RequestMethod.PUT)
+    @ApiOperation(value = ApiDocumentation.Alumni.UNSET_MATCH_OPERATION)
+    public void unsetMatch(
+            @RequestBody(required = true) String registration,
+            @RequestHeader(required = false, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+    {
+        try{
+            ApplicationFacade.getInstance().unsetMatch(token, registration);
+        } catch(Exception e){
+            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+
+    }
+
 
 }

@@ -6,6 +6,7 @@ import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
+import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.models.SystemUser;
 import br.edu.ufcg.computacao.alumni.core.util.AuthenticationUtil;
@@ -14,6 +15,8 @@ import br.edu.ufcg.computacao.alumni.core.util.CryptoUtil;
 import br.edu.ufcg.computacao.alumni.core.util.ServiceAsymmetricKeysHolder;
 import java.security.GeneralSecurityException;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+import org.springframework.data.domain.Page;
+
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 
@@ -64,4 +67,22 @@ public class ApplicationFacade {
             throw new GeneralSecurityException(e.getMessage());
         }
     }
+
+    public Page<LinkedinNameProfilePair> getAlumniMatches(String token, int page) throws Exception {
+        return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPages(token, page);
+    }
+
+    public Collection<PendingMatch> getAlumniPendingMatches(String token) {
+
+    }
+
+    public void setMatch(String token, String registration, String linkedinId) {
+
+    }
+
+    public void unsetMatch(String token, String registration){
+
+    }
+
+
 }

@@ -9,6 +9,7 @@ import br.edu.ufcg.computacao.alumni.core.Match;
 import br.edu.ufcg.computacao.alumni.core.models.Curso;
 import br.edu.ufcg.computacao.alumni.core.models.Grau;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
+import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
