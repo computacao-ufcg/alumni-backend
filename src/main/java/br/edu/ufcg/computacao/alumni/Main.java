@@ -3,12 +3,9 @@ package br.edu.ufcg.computacao.alumni;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
-import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
-import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
-import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
-import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
+import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
-import br.edu.ufcg.computacao.alumni.core.processors.MatchesFinder;
+import br.edu.ufcg.computacao.alumni.core.processors.MatchesFinderProcessor;
 import br.edu.ufcg.computacao.alumni.core.util.PluginInstantiator;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
@@ -43,7 +40,8 @@ public class Main implements ApplicationRunner {
             LinkedinDataHolder.getInstance().start();
             AlumniHolder.getInstance().start();
             MatchesHolder.getInstance();
-            MatchesFinder.getInstance().start();
+            PendingMatchesHolder.getInstance();
+            new MatchesFinderProcessor().start();
         } catch (Exception e) {
             LOGGER.error(Messages.ERROR_READING_CONFIGURATION_FILE, e);
             System.exit(-1);
