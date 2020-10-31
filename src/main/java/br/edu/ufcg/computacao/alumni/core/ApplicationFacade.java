@@ -7,7 +7,6 @@ import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.models.AlumniOperation;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
-import br.edu.ufcg.computacao.alumni.core.processors.MatchesFinder;
 import br.edu.ufcg.computacao.eureca.as.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.eureca.as.core.AuthenticationUtil;
 import br.edu.ufcg.computacao.eureca.as.core.models.SystemUser;
