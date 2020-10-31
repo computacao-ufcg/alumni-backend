@@ -2,6 +2,7 @@ package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
+import br.edu.ufcg.computacao.alumni.api.http.response.MatchResponse;
 import br.edu.ufcg.computacao.alumni.api.parameters.MatchParameter;
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
@@ -65,8 +66,8 @@ public class Match {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
             }
 
-            Page<LinkedinNameProfilePair> matches = ApplicationFacade.getInstance().getAlumniMatches(token, p);
-            return new ResponseEntity<>(matches, HttpStatus.OK);
+            Page<MatchResponse> matches = ApplicationFacade.getInstance().getAlumniMatches(token, p);
+            return new ResponseEntity(matches, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
