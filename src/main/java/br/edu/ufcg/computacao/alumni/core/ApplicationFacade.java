@@ -69,7 +69,6 @@ public class ApplicationFacade {
 
     public void setMatch(String token, String registration, String linkedinId) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.SET_MATCH);
-        System.out.println("Adding match");
         MatchesHolder.getInstance().addMatch(registration, linkedinId);
     }
 
