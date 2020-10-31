@@ -1,6 +1,7 @@
 package br.edu.ufcg.computacao.alumni.constants;
 
 public class Messages {
+    public static final Object ALL_SET = "All services have been initialized.";
     public static final String COULD_NOT_LOAD_ALUMNI_DATA = "Could not load Alumni data.";
     public static final String COULD_NOT_LOAD_LINKEDIN_DATA = "Could not load Linkedin data.";
     public static final String COULD_NOT_PROCESS_ENTRY = "Could not process Linkedin entry.";

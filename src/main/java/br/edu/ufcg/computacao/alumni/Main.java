@@ -42,6 +42,7 @@ public class Main implements ApplicationRunner {
             MatchesHolder.getInstance();
             PendingMatchesHolder.getInstance();
             new MatchesFinderProcessor().start();
+            LOGGER.info(Messages.ALL_SET);
         } catch (Exception e) {
             LOGGER.error(Messages.ERROR_READING_CONFIGURATION_FILE, e);
             System.exit(-1);
