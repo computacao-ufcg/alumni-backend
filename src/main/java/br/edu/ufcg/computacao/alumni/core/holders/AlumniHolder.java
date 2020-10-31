@@ -2,9 +2,10 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.constants.*;
-import br.edu.ufcg.computacao.alumni.core.models.Curso;
-import br.edu.ufcg.computacao.alumni.core.models.Grau;
+import br.edu.ufcg.computacao.alumni.core.models.CourseName;
+import br.edu.ufcg.computacao.alumni.core.models.Degree;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
+import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 
@@ -21,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 public class AlumniHolder extends Thread {
     private Logger LOGGER = Logger.getLogger(AlumniHolder.class);
-    public static final String PRIVATE_DIRECTORY = "private/";
 
     private static AlumniHolder instance;
     private long lastModificationDate;
@@ -51,34 +51,44 @@ public class AlumniHolder extends Thread {
             String[] data = row.split(",");
             String registration = data[0];
             String name = data[1];
-            String codigoCurso = data[2];
-            String semestreIngresso = data[3];
-            String semestreFormatura = data[4];
+            String courseNameCode = data[2];
+            String levelCode = data[3];
+            String admission = data[4];
+            String graduation = data[5];
 
-            Grau grau = null;
-            switch (codigoCurso) {
-                case CodigoCurso.GRAD_PROC_DADOS:
-                    grau = new Grau(Curso.GRADUACAO_PROCESSAMENTO_DE_DADOS, semestreIngresso, semestreFormatura);
+            CourseName courseName = null;
+            Level level = null;
+            switch (courseNameCode) {
+                case CourseNameCode.DATA_PROCESSING:
+                    courseName = CourseName.DATA_PROCESSING;
                     break;
-                case CodigoCurso.GRAD_COMPUTACAO:
-                    grau = new Grau(Curso.GRADUACAO_CIENCIA_DA_COMPUTACAO, semestreIngresso, semestreFormatura);
+                case CourseNameCode.COMPUTING_SCIENCE:
+                    courseName = CourseName.COMPUTING_SCIENCE;
                     break;
-                case CodigoCurso.MEST_INFORMATICA:
-                    grau = new Grau(Curso.MESTRADO_EM_INFOMATICA, semestreIngresso, semestreFormatura);
-                    break;
-                case CodigoCurso.MEST_COMPUTACAO:
-                    grau = new Grau(Curso.GRADUACAO_CIENCIA_DA_COMPUTACAO, semestreIngresso, semestreFormatura);
-                    break;
-                case CodigoCurso.DOUT_COMPUTACAO:
-                    grau = new Grau(Curso.GRADUACAO_CIENCIA_DA_COMPUTACAO, semestreIngresso, semestreFormatura);
+                case CourseNameCode.INFORMATICS:
+                    courseName = CourseName.INFORMATICS;
                     break;
                 default:
                     LOGGER.error(String.format(Messages.INVALID_INPUT_S, row));
                     break;
             }
-            Grau[] graus = new Grau[1];
-            graus[0] = grau;
-            UfcgAlumnusData alumnus = new UfcgAlumnusData(registration, name, graus);
+            switch (levelCode) {
+                case LevelCode.UNDERGRADUATE:
+                    level = Level.UNDERGRADUATE;
+                    break;
+                case LevelCode.MASTER:
+                    level = Level.MASTER;
+                    break;
+                case LevelCode.DOCTORATE:
+                    level = Level.DOCTORATE;
+                    break;
+                default:
+                    LOGGER.error(String.format(Messages.INVALID_INPUT_S, row));
+                    break;
+            }
+            Degree[] degrees = new Degree[1];
+            degrees[0] = new Degree(courseName, level, admission, graduation);
+            UfcgAlumnusData alumnus = new UfcgAlumnusData(registration, name, degrees);
             alumniList.add(alumnus);
         }
         csvReader.close();
@@ -107,7 +117,7 @@ public class AlumniHolder extends Thread {
         return alumniNames;
     }
 
-    public List<CurrentJob> getAlumniCurrentJob() throws Exception {
+    public List<CurrentJob> getAlumniCurrentJob() {
         List<CurrentJob> alumniCurrentJob = new LinkedList<>();
 
         for(int i = 0; i < this.alumni.length; i++) {

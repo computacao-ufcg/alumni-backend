@@ -71,7 +71,7 @@ public class LinkedinAlumnusData {
     }
 
     public LinkedinSchoolData[] getSchools() {
-        return schools;
+        return this.schools;
     }
 
     public void setSchools(LinkedinSchoolData[] schools) {

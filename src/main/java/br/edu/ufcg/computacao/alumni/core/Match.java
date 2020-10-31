@@ -1,6 +1,5 @@
 package br.edu.ufcg.computacao.alumni.core;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,77 +14,60 @@ import java.util.stream.Collectors;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
-import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
-import br.edu.ufcg.computacao.alumni.core.models.Curso;
-import br.edu.ufcg.computacao.alumni.core.models.DateRange;
-import br.edu.ufcg.computacao.alumni.core.models.Grau;
-import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
-import br.edu.ufcg.computacao.alumni.core.models.ParsedName;
-import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
+import br.edu.ufcg.computacao.alumni.core.models.*;
+import br.edu.ufcg.computacao.alumni.core.models.Degree;
 
 public class Match {
 
-	private PropertiesHolder props;
-
 	private static Match instance;
 
-	private static final String COMPUTACAO = "computacao";
-	private static final String INFORMATICA = "informatica";
-	private static final String PROC_DADOS = "proc-dados";
-	private static final String GRADUACAO = "graduacao";
-	private static final String MESTRADO = "mestrado";
-	private static final String DOUTORADO = "doutorado";
-
-	private Match() throws IOException {
-		this.props = PropertiesHolder.getInstance();
+	private Match() {
 	}
 
-	public static synchronized Match getInstance() throws IOException {
+	public static synchronized Match getInstance() {
 		if (instance == null) {
 			instance = new Match();
 		}
 		return instance;
 	}
 
-	private Set<String> getData(String property) {
-		String[] values = props.getProperty(property).split(",");
+	public Map<Integer, Collection<LinkedinAlumnusData>> getMatches(UfcgAlumnusData alumnus, SchoolName school) throws Exception {
+		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
+		Map<Integer, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(Collections.reverseOrder()); // relaciona o score com uma lista
 
-		Set<String> set = new HashSet<>();
-		set.addAll(Arrays.asList(values));
+		String alumniName = alumnus.getFullName().toUpperCase();
 
-		return set;
+		linkedinProfilesList.forEach(linkedinProfile -> {
+			int score = 0;
+
+			LinkedinSchoolData[] linkedinSchoolData = linkedinProfile.getSchools();
+			String linkedinAlumniFullName = linkedinProfile.getFullName().toUpperCase();
+
+			score += getScoreFromName(alumniName, linkedinAlumniFullName);
+			score += getScoreFromSchool(alumnus, linkedinSchoolData, school);
+
+			if (score >= 1) {
+				if (!selectedProfilesList.containsKey(score)) {
+					selectedProfilesList.put(score, new ArrayList<>());
+				}
+
+				selectedProfilesList.get(score).add(linkedinProfile);
+			}
+		});
+
+		return selectedProfilesList;
 	}
 
-	private Curso getCurso(LinkedinSchoolData linkedinSchoolData) {
-		Set<String> fieldComputacaoSet = getData(COMPUTACAO);
-		Set<String> fieldInformaticaSet = getData(INFORMATICA);
-		Set<String> fieldProcDadosSet = getData(PROC_DADOS);
-		Set<String> degreeGraduacaoSet = getData(GRADUACAO);
-		Set<String> degreeMestradoSet = getData(MESTRADO);
-		Set<String> degreeDoutoradoSet = getData(DOUTORADO);
+	private CourseName getCourseName(LinkedinSchoolData linkedinSchoolData) {
+		String field = linkedinSchoolData.getCourseName().toUpperCase().trim();
 
-		String field = linkedinSchoolData.getField().toUpperCase().trim();
-		String degree = linkedinSchoolData.getDegree().toUpperCase().trim();
+		return CourseName.COMPUTING_SCIENCE;
+	}
 
-		if (!(fieldComputacaoSet.contains(field) && fieldInformaticaSet.contains(field) && fieldProcDadosSet.contains(field))) {
-			return null;
-		}
-		if (fieldComputacaoSet.contains(field) && degreeMestradoSet.contains(degree)) {
-			return Curso.MESTRADO_EM_CIENCIA_DA_COMPUTACAO;
-		}
-		if (fieldComputacaoSet.contains(field) && degreeGraduacaoSet.contains(degree)) {
-			return Curso.GRADUACAO_CIENCIA_DA_COMPUTACAO;
-		}
-		if (fieldComputacaoSet.contains(field) && degreeDoutoradoSet.contains(degree)) {
-			return Curso.DOUTORADO_EM_CIENCIA_DA_COMPUTACAO;
-		}
-		if (fieldInformaticaSet.contains(field) && degreeMestradoSet.contains(degree)) {
-			return Curso.MESTRADO_EM_INFOMATICA;
-		}
-		if (fieldProcDadosSet.contains(field) && degreeGraduacaoSet.contains(degree)) {
-			return Curso.GRADUACAO_PROCESSAMENTO_DE_DADOS;
-		}
-		return null;
+	private Level getDegreeLevel(LinkedinSchoolData linkedinSchoolData) {
+		String degree = linkedinSchoolData.getDegreeLevel().toUpperCase().trim();
+
+		return Level.UNDERGRADUATE;
 	}
 
 	private String[] filterName(String name) {
@@ -187,19 +169,20 @@ public class Match {
 		return score;
 	}
 
-	private Grau getGrauData(Grau[] alumniGraus, Curso curso) {
+	private Degree getDegreeData(Degree[] alumniGraus, CourseName curso, Level degreeLevel) {
 		return Arrays.asList(alumniGraus)
 				.stream()
-				.filter(grau -> grau.getCurso().equals(curso))
+				.filter(grau -> grau.getCourseName().equals(curso))
 				.findAny()
 				.orElse(null);
 	}
 
-	private int getMatchesFromCurso(UfcgAlumnusData alumni, LinkedinSchoolData schoolData, SchoolName school) {
-		Curso curso = getCurso(schoolData);
-		Grau alumniGrauData = getGrauData(alumni.getGraus(), curso);
+	private int getMatchesBasedOnSchoolData(UfcgAlumnusData alumni, LinkedinSchoolData schoolData, SchoolName school) {
+		CourseName courseName = getCourseName(schoolData);
+		Level degreeLevel = getDegreeLevel(schoolData);
+		Degree alumnusDegreeData = getDegreeData(alumni.getGraus(), courseName, degreeLevel);
 
-		if (alumniGrauData == null) {
+		if (alumnusDegreeData == null) {
 			return 0;
 		}
 
@@ -250,36 +233,9 @@ public class Match {
 		int score = 0;
 
 		for (LinkedinSchoolData linkedinSchool : linkedinSchoolData) {
-			score += getMatchesFromCurso(alumni, linkedinSchool, school);
+			score += getMatchesBasedOnSchoolData(alumni, linkedinSchool, school);
 		}
 
 		return score;
-	}
-
-	public Map<Integer, Collection<LinkedinAlumnusData>> getMatches(UfcgAlumnusData alumni, SchoolName school) throws Exception {
-		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
-		Map<Integer, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(Collections.reverseOrder()); // relaciona o score com uma lista  
-
-		String alumniName = alumni.getFullName().toUpperCase();
-
-		linkedinProfilesList.forEach(linkedinProfile -> {
-			int score = 0;
-
-			LinkedinSchoolData[] linkedinSchoolData = linkedinProfile.getSchools();
-			String linkedinAlumniFullName = linkedinProfile.getFullName().toUpperCase();
-
-			score += getScoreFromName(alumniName, linkedinAlumniFullName);
-			score += getScoreFromSchool(alumni, linkedinSchoolData, school);
-
-			if (score >= 1) {
-				if (!selectedProfilesList.containsKey(score)) {
-					selectedProfilesList.put(score, new ArrayList<>());
-				}
-				
-				selectedProfilesList.get(score).add(linkedinProfile);
-			}
-		});
-
-		return selectedProfilesList;
 	}
 }

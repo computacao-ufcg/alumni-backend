@@ -8,6 +8,7 @@ import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
+import br.edu.ufcg.computacao.alumni.core.processors.MatchesFinder;
 import br.edu.ufcg.computacao.alumni.core.util.PluginInstantiator;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
@@ -42,6 +43,7 @@ public class Main implements ApplicationRunner {
             LinkedinDataHolder.getInstance().start();
             AlumniHolder.getInstance().start();
             MatchesHolder.getInstance();
+            MatchesFinder.getInstance().start();
         } catch (Exception e) {
             LOGGER.error(Messages.ERROR_READING_CONFIGURATION_FILE, e);
             System.exit(-1);

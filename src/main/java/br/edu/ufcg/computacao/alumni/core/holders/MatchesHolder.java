@@ -3,17 +3,12 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
+import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Date;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,16 +16,17 @@ public class MatchesHolder {
     private Logger LOGGER = Logger.getLogger(MatchesHolder.class);
     
     private Map<String, String> matches;
+    private String matchesFilePath;
     private static MatchesHolder instance;
-    private long lastModificationDate;
 
-    private MatchesHolder() throws Exception {
-        this.loadMatches(HomeDir.getPath() + PropertiesHolder.getInstance().
+    private MatchesHolder() throws FatalErrorException {
+        this.matchesFilePath = HomeDir.getPath() + PropertiesHolder.getInstance().
                 getProperty(ConfigurationPropertyKeys.MATCHES_INPUT_KEY,
-                ConfigurationPropertyDefaults.DEFAULT_MATCHES_FILE_NAME));
+                        ConfigurationPropertyDefaults.DEFAULT_MATCHES_FILE_NAME);
+        this.loadMatches(this.matchesFilePath);
     }
 
-    public static MatchesHolder getInstance() throws Exception {
+    public static MatchesHolder getInstance() {
         synchronized (AlumniHolder.class) {
             if (instance == null) {
                 instance = new MatchesHolder();
@@ -39,55 +35,59 @@ public class MatchesHolder {
         }
     }
     
-    public synchronized void loadMatches(String filePath) throws IOException {
-    	if (!dataHasChanged(filePath)) {
-    		return;
-    	}
-    	
+    public synchronized void loadMatches(String filePath) throws FatalErrorException {
         this.matches = new HashMap<>();
-        BufferedReader csvReader = new BufferedReader(new FileReader(filePath));
-        String row;
-        while ((row = csvReader.readLine()) != null) {
-            String[] data = row.split(",");
-            String registration = data[0];
-            String linkedinId = data[1];
-            this.matches.put(registration, linkedinId);
-            LOGGER.info(String.format(Messages.LOADING_MATCH_D_S_S, this.matches.size(), registration, linkedinId));
+        BufferedReader csvReader = null;
+        try {
+            csvReader = new BufferedReader(new FileReader(filePath));
+            String row;
+            while ((row = csvReader.readLine()) != null) {
+                String[] data = row.split(",");
+                String registration = data[0];
+                String linkedinId = data[1];
+                this.matches.put(registration, linkedinId);
+                LOGGER.info(String.format(Messages.LOADING_MATCH_D_S_S, this.matches.size(), registration, linkedinId));
+            }
+            csvReader.close();
+        } catch (IOException e) {
+            throw new FatalErrorException(e.getMessage());
         }
-        csvReader.close();
     }
     
-    public synchronized void addMatch(String filePath, String registration, String linkedinId) throws IOException {
+    public synchronized void addMatch(String registration, String linkedinId) {
     	if (this.matches.containsKey(registration)) {
     		this.matches.replace(registration, linkedinId);
     	} else {
     		this.matches.put(registration, linkedinId);
     	}
-    	
-    	this.saveMatch(filePath, registration, linkedinId);
-    	this.lastModificationDate = new Date().getTime();
+
+        try {
+            this.saveMatches();
+        } catch (IOException e) {
+            LOGGER.error(String.format(Messages.COULD_NOT_SAVE_MATCHES_S, this.matchesFilePath));
+        }
+    }
+
+    public synchronized void deleteMatch(String registration) throws InvalidParameterException {
+        if (this.matches.containsKey(registration)) {
+            this.matches.remove(registration);
+        } else {
+            throw new InvalidParameterException(String.format(Messages.NO_SUCH_MATCH_S, registration));
+        }
+
+        try {
+            this.saveMatches();
+        } catch (IOException e) {
+            LOGGER.error(String.format(Messages.COULD_NOT_SAVE_MATCHES_S, this.matchesFilePath));
+        }
     }
     
-    public synchronized void saveMatch(String filePath, String registration, String linkedinId) throws IOException {
-    	BufferedWriter csvWriter = new BufferedWriter(new FileWriter(filePath, true));
-    	
-    	csvWriter.write(registration + "," + linkedinId);
-    	
-    	csvWriter.newLine();
+    public synchronized void saveMatches() throws IOException {
+    	BufferedWriter csvWriter = new BufferedWriter(new FileWriter(this.matchesFilePath));
+    	// ToDo: write file
     	csvWriter.close();
     }
-    
-    private boolean dataHasChanged(String filePath) throws IOException {
-    	BasicFileAttributes attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
-    	long currentDate = attr.lastModifiedTime().toMillis();
-    	if (currentDate > this.lastModificationDate) {
-    		this.lastModificationDate = currentDate;
-    		return true;
-    	} else {
-    		return false;
-    	}
-    }
-    
+
     public synchronized Map<String, String> getMatches() {
     	return this.matches;
     }

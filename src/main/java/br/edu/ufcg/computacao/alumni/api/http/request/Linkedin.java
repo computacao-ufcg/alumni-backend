@@ -7,6 +7,7 @@ import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
+import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,13 +33,15 @@ public class Linkedin {
     @GetMapping
     public ResponseEntity<Collection<LinkedinAlumnusData>> getLinkedinData(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token) {
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws EurecaException {
+
         try {
             Collection<LinkedinAlumnusData> linkedinAlumniData = ApplicationFacade.getInstance().getLinkedinAlumniData(token);
             return new ResponseEntity<>(linkedinAlumniData, HttpStatus.OK);
-        } catch (Exception e) {
-            LOGGER.error(Messages.INTERNAL_SERVER_ERROR, e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
         }
     }
 
@@ -47,13 +50,13 @@ public class Linkedin {
     public ResponseEntity<List<LinkedinNameProfilePair>> getLinkedinNameProfilePairs(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
-            throws Exception {
+            throws EurecaException {
 
         try {
             List<LinkedinNameProfilePair> alumniNames = ApplicationFacade.getInstance().getLinkedinNameProfilePairs(token);
             return new ResponseEntity<>(alumniNames, HttpStatus.OK);
-        } catch (Exception e) {
-            LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+        } catch (EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
         }
     }

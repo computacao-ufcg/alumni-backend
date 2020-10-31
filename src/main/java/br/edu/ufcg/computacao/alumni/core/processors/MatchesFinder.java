@@ -3,9 +3,6 @@ package br.edu.ufcg.computacao.alumni.core.processors;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
@@ -32,18 +31,21 @@ public class MatchesFinder extends Thread {
 	private Logger LOGGER = Logger.getLogger(MatchesFinder.class);
 	
 	private static MatchesFinder instance;
-	
 	private Collection<PendingMatch> pendingMatches;
-	
 	private SchoolName schoolName;
-	private long lastModificationDate;
-	
-	private MatchesFinder() throws Exception {
+
+	private MatchesFinder() throws FatalErrorException {
 		this.pendingMatches = new HashSet<>();
-		this.loadSchoolName(PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.SCHOOL_INPUT_KEY));
+		try {
+			String path = HomeDir.getPath();
+			this.loadSchoolName(path + PropertiesHolder.getInstance().
+					getProperty(ConfigurationPropertyKeys.SCHOOL_INPUT_KEY));
+		} catch (IOException e) {
+			throw new FatalErrorException(e.getMessage());
+		}
 	}
 	
-	public static MatchesFinder getInstance() throws Exception {
+	public static MatchesFinder getInstance() {
 		synchronized (MatchesFinder.class) {
 			if (instance == null) {
 				instance = new MatchesFinder();
@@ -57,10 +59,6 @@ public class MatchesFinder extends Thread {
 	}
 	
 	private synchronized void loadSchoolName(String filePath) throws IOException {
-		if (!dataHasChanged(filePath)) {
-			return;
-		}
-		
 		BufferedReader csvReader = new BufferedReader(new FileReader(filePath));
 		String row;
 		
@@ -71,7 +69,7 @@ public class MatchesFinder extends Thread {
 			String[] data = row.split(",");
 			String schoolName = data[0].trim();
 			DateRange dateRange = new DateRange(data[1].trim());
-			
+
 			schoolNamesList.add(schoolName);
 			dateRangesList.add(dateRange);
 		}
@@ -91,18 +89,7 @@ public class MatchesFinder extends Thread {
 		
 		this.schoolName = new SchoolName(names, dateRanges);
 	}
-	
-	private boolean dataHasChanged(String filePath) throws IOException {
-		 BasicFileAttributes attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
-		 long currentDate = attr.lastModifiedTime().toMillis();
-		 if (currentDate > this.lastModificationDate) {
-			 this.lastModificationDate = currentDate;
-			 return true;
-		 } else {
-			 return false;
-		 }
-	}
-	
+
 	@Override
 	public void run() {
 		boolean isActive = true;
@@ -110,21 +97,22 @@ public class MatchesFinder extends Thread {
 		while (isActive) {
 			try {
 				Map<String, String> consolidatedMatches = MatchesHolder.getInstance().getMatches();
-				Collection<UfcgAlumnusData> alumnus = AlumniHolder.getInstance().getAlumniData();
-				this.pendingMatches = new LinkedList<>();
+				Collection<UfcgAlumnusData> alumni = AlumniHolder.getInstance().getAlumniData();
+				Collection<PendingMatch> newPendingMatches = new LinkedList<>();
 			
-				for (UfcgAlumnusData alumni : alumnus) {
-					String registration = alumni.getRegistration();
+				for (UfcgAlumnusData alumnus : alumni) {
+					String registration = alumnus.getRegistration();
 					
 					if (!consolidatedMatches.containsKey(registration)) {
-						Map<Integer, Collection<LinkedinAlumnusData>> possibleMatches = Match.getInstance().getMatches(alumni, schoolName);
+						Map<Integer, Collection<LinkedinAlumnusData>> possibleMatches =
+								Match.getInstance().getMatches(alumnus, schoolName);
 						
 						if (!possibleMatches.isEmpty()) {
-							this.pendingMatches.add(new PendingMatch(alumni, possibleMatches));
+							newPendingMatches.add(new PendingMatch(alumnus, possibleMatches));
 						}
 					}
 				}
-				
+				this.pendingMatches = newPendingMatches;
 				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(10))));
 				
 			} catch (InterruptedException e) {

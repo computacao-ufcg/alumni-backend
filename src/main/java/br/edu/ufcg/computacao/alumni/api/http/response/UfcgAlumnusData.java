@@ -1,6 +1,6 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
-import br.edu.ufcg.computacao.alumni.core.models.Grau;
+import br.edu.ufcg.computacao.alumni.core.models.Degree;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -8,15 +8,15 @@ import java.util.Objects;
 public class UfcgAlumnusData {
     private String registration;
     private String fullName;
-    private Grau[] graus;
+    private Degree[] graus;
 
-    public UfcgAlumnusData(String registration, String fullName, Grau[] graus) {
+    public UfcgAlumnusData(String registration, String fullName, Degree[] graus) {
         this.fullName = fullName;
         this.graus = graus;
         this.registration = registration;
     }
 
-    public UfcgAlumnusData(String fullName, Grau[] graus) {
+    public UfcgAlumnusData(String fullName, Degree[] graus) {
         this.fullName = fullName;
         this.graus = graus;
     }
@@ -29,11 +29,11 @@ public class UfcgAlumnusData {
         this.fullName = fullName;
     }
 
-    public Grau[] getGraus() {
+    public Degree[] getGraus() {
         return graus;
     }
 
-    public void setGraus(Grau[] graus) {
+    public void setGraus(Degree[] graus) {
         this.graus = graus;
     }
 

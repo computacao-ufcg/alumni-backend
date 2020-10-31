@@ -2,6 +2,7 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
+import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 
@@ -15,12 +16,12 @@ public class PropertiesHolder {
     private Properties properties;
     private static PropertiesHolder instance;
 
-    private PropertiesHolder() throws IOException {
+    private PropertiesHolder() throws FatalErrorException {
         String filePath = HomeDir.getPath() + SystemConstants.CONFIG_FILE;
         this.properties = readProperties(filePath);
     }
 
-    public static synchronized PropertiesHolder getInstance() throws IOException {
+    public static synchronized PropertiesHolder getInstance() throws FatalErrorException {
         if (instance == null) {
             instance = new PropertiesHolder();
         }
@@ -43,13 +44,15 @@ public class PropertiesHolder {
         return this.properties;
     }
 
-    private Properties readProperties(String fileName) throws IOException {
+    private Properties readProperties(String fileName) throws FatalErrorException {
         Properties prop = new Properties();
         FileInputStream fileInputStream = null;
 
         try {
             fileInputStream = new FileInputStream(fileName);
             prop.load(fileInputStream);
+        } catch (IOException e) {
+            throw new FatalErrorException(e.getMessage());
         } finally {
             if (fileInputStream != null) {
                 try {

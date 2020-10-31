@@ -3,7 +3,6 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.eureca.as.api.http.request.PublicKey;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
-import br.edu.ufcg.computacao.eureca.common.exceptions.InternalServerErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.PublicKeyUtil;
 
 import java.io.IOException;
@@ -28,12 +27,8 @@ public class EurecaAsPublicKeyHolder {
         if (this.asPublicKey == null) {
             String asAddress = null;
             String asPort = null;
-            try {
-                asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
-                asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
-            } catch (IOException e) {
-                throw new InternalServerErrorException(e.getMessage());
-            }
+            asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
+            asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
             this.asPublicKey = PublicKeyUtil.getPublicKey(asAddress, asPort, PublicKey.PUBLIC_KEY_ENDPOINT);
         }
         return this.asPublicKey;

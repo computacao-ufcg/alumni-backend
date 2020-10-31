@@ -45,6 +45,7 @@ public class DateRange {
         if (currentPosition >= range.length()) {
             this.endMonth = "";
             this.endYear = "";
+            this.isCurrent = true;
         } else {
             if (Character.isDigit(range.charAt(currentPosition))) {
                 this.endMonth = "";

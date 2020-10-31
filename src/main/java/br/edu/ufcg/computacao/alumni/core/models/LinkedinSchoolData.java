@@ -5,17 +5,17 @@ import java.util.Objects;
 public class LinkedinSchoolData {
     private String schoolUrl;
     private String schoolName;
-    private String degree;
-    private String field;
+    private String degreeLevel;
+    private String courseName;
     private DateRange dateRange;
     private String description;
 
-    public LinkedinSchoolData(String schoolUrl, String schoolName, String degree, String field,
+    public LinkedinSchoolData(String schoolUrl, String schoolName, String degreeLevel, String courseName,
                               DateRange dateRange, String description) {
         this.schoolUrl = schoolUrl;
         this.schoolName = schoolName;
-        this.degree = degree;
-        this.field = field;
+        this.degreeLevel = degreeLevel;
+        this.courseName = courseName;
         this.dateRange = dateRange;
         this.description = description;
     }
@@ -36,20 +36,20 @@ public class LinkedinSchoolData {
         this.schoolName = schoolName;
     }
 
-    public String getDegree() {
-        return degree;
+    public String getDegreeLevel() {
+        return degreeLevel;
     }
 
-    public void setDegree(String degree) {
-        this.degree = degree;
+    public void setDegreeLevel(String degreeLevel) {
+        this.degreeLevel = degreeLevel;
     }
 
-    public String getField() {
-        return field;
+    public String getCourseName() {
+        return courseName;
     }
 
-    public void setField(String field) {
-        this.field = field;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public DateRange getDateRange() {
@@ -86,8 +86,8 @@ public class LinkedinSchoolData {
         return "LinkedinSchoolData{" +
                 "schoolUrl='" + schoolUrl + '\'' +
                 ", schoolName='" + schoolName + '\'' +
-                ", degree='" + degree + '\'' +
-                ", field='" + field + '\'' +
+                ", degree='" + degreeLevel + '\'' +
+                ", field='" + courseName + '\'' +
                 ", dateRange='" + dateRange + '\'' +
                 ", description='" + description + '\'' +
                 '}';

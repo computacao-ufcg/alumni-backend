@@ -10,6 +10,7 @@ import br.edu.ufcg.computacao.alumni.core.models.DateRange;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
 import br.edu.ufcg.computacao.alumni.core.parsers.AlumnusParser;
 import br.edu.ufcg.computacao.alumni.core.util.ChecksumGenerator;
+import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -20,15 +21,17 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class LinkedinDataHolder extends Thread{
+public class LinkedinDataHolder extends Thread {
     private Logger LOGGER = Logger.getLogger(LinkedinDataHolder.class);
 
     private static LinkedinDataHolder instance;
@@ -41,6 +44,7 @@ public class LinkedinDataHolder extends Thread{
             loadLinkedinData();
         } catch (IOException e) {
             this.linkedinAlumniData = new HashMap<>();
+            LOGGER.error(Messages.COULD_NOT_LOAD_LINKEDIN_DATA);
         }
     }
 
@@ -49,7 +53,7 @@ public class LinkedinDataHolder extends Thread{
         return content;
     }
 
-    public static LinkedinDataHolder getInstance() throws Exception {
+    public static LinkedinDataHolder getInstance() {
         synchronized (LinkedinDataHolder.class) {
             if (instance == null) {
                 instance = new LinkedinDataHolder();
@@ -59,18 +63,18 @@ public class LinkedinDataHolder extends Thread{
     }
 
     public synchronized void loadLinkedinData() throws IOException {
-        String linkedinURL = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.LINKEDIN_SOURCE_URL_KEY);
-        String filePath = HomeDir.getPath() + PropertiesHolder.getInstance().
-                getProperty(ConfigurationPropertyKeys.LINKEDIN_INPUT_FILE_KEY,
-                        ConfigurationPropertyDefaults.DEFAULT_LINKEDIN_INPUT_FILE_NAME);
+    String linkedinURL = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.LINKEDIN_SOURCE_URL_KEY);
+    String filePath = HomeDir.getPath() + PropertiesHolder.getInstance().
+            getProperty(ConfigurationPropertyKeys.LINKEDIN_INPUT_FILE_KEY,
+                    ConfigurationPropertyDefaults.DEFAULT_LINKEDIN_INPUT_FILE_NAME);
+
         // Download linkedin data
-        try (BufferedInputStream in = new BufferedInputStream(new URL(linkedinURL).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream(filePath)) {
-                byte dataBuffer[] = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-                    fileOutputStream.write(dataBuffer, 0, bytesRead);
-                }
+        BufferedInputStream in = new BufferedInputStream(new URL(linkedinURL).openStream());
+        FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+        byte dataBuffer[] = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+            fileOutputStream.write(dataBuffer, 0, bytesRead);
         }
         // ingest linkedin data
         String membersJsonString = readInput(filePath);
@@ -93,7 +97,7 @@ public class LinkedinDataHolder extends Thread{
         }
     }
 
-    public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) throws Exception {
+    public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) {
         Collection<LinkedinAlumnusData> linkedinAlumniData = this.linkedinAlumniData.values();
         List<LinkedinNameProfilePair> pairs = new ArrayList<>(linkedinAlumniData.size());
 
@@ -105,7 +109,7 @@ public class LinkedinDataHolder extends Thread{
         return pairs;
     }
 
-    public synchronized CurrentJob getAlumnusCurrentJob(String fullName, String linkedinId) throws Exception {
+    public synchronized CurrentJob getAlumnusCurrentJob(String fullName, String linkedinId) {
         if (linkedinId == null) {
             return new CurrentJob(fullName, "not matched", "not matched");
         }
@@ -130,8 +134,7 @@ public class LinkedinDataHolder extends Thread{
         return this.linkedinAlumniData.values();
     }
 
-
-    public synchronized  Page<LinkedinNameProfilePair> getLinkedinAlumniDataPages(String token, int requiredPage) throws Exception {
+    public synchronized  Page<LinkedinNameProfilePair> getLinkedinAlumniDataPages(String token, int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
         int start = (int) pageable.getOffset();
 
@@ -159,7 +162,7 @@ public class LinkedinDataHolder extends Thread{
                 isActive = false;
                 LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);
             } catch (IOException e) {
-                LOGGER.error(Messages.COULD_NOT_LOAD_LINKEDIN_DATA, e);
+                LOGGER.error(Messages.COULD_NOT_REFRESH_LINKEDIN_DATA);
             }
         }
     }
