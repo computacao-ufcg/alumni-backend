@@ -1,12 +1,15 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
+import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 public class LinkedinAlumnusData {
+    @ApiModelProperty(position = 0, example = ApiDocumentation.Model.FULL_NAME)
     private String fullName;
     private String company;
     private String description;

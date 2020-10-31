@@ -41,6 +41,7 @@ public class Match {
             throws EurecaException {
 
         try {
+            System.out.println("Putting " + matchParameter.getRegistration() + ":" + matchParameter.getLinkedinId());
             ApplicationFacade.getInstance().setMatch(token, matchParameter.getRegistration(), matchParameter.getLinkedinId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch(EurecaException e) {

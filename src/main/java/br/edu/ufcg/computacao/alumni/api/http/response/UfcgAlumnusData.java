@@ -1,12 +1,16 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
+import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.core.models.Degree;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 public class UfcgAlumnusData {
+    @ApiModelProperty(position = 0, example = ApiDocumentation.Model.REGISTRATION)
     private String registration;
+    @ApiModelProperty(position = 1, example = ApiDocumentation.Model.FULL_NAME)
     private String fullName;
     private Degree[] graus;
 
