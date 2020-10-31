@@ -69,11 +69,8 @@ public class MatchesHolder {
     		this.matches.put(registration, linkedinId);
     	}
         try {
-            System.out.println("Saving");
             this.saveMatches();
-            System.out.println("Saved");
         } catch (IOException e) {
-            System.out.println("Error");
             LOGGER.error(String.format(Messages.COULD_NOT_SAVE_MATCHES_S, this.matchesFilePath));
         }
     }
