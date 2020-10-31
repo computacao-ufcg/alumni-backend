@@ -5,12 +5,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import br.edu.ufcg.computacao.alumni.core.holders.PendingMatchesHolder;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
@@ -19,7 +19,7 @@ import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.alumni.core.Match;
+import br.edu.ufcg.computacao.alumni.core.MatchesFinder;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
@@ -27,38 +27,22 @@ import br.edu.ufcg.computacao.alumni.core.models.DateRange;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
 
-public class MatchesFinder extends Thread {
-	private Logger LOGGER = Logger.getLogger(MatchesFinder.class);
+public class MatchesFinderProcessor extends Thread {
+	private Logger LOGGER = Logger.getLogger(MatchesFinderProcessor.class);
 	
-	private static MatchesFinder instance;
-	private Collection<PendingMatch> pendingMatches;
 	private SchoolName schoolName;
 
-	private MatchesFinder() throws FatalErrorException {
-		this.pendingMatches = new HashSet<>();
+	public MatchesFinderProcessor() throws FatalErrorException {
 		try {
 			String path = HomeDir.getPath();
-			this.loadSchoolName(path + PropertiesHolder.getInstance().
+			this.schoolName = loadSchoolName(path + PropertiesHolder.getInstance().
 					getProperty(ConfigurationPropertyKeys.SCHOOL_INPUT_KEY));
 		} catch (IOException e) {
 			throw new FatalErrorException(e.getMessage());
 		}
 	}
-	
-	public static MatchesFinder getInstance() {
-		synchronized (MatchesFinder.class) {
-			if (instance == null) {
-				instance = new MatchesFinder();
-			}
-		}
-		return instance;
-	}
 
-	public synchronized Collection<PendingMatch> getPendingMatches() {
-		return new LinkedList<>(this.pendingMatches);
-	}
-	
-	private synchronized void loadSchoolName(String filePath) throws IOException {
+	private synchronized SchoolName loadSchoolName(String filePath) throws IOException {
 		BufferedReader csvReader = new BufferedReader(new FileReader(filePath));
 		String row;
 		
@@ -87,13 +71,13 @@ public class MatchesFinder extends Thread {
 			dateRanges[i] = dateRangesList.get(i);
 		}
 		
-		this.schoolName = new SchoolName(names, dateRanges);
+		return new SchoolName(names, dateRanges);
 	}
 
 	@Override
 	public void run() {
 		boolean isActive = true;
-		
+
 		while (isActive) {
 			try {
 				Map<String, String> consolidatedMatches = MatchesHolder.getInstance().getMatches();
@@ -102,19 +86,18 @@ public class MatchesFinder extends Thread {
 			
 				for (UfcgAlumnusData alumnus : alumni) {
 					String registration = alumnus.getRegistration();
-					
 					if (!consolidatedMatches.containsKey(registration)) {
 						Map<Integer, Collection<LinkedinAlumnusData>> possibleMatches =
-								Match.getInstance().getMatches(alumnus, schoolName);
+								MatchesFinder.getInstance().findMatches(alumnus, schoolName);
 						
 						if (!possibleMatches.isEmpty()) {
 							newPendingMatches.add(new PendingMatch(alumnus, possibleMatches));
 						}
 					}
 				}
-				this.pendingMatches = newPendingMatches;
-				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(10))));
-				
+
+				PendingMatchesHolder.getInstance().setPendingMatches(newPendingMatches);
+				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(1))));
 			} catch (InterruptedException e) {
 				isActive = false;
                 LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);

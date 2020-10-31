@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class MatchesHolder {
     private Logger LOGGER = Logger.getLogger(MatchesHolder.class);
+    private static final String FIELD_SEPARATOR = ",";
     
     private Map<String, String> matches;
     private String matchesFilePath;
@@ -42,7 +43,7 @@ public class MatchesHolder {
             csvReader = new BufferedReader(new FileReader(filePath));
             String row;
             while ((row = csvReader.readLine()) != null) {
-                String[] data = row.split(",");
+                String[] data = row.split(FIELD_SEPARATOR);
                 String registration = data[0];
                 String linkedinId = data[1];
                 this.matches.put(registration, linkedinId);
@@ -83,9 +84,13 @@ public class MatchesHolder {
     }
     
     public synchronized void saveMatches() throws IOException {
-    	BufferedWriter csvWriter = new BufferedWriter(new FileWriter(this.matchesFilePath));
-    	// ToDo: write file
-    	csvWriter.close();
+        BufferedWriter csvWriter = new BufferedWriter(new FileWriter(this.matchesFilePath, false));
+        for (Map.Entry<String, String> entry : this.matches.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            csvWriter.write(key + FIELD_SEPARATOR + value + System.lineSeparator());
+        }
+        csvWriter.close();
     }
 
     public synchronized Map<String, String> getMatches() {

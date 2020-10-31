@@ -13,45 +13,52 @@ import java.util.stream.Collectors;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
+import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.models.*;
 import br.edu.ufcg.computacao.alumni.core.models.Degree;
+import org.apache.log4j.Logger;
 
-public class Match {
+public class MatchesFinder {
+	private static final Logger LOGGER = Logger.getLogger(MatchesFinder.class);
 
-	private static Match instance;
+	private static MatchesFinder instance;
 
-	private Match() {
+	private MatchesFinder() {
 	}
 
-	public static synchronized Match getInstance() {
+	public static synchronized MatchesFinder getInstance() {
 		if (instance == null) {
-			instance = new Match();
+			instance = new MatchesFinder();
 		}
 		return instance;
 	}
 
-	public Map<Integer, Collection<LinkedinAlumnusData>> getMatches(UfcgAlumnusData alumnus, SchoolName school) throws Exception {
+	public Map<Integer, Collection<LinkedinAlumnusData>> findMatches(UfcgAlumnusData alumnus, SchoolName school) {
 		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
 		Map<Integer, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(Collections.reverseOrder()); // relaciona o score com uma lista
-
+		// ToDo: a ordenação não está funcionando porque quando o mapa é transformado em um JSON a ordenação não
+		// é feita considerando inteiros, mas strings. Daí "20" é maior que "100".
 		String alumniName = alumnus.getFullName().toUpperCase();
 
 		linkedinProfilesList.forEach(linkedinProfile -> {
 			int score = 0;
 
-			LinkedinSchoolData[] linkedinSchoolData = linkedinProfile.getSchools();
-			String linkedinAlumniFullName = linkedinProfile.getFullName().toUpperCase();
+			try {
+				LinkedinSchoolData[] linkedinSchoolData = linkedinProfile.getSchools();
+				String linkedinAlumniFullName = linkedinProfile.getFullName().toUpperCase();
 
-			score += getScoreFromName(alumniName, linkedinAlumniFullName);
-			score += getScoreFromSchool(alumnus, linkedinSchoolData, school);
+				score += getScoreFromName(alumniName, linkedinAlumniFullName);
+				score += getScoreFromSchool(alumnus, linkedinSchoolData, school);
 
-			if (score >= 1) {
-				if (!selectedProfilesList.containsKey(score)) {
-					selectedProfilesList.put(score, new ArrayList<>());
+				if (score >= 1) {
+					if (!selectedProfilesList.containsKey(score)) {
+						selectedProfilesList.put(score, new ArrayList<>());
+					}
+					selectedProfilesList.get(score).add(linkedinProfile);
 				}
-
-				selectedProfilesList.get(score).add(linkedinProfile);
+			} catch(Exception e) {
+				LOGGER.error(Messages.COULD_NOT_PROCESS_ENTRY, e);
 			}
 		});
 

@@ -20,7 +20,6 @@ import br.edu.ufcg.computacao.eureca.common.util.CryptoUtil;
 import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import org.springframework.data.domain.Page;
 
@@ -75,7 +74,7 @@ public class ApplicationFacade {
 
     public Collection<PendingMatch> getAlumniPendingMatches(String token) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_PENDING_MATCHES);
-        return null;
+        return PendingMatchesHolder.getInstance().getPendingMatches();
     }
 
     public void setMatch(String token, String registration, String linkedinId) throws EurecaException {
