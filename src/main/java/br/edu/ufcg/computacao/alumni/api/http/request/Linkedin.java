@@ -29,7 +29,7 @@ public class Linkedin {
 
     private static final Logger LOGGER = Logger.getLogger(Linkedin.class);
 
-    @ApiOperation(value = ApiDocumentation.Alumni.DESCRIPTION)
+    @ApiOperation(value = ApiDocumentation.Alumni.GET_OPERATION)
     @GetMapping
     public ResponseEntity<Collection<LinkedinAlumnusData>> getLinkedinData(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)

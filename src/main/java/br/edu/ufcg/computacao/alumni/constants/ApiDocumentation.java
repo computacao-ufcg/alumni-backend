@@ -17,17 +17,27 @@ public class ApiDocumentation {
         public static final String ALUMNUS_NAME = "John Smith";
         public static final String CURRENT_JOB = "John Smith & Sons";
         public static final String START_YEAR = "2000";
+        public static final String REGISTRATION = "\"100110007\"";
+        public static final String LINKEDIN_ID = "https://www.linkedin.com/in/joaosilva";
     }
 
     public static class Alumni {
         public static final String API = "Queries information about the alumni.";
-        public static final String DESCRIPTION = "Lists information about the alumni.";
+        public static final String GET_OPERATION = "Lists information about the alumni.";
         public static final String GET_NAMES_OPERATION = "Lists the names of the alumni.";
         public static final String GET_CURRENT_JOB_OPERATION = "Lists names and current position of alumni.";
+
+    }
+
+    public static class Match {
+        public static final String API = "Manages matches between alumni and linkedin profiles.";
         public static final String GET_MATCHES_OPERATION = "Lists matches between alumni and linkedin alumnus";
-        public static final String GET_PENDING_MATCHES_OPERATION = "Lists alumni pending matches";
-        public static final String SET_MATCH_OPERATION = "set alumus matches";
-        public static final String UNSET_MATCH_OPERATION = "revert setMatch operation";
+        public static final String GET_PENDING_MATCHES_OPERATION = "Lists alumni pending matches.";
+        public static final String SET_MATCH_OPERATION = "Sets an alumnus match.";
+        public static final String RESET_MATCH_OPERATION = "Resets an alumnus match.";
+        public static final String REGISTRATION_PARAMETER = "Alumnus registration.";
+        public static final String MATCH_PARAMETER = "A registrations number and its matching LinkedIn ID.";
+        public static final String PAGE = "The list is paged. This parameter indicates which page should be fetched.";
     }
 
     public static class Version {
