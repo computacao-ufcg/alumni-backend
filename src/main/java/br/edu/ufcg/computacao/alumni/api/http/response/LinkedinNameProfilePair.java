@@ -1,9 +1,14 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
+import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Objects;
 
 public class LinkedinNameProfilePair {
+    @ApiModelProperty(position = 0, example = ApiDocumentation.Model.FULL_NAME)
     private String fullName;
+    @ApiModelProperty(position = 0, example = ApiDocumentation.Model.LINKEDIN_ID)
     private String profileUrl;
 
     public LinkedinNameProfilePair(String fullName, String profileUrl) {
