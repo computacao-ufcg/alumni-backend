@@ -94,18 +94,6 @@ public class LinkedinDataHolder extends Thread {
         }
     }
 
-    public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) {
-        Collection<LinkedinAlumnusData> linkedinAlumniData = this.linkedinAlumniData.values();
-        List<LinkedinNameProfilePair> pairs = new ArrayList<>(linkedinAlumniData.size());
-
-        Iterator<LinkedinAlumnusData> iterator = linkedinAlumniData.iterator();
-        while(iterator.hasNext()) {
-            LinkedinAlumnusData alumnus = iterator.next();
-            pairs.add(new LinkedinNameProfilePair(alumnus.getFullName(), alumnus.getLinkedinProfile()));
-        }
-        return pairs;
-    }
-
     public synchronized CurrentJob getAlumnusCurrentJob(String fullName, String linkedinId) {
         if (linkedinId == null) {
             return new CurrentJob(fullName, "not matched", "not matched");
@@ -131,18 +119,16 @@ public class LinkedinDataHolder extends Thread {
         return this.linkedinAlumniData.values();
     }
 
-    public synchronized  Page<LinkedinNameProfilePair> getLinkedinAlumniDataPages(String token, int requiredPage) {
-        Pageable pageable= new PageRequest(requiredPage, 10);
-        int start = (int) pageable.getOffset();
+    public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) {
+        Collection<LinkedinAlumnusData> linkedinAlumniData = this.linkedinAlumniData.values();
+        List<LinkedinNameProfilePair> pairs = new ArrayList<>(linkedinAlumniData.size());
 
-        int end = (int) ((start + pageable.getPageSize()) > this.getLinkedinNameProfilePairs(token).size() ?
-                this.getLinkedinNameProfilePairs(token).size()
-                : (start + pageable.getPageSize()));
-
-        Page<LinkedinNameProfilePair> page
-                = new PageImpl<LinkedinNameProfilePair>(getLinkedinNameProfilePairs(token).subList(start, end), pageable,
-                this.getLinkedinNameProfilePairs(token).size());
-        return page;
+        Iterator<LinkedinAlumnusData> iterator = linkedinAlumniData.iterator();
+        while(iterator.hasNext()) {
+            LinkedinAlumnusData alumnus = iterator.next();
+            pairs.add(new LinkedinNameProfilePair(alumnus.getFullName(), alumnus.getLinkedinProfile()));
+        }
+        return pairs;
     }
 
     /**

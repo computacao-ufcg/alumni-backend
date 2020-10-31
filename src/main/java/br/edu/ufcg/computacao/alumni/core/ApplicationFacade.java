@@ -1,15 +1,13 @@
 package br.edu.ufcg.computacao.alumni.core;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
-import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
+import br.edu.ufcg.computacao.alumni.api.http.response.*;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.models.AlumniOperation;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
+import br.edu.ufcg.computacao.alumni.core.processors.MatchesFinder;
 import br.edu.ufcg.computacao.eureca.as.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.eureca.as.core.AuthenticationUtil;
 import br.edu.ufcg.computacao.eureca.as.core.models.SystemUser;
@@ -63,15 +61,6 @@ public class ApplicationFacade {
         return AlumniHolder.getInstance().getAlumniCurrentJob();
     }
 
-    public Page<LinkedinNameProfilePair> getAlumniMatches(String token, int page) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
-        try {
-            return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPages(token, page);
-        } catch (Exception e) {
-            throw new InternalServerErrorException(e.getMessage());
-        }
-    }
-
     public Collection<PendingMatch> getAlumniPendingMatches(String token) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_PENDING_MATCHES);
         return PendingMatchesHolder.getInstance().getPendingMatches();
@@ -90,6 +79,15 @@ public class ApplicationFacade {
     public Collection<LinkedinAlumnusData> getLinkedinAlumniData(String token) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
         return LinkedinDataHolder.getInstance().getLinkedinAlumniData();
+    }
+
+    public Page<MatchResponse> getAlumniMatches(String token, int page) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
+        try {
+            return MatchesHolder.getInstance().getMatchesPage(page);
+        } catch (Exception e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
     }
 
     public List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) throws EurecaException {
