@@ -37,7 +37,8 @@ public class MatchesFinder {
 	public Map<Integer, Collection<LinkedinAlumnusData>> findMatches(UfcgAlumnusData alumnus, SchoolName school) {
 		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
 		Map<Integer, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(Collections.reverseOrder()); // relaciona o score com uma lista
-
+		// ToDo: a ordenação não está funcionando porque quando o mapa é transformado em um JSON a ordenação não
+		// é feita considerando inteiros, mas strings. Daí "20" é maior que "100".
 		String alumniName = alumnus.getFullName().toUpperCase();
 
 		linkedinProfilesList.forEach(linkedinProfile -> {
