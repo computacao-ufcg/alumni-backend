@@ -4,9 +4,9 @@ import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import io.swagger.annotations.ApiModelProperty;
 
 public class CurrentJob {
-    @ApiModelProperty(position = 1, example = ApiDocumentation.Model.ALUMNUS_NAME)
+    @ApiModelProperty(position = 0, example = ApiDocumentation.Model.ALUMNUS_NAME)
     private String alumnusName;
-    @ApiModelProperty(position = 2, example = ApiDocumentation.Model.CURRENT_JOB)
+    @ApiModelProperty(position = 1, example = ApiDocumentation.Model.CURRENT_JOB)
     private String currentJob;
     @ApiModelProperty(position = 2, example = ApiDocumentation.Model.START_YEAR)
     private String startYear;

@@ -8,7 +8,7 @@ import java.util.Objects;
 public class LinkedinNameProfilePair {
     @ApiModelProperty(position = 0, example = ApiDocumentation.Model.FULL_NAME)
     private String fullName;
-    @ApiModelProperty(position = 0, example = ApiDocumentation.Model.LINKEDIN_ID)
+    @ApiModelProperty(position = 1, example = ApiDocumentation.Model.LINKEDIN_ID)
     private String profileUrl;
 
     public LinkedinNameProfilePair(String fullName, String profileUrl) {
