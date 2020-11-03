@@ -1,7 +1,13 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
+import br.edu.ufcg.computacao.alumni.api.http.response.MatchResponse;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.util.*;
 
 public class PendingMatchesHolder extends Thread {
@@ -25,6 +31,24 @@ public class PendingMatchesHolder extends Thread {
 
 	public synchronized Collection<PendingMatch> getPendingMatches() {
 		return new LinkedList<>(this.pendingMatches);
+	}
+
+	public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage) {
+		Pageable pageable= new PageRequest(requiredPage, 10);
+		int start = (int) pageable.getOffset();
+		int end = (int) ((start + pageable.getPageSize()) > this.pendingMatches.size() ?
+				this.pendingMatches.size() : (start + pageable.getPageSize()));
+		List list = getPendingMatchesList();
+		Page<PendingMatch> page = new PageImpl<PendingMatch>(list.subList(start, end), pageable, list.size());
+		return page;
+	}
+
+	private synchronized List<PendingMatch> getPendingMatchesList() {
+		List<PendingMatch> pendingMatchesList = new ArrayList<PendingMatch>();
+		for (PendingMatch pendingMatch : this.pendingMatches) {
+			pendingMatchesList.add(pendingMatch);
+		}
+		return pendingMatchesList;
 	}
 
 	public synchronized void setPendingMatches(Collection<PendingMatch> newPendingMatches) {

@@ -99,8 +99,8 @@ public class MatchesHolder {
         csvWriter.close();
     }
 
-    public synchronized Page<MatchResponse> getMatchesPage(int requiredPage, int requiredSize) {
-        Pageable pageable= new PageRequest(requiredPage, requiredSize);
+    public synchronized Page<MatchResponse> getMatchesPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > this.matches.size() ?
                 this.matches.size() : (start + pageable.getPageSize()));

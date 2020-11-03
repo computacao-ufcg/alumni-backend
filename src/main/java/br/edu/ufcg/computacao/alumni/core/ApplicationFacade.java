@@ -60,9 +60,9 @@ public class ApplicationFacade {
         return AlumniHolder.getInstance().getAlumniCurrentJob();
     }
 
-    public Collection<PendingMatch> getAlumniPendingMatches(String token) throws EurecaException {
+    public Page<PendingMatch> getAlumniPendingMatches(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_PENDING_MATCHES);
-        return PendingMatchesHolder.getInstance().getPendingMatches();
+        return PendingMatchesHolder.getInstance().getPendingMatchesPage(page);
     }
 
     public void setMatch(String token, String registration, String linkedinId) throws EurecaException {
@@ -80,10 +80,10 @@ public class ApplicationFacade {
         return LinkedinDataHolder.getInstance().getLinkedinAlumniData();
     }
 
-    public Page<MatchResponse> getAlumniMatches(String token, int page, int size) throws EurecaException {
+    public Page<MatchResponse> getAlumniMatches(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
         try {
-            return MatchesHolder.getInstance().getMatchesPage(page, size);
+            return MatchesHolder.getInstance().getMatchesPage(page);
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }
