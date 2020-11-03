@@ -80,10 +80,10 @@ public class ApplicationFacade {
         return LinkedinDataHolder.getInstance().getLinkedinAlumniData();
     }
 
-    public Page<MatchResponse> getAlumniMatches(String token, int page) throws EurecaException {
+    public Page<MatchResponse> getAlumniMatches(String token, int page, int size) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
         try {
-            return MatchesHolder.getInstance().getMatchesPage(page);
+            return MatchesHolder.getInstance().getMatchesPage(page, size);
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }

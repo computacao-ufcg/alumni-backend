@@ -49,24 +49,27 @@ public class Match {
         }
     }
 
-    @RequestMapping(value = "/list/{page}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{page}/{size}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Match.GET_MATCHES_OPERATION)
     public ResponseEntity<Page<LinkedinNameProfilePair>> getAlumniMatches(
             @ApiParam(value = ApiDocumentation.Match.PAGE)
             @PathVariable String page,
+            @PathVariable String size,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
             int p;
+            int s;
             try {
                 p = Integer.parseInt(page);
+                s = Integer.parseInt(size);
             } catch(NumberFormatException e) {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
             }
 
-            Page<MatchResponse> matches = ApplicationFacade.getInstance().getAlumniMatches(token, p);
+            Page<MatchResponse> matches = ApplicationFacade.getInstance().getAlumniMatches(token, p, s);
             return new ResponseEntity(matches, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
