@@ -28,7 +28,7 @@
 mvnw.cmd
 
 ### Configuration files ###
-src/main/resources/private-alumni-backend
+src/main/resources/private
 
 ### Permission files ###
 *.pem
