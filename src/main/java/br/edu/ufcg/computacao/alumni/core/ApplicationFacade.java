@@ -5,6 +5,7 @@ import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.models.AlumniOperation;
+import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
 import br.edu.ufcg.computacao.eureca.as.constants.ConfigurationPropertyKeys;
@@ -104,7 +105,12 @@ public class ApplicationFacade {
 
     public Page<EmployerResponse> getEmployers(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
-        return EmployersHolder.getInstance().getEmployers();
+        return EmployersHolder.getInstance().getEmployers(page);
+    }
+
+    public Page<EmployerResponse> getEmployersByType(String token, int page, EmployerType type) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return EmployersHolder.getInstance().getEmployers(type, page);
     }
 
     private RSAPublicKey getAsPublicKey() throws EurecaException {

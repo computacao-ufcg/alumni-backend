@@ -6,6 +6,7 @@ import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
+import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
@@ -43,6 +44,36 @@ public class Employer {
             }
 
             Page<EmployerResponse> employers = ApplicationFacade.getInstance().getEmployers(token, p);
+            return new ResponseEntity(employers, HttpStatus.OK);
+        } catch(EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+
+    }
+
+    @RequestMapping(value = "/{type}/{page}", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYER_OPERATION)
+    public ResponseEntity<Page<EmployerResponse>> getEmployers(
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @PathVariable String page,
+            @PathVariable String type,
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws EurecaException {
+        try {
+            int p;
+            EmployerType t;
+            try{
+                p = Integer.parseInt(page);
+                t =  EmployerType.valueOf(type);
+            } catch(NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+
+            } catch(Exception e) {
+                throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
+            }
+
+            Page<EmployerResponse> employers = ApplicationFacade.getInstance().getEmployersByType(token, p, t);
             return new ResponseEntity(employers, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
