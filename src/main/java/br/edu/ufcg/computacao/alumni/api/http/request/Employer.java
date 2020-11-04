@@ -88,7 +88,7 @@ public class Employer {
     public ResponseEntity<Void> getEmployersUndefined(
             @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
-            throws EurecaException{
+            throws EurecaException {
 
             try {
                 int p;
@@ -104,5 +104,22 @@ public class Employer {
                 LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
                 throw e;
             }
+    }
+
+    @RequestMapping(value = "/{linkedinId}", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Employers.DELETE_EMPLOYER_TYPE)
+    public ResponseEntity<Void> deleteEmployerType(
+            @PathVariable String linkedinId,
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws EurecaException {
+
+        try {
+            ApplicationFacade.getInstance().setEmployerTypeToUndefined(token, linkedinId);
+            return new ResponseEntity<>(HttpStatus.OK);
+
+        } catch (EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
     }
 }

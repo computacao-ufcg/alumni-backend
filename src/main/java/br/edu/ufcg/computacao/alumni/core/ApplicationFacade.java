@@ -118,6 +118,11 @@ public class ApplicationFacade {
         return EmployersHolder.getInstance().getEmployersUndefined(page);
     }
 
+    public  void setEmployerTypeToUndefined(String token, String linkedinId) throws EurecaException{
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return EmployersHolder.getInstance().setEmployerTypeToUndefined(linkedinId);
+    }
+
     private RSAPublicKey getAsPublicKey() throws EurecaException {
         if (this.asPublicKey == null) {
             this.asPublicKey = EurecaAsPublicKeyHolder.getInstance().getAsPublicKey();
