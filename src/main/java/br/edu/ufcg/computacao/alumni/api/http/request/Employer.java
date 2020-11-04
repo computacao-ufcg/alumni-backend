@@ -7,7 +7,6 @@ import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
-import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import io.swagger.annotations.Api;
@@ -86,6 +85,7 @@ public class Employer {
     @RequestMapping(value = "/undefined/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYERS_UNDEFINED)
     public ResponseEntity<Void> getEmployersUndefined(
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
@@ -109,6 +109,7 @@ public class Employer {
     @RequestMapping(value = "/{linkedinId}", method = RequestMethod.DELETE)
     @ApiOperation(value = ApiDocumentation.Employers.DELETE_EMPLOYER_TYPE)
     public ResponseEntity<Void> deleteEmployerType(
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @PathVariable String linkedinId,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
@@ -126,6 +127,7 @@ public class Employer {
     @RequestMapping(value = "{type}/{linkedinId}", method = RequestMethod.PUT)
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
     public ResponseEntity<Void> setEmployerType(
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @PathVariable String type,
             @PathVariable String linkedinId,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
