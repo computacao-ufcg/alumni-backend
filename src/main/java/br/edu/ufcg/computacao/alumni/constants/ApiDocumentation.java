@@ -61,4 +61,8 @@ public class ApiDocumentation {
         public static final String API = "Queries the public key of the service.";
         public static final String GET_OPERATION = "Returns the public key of the service.";
     }
+
+    public static class Employers {
+        public static final String GET_EMPLOYER_OPERATION = "Returns a page with information from organizations where graduates of a course work or have worked";
+    }
 }
