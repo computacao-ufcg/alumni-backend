@@ -53,8 +53,8 @@ public class Employer {
     }
 
     @RequestMapping(value = "/{type}/{page}", method = RequestMethod.GET)
-    @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYER_OPERATION)
-    public ResponseEntity<Page<EmployerResponse>> getEmployers(
+    @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYER_BY_TYPE_OPERATION)
+    public ResponseEntity<Page<EmployerResponse>> getEmployersByType(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @PathVariable String page,
             @PathVariable String type,
@@ -69,7 +69,7 @@ public class Employer {
             } catch(NumberFormatException e) {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
 
-            } catch(Exception e) {
+            } catch(IllegalArgumentException e) {
                 throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
             }
 

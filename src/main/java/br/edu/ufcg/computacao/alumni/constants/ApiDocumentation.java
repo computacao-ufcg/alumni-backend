@@ -63,6 +63,7 @@ public class ApiDocumentation {
     }
 
     public static class Employers {
-        public static final String GET_EMPLOYER_OPERATION = "Returns a page with information from organizations where graduates of a course work or have worked";
+        public static final String GET_EMPLOYER_OPERATION = "Lists information from organizations where graduates of a course work or have worked";
+        public static final String GET_EMPLOYER_BY_TYPE_OPERATION = "Lists information from organizations of a type where graduates of a course work or have worked";
     }
 }
