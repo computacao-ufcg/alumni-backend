@@ -106,7 +106,7 @@ public class Employer {
             }
     }
 
-    @RequestMapping(value = "/{linkedinId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{linkedinId}", method = RequestMethod.DELETE)
     @ApiOperation(value = ApiDocumentation.Employers.DELETE_EMPLOYER_TYPE)
     public ResponseEntity<Void> deleteEmployerType(
             @PathVariable String linkedinId,
@@ -121,5 +121,31 @@ public class Employer {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
         }
+    }
+
+    @RequestMapping(value = "{type}/{linkedinId}", method = RequestMethod.PUT)
+    @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
+    public ResponseEntity<Void> setEmployerType(
+            @PathVariable String type,
+            @PathVariable String linkedinId,
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws EurecaException {
+
+        try {
+            EmployerType t;
+            try {
+                t = EmployerType.valueOf(type);
+
+            } catch (IllegalArgumentException e) {
+                throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
+            }
+            ApplicationFacade.getInstance().setEmployerType(token, t, linkedinId);
+            return new ResponseEntity<>(HttpStatus.OK);
+
+        } catch (EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+
     }
 }
