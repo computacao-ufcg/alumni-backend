@@ -113,6 +113,11 @@ public class ApplicationFacade {
         return EmployersHolder.getInstance().getEmployers(type, page);
     }
 
+    public Page<EmployerResponse> getEmployersUndefined(String token, int page) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return EmployersHolder.getInstance().getEmployersUndefined(page);
+    }
+
     private RSAPublicKey getAsPublicKey() throws EurecaException {
         if (this.asPublicKey == null) {
             this.asPublicKey = EurecaAsPublicKeyHolder.getInstance().getAsPublicKey();
