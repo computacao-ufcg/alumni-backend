@@ -5,6 +5,7 @@ import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.models.AlumniOperation;
+import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
 import br.edu.ufcg.computacao.eureca.as.constants.ConfigurationPropertyKeys;
@@ -60,9 +61,9 @@ public class ApplicationFacade {
         return AlumniHolder.getInstance().getAlumniCurrentJob();
     }
 
-    public Collection<PendingMatch> getAlumniPendingMatches(String token) throws EurecaException {
+    public Page<PendingMatch> getAlumniPendingMatches(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_PENDING_MATCHES);
-        return PendingMatchesHolder.getInstance().getPendingMatches();
+        return PendingMatchesHolder.getInstance().getPendingMatchesPage(page);
     }
 
     public void setMatch(String token, String registration, String linkedinId) throws EurecaException {
@@ -102,12 +103,38 @@ public class ApplicationFacade {
         }
     }
 
+    public Page<EmployerResponse> getEmployers(String token, int page) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return EmployersHolder.getInstance().getEmployers(page);
+    }
+
+    public Page<EmployerResponse> getEmployersByType(String token, int page, EmployerType type) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return EmployersHolder.getInstance().getEmployers(type, page);
+    }
+
+    public Page<EmployerResponse> getEmployersUndefined(String token, int page) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return EmployersHolder.getInstance().getEmployersUndefined(page);
+    }
+
+    public void setEmployerTypeToUndefined(String token, String linkedinId) throws EurecaException{
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return EmployersHolder.getInstance().setEmployerTypeToUndefined(linkedinId);
+    }
+
+    public void setEmployerType(String token, EmployerType type, String linkedinId) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return EmployersHolder.getInstance().setEmployerType(type, linkedinId);
+    }
+
     private RSAPublicKey getAsPublicKey() throws EurecaException {
         if (this.asPublicKey == null) {
             this.asPublicKey = EurecaAsPublicKeyHolder.getInstance().getAsPublicKey();
         }
         return this.asPublicKey;
     }
+
 
     private SystemUser authenticateAndAuthorize(String token, AlumniOperation operation) throws EurecaException {
         RSAPublicKey keyRSA = getAsPublicKey();
