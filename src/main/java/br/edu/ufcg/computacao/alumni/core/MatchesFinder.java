@@ -3,7 +3,6 @@ package br.edu.ufcg.computacao.alumni.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +10,20 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
+
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
-import br.edu.ufcg.computacao.alumni.core.models.*;
+import br.edu.ufcg.computacao.alumni.core.models.CourseName;
+import br.edu.ufcg.computacao.alumni.core.models.DateRange;
 import br.edu.ufcg.computacao.alumni.core.models.Degree;
-import org.apache.log4j.Logger;
+import br.edu.ufcg.computacao.alumni.core.models.Level;
+import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
+import br.edu.ufcg.computacao.alumni.core.models.ParsedName;
+import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
+import br.edu.ufcg.computacao.alumni.core.util.ScoreComparator;
 
 public class MatchesFinder {
 	private static final Logger LOGGER = Logger.getLogger(MatchesFinder.class);
@@ -34,11 +40,10 @@ public class MatchesFinder {
 		return instance;
 	}
 
-	public Map<Integer, Collection<LinkedinAlumnusData>> findMatches(UfcgAlumnusData alumnus, SchoolName school) {
+	public Map<String, Collection<LinkedinAlumnusData>> findMatches(UfcgAlumnusData alumnus, SchoolName school) {
 		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
-		Map<Integer, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(Collections.reverseOrder()); // relaciona o score com uma lista
-		// ToDo: a ordenação não está funcionando porque quando o mapa é transformado em um JSON a ordenação não
-		// é feita considerando inteiros, mas strings. Daí "20" é maior que "100".
+		Map<String, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(new ScoreComparator()); // relaciona o score com uma lista
+		
 		String alumniName = alumnus.getFullName().toUpperCase();
 
 		linkedinProfilesList.forEach(linkedinProfile -> {
@@ -51,11 +56,13 @@ public class MatchesFinder {
 				score += getScoreFromName(alumniName, linkedinAlumniFullName);
 				score += getScoreFromSchool(alumnus, linkedinSchoolData, school);
 
+				String scoreString = String.format("%d", score);
+				
 				if (score >= 1) {
-					if (!selectedProfilesList.containsKey(score)) {
-						selectedProfilesList.put(score, new ArrayList<>());
+					if (!selectedProfilesList.containsKey(scoreString)) {
+						selectedProfilesList.put(scoreString, new ArrayList<>());
 					}
-					selectedProfilesList.get(score).add(linkedinProfile);
+					selectedProfilesList.get(scoreString).add(linkedinProfile);
 				}
 			} catch(Exception e) {
 				LOGGER.error(Messages.COULD_NOT_PROCESS_ENTRY, e);
@@ -121,7 +128,9 @@ public class MatchesFinder {
 		List<String> names = Arrays.asList(filterName(name));
 		List<String> firstNameList = Arrays.asList(getFirstName(name));
 
-		List<String> lastNameList = names.stream().filter(n -> !firstNameList.contains(n)).collect(Collectors.toList());
+		List<String> lastNameList = names.stream()
+				.filter(n -> !firstNameList.contains(n))
+				.collect(Collectors.toList());
 
 		String[] lastNames = lastNameList.toArray(new String[0]);
 

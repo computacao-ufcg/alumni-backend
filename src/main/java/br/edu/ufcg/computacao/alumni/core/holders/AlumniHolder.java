@@ -131,7 +131,7 @@ public class AlumniHolder extends Thread {
         }
         return alumniCurrentJob;
     }
-
+    
     private boolean dataHasChanged(String filePath) throws IOException {
         BasicFileAttributes attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
         long currentDate = attr.lastModifiedTime().toMillis();

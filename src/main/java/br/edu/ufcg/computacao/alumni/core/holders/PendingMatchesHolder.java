@@ -1,14 +1,18 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.MatchResponse;
-import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.*;
+import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 
 public class PendingMatchesHolder extends Thread {
 	private Logger LOGGER = Logger.getLogger(PendingMatchesHolder.class);
@@ -38,7 +42,7 @@ public class PendingMatchesHolder extends Thread {
 		int start = (int) pageable.getOffset();
 		int end = (int) ((start + pageable.getPageSize()) > this.pendingMatches.size() ?
 				this.pendingMatches.size() : (start + pageable.getPageSize()));
-		List list = getPendingMatchesList();
+		List<PendingMatch> list = getPendingMatchesList();
 		Page<PendingMatch> page = new PageImpl<PendingMatch>(list.subList(start, end), pageable, list.size());
 		return page;
 	}

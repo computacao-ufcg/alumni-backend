@@ -115,7 +115,7 @@ public class ApplicationFacade {
 
     public Page<EmployerResponse> getEmployersUndefined(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
-        return EmployersHolder.getInstance().getEmployersUndefined(page);
+        return EmployersHolder.getInstance().getEmployers(EmployerType.UNDEFINED);
     }
 
     public void setEmployerTypeToUndefined(String token, String linkedinId) throws EurecaException{

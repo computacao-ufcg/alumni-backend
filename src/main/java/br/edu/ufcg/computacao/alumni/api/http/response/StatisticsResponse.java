@@ -1,7 +1,5 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
-import java.util.Objects;
-
 public class StatisticsResponse {
     private int numberAlumni;
     private int numberMappedAlumni;
