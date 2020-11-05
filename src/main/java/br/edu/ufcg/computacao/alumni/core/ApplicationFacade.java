@@ -128,6 +128,11 @@ public class ApplicationFacade {
         return EmployersHolder.getInstance().setEmployerType(type, linkedinId);
     }
 
+    public StatisticsResponse getStatistics(String token, String level, String courseName) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        return StatisticsHolder.getInstance().setEmployerType(level, courseName);
+    }
+
     private RSAPublicKey getAsPublicKey() throws EurecaException {
         if (this.asPublicKey == null) {
             this.asPublicKey = EurecaAsPublicKeyHolder.getInstance().getAsPublicKey();

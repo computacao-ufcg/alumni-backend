@@ -69,4 +69,8 @@ public class ApiDocumentation {
         public static final String GET_EMPLOYERS_UNDEFINED = "Lists information about organizations where graduates of a course work or have worked, whose type is undefined";
         public static final String DELETE_EMPLOYER_TYPE = "Sets employer type to undefined";
     }
+
+    public static class Statistics {
+        public static final String GET_STATISTICS_OPERATION = "returns a Statistic response associated with graduates of the course";
+    }
 }
