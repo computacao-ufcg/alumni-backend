@@ -104,32 +104,32 @@ public class ApplicationFacade {
     }
 
     public Page<EmployerResponse> getEmployers(String token, int page) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS);
         return EmployersHolder.getInstance().getEmployers(page);
     }
 
     public Page<EmployerResponse> getEmployersByType(String token, int page, EmployerType type) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_BY_TYPE);
         return EmployersHolder.getInstance().getEmployers(type, page);
     }
 
     public Page<EmployerResponse> getEmployersUndefined(String token, int page) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
         return EmployersHolder.getInstance().getEmployersUndefined(page);
     }
 
     public void setEmployerTypeToUndefined(String token, String linkedinId) throws EurecaException{
-        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        authenticateAndAuthorize(token, AlumniOperation.SET_EMPLOYER_TYPE_TO_UNDEFINED);
         return EmployersHolder.getInstance().setEmployerTypeToUndefined(linkedinId);
     }
 
     public void setEmployerType(String token, EmployerType type, String linkedinId) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        authenticateAndAuthorize(token, AlumniOperation.SET_EMPLOYER_TYPE);
         return EmployersHolder.getInstance().setEmployerType(type, linkedinId);
     }
 
     public StatisticsResponse getStatistics(String token, String level, String courseName) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        authenticateAndAuthorize(token, AlumniOperation.GET_STATISTICS);
         return StatisticsHolder.getInstance().setEmployerType(level, courseName);
     }
 
