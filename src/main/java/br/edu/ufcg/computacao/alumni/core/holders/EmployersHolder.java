@@ -1,35 +1,31 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+import br.edu.ufcg.computacao.alumni.core.models.Employer;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
-import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 
 public class EmployersHolder {
 	private Logger LOGGER = Logger.getLogger(EmployersHolder.class);
 	
 	private static EmployersHolder instance;
 	
-	private String employersFilePath;
-	private Map<EmployerResponse, Collection<String>> employers; // associa um empregador com uma coleção de matrículas
+	// company url
+	private Map<String, Employer> classifiedEmployers; // associa um empregador com uma coleção de matrículas
+	private Map<String, Employer> unclassifiedEmployers;
 	
 	private EmployersHolder() {
-		this.employersFilePath = HomeDir.getPath() + PropertiesHolder.getInstance()
-				.getProperty(ConfigurationPropertyKeys.EMPLOYERS_INPUT_KEY);
-		
-		this.loadEmployers(this.employersFilePath);
+		this.classifiedEmployers = new HashMap<>();
+		this.unclassifiedEmployers = new HashMap<>();
 	}
 	
 	public static EmployersHolder getInstance() {
@@ -41,49 +37,63 @@ public class EmployersHolder {
 		}
 	}
 	
-	private synchronized void loadEmployers(String filePath) throws FatalErrorException {
-		this.employers = new HashMap<>();
-		try (BufferedReader csvReader = new BufferedReader(new FileReader(filePath))) {
-			String row;
-			while ((row = csvReader.readLine()) != null) {
-				String[] data = row.split(",");
-				
-				String registration = data[0].trim();
-				String name = data[1].trim();
-				String linkedinId = data[2].trim();
-				EmployerType type = EmployerType.valueOf(data[3].trim());
-				
-				EmployerResponse employer = new EmployerResponse(name, linkedinId, type);
-				
-				if (!this.employers.containsKey(employer)) {
-					this.employers.put(employer, new HashSet<>());
-				}
+	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException {
+		if (!this.unclassifiedEmployers.containsKey(employerId)) {
+			throw new FatalErrorException();
+		} 
+		if (!this.classifiedEmployers.containsKey(employerId)) {
+			throw new FatalErrorException();
+		} 
 
-				this.employers.get(employer).add(registration);
-				
-				LOGGER.info("");
-			}
-		} catch (IOException e) {
-			throw new FatalErrorException(e.getMessage());
-		}
-	}
-	
-	public synchronized Map<EmployerResponse, Collection<String>> getEmployers() {
-		return new HashMap<EmployerResponse, Collection<String>>(this.employers);
-	}
-	
-	public synchronized Map<EmployerResponse, Collection<String>> getEmployers(EmployerType type) {
-		Map<EmployerResponse, Collection<String>> filteredEmployers = new HashMap<>();
+		Employer employer = this.unclassifiedEmployers.get(employerId);
+		employer.setType(type);
 		
-		for (Entry<EmployerResponse, Collection<String>> entry : this.employers.entrySet()) {
-			EmployerResponse employer = entry.getKey();
+		this.classifiedEmployers.put(employerId, employer);
+		this.unclassifiedEmployers.remove(employerId, employer);
+	}
+	
+	// se o tipo será resetado, então o novo tipo é automaticamente "undefined"
+	public synchronized void resetEmployerType(String employerId) throws FatalErrorException {
+		if (!this.classifiedEmployers.containsKey(employerId)) {
+			throw new FatalErrorException();
+		}
+		if (!this.unclassifiedEmployers.containsKey(employerId)) {
+			throw new FatalErrorException();
+		}
+		
+		Employer employer = this.classifiedEmployers.get(employerId);
+		employer.setType(EmployerType.UNDEFINED);
+		
+		this.unclassifiedEmployers.put(employerId, employer);
+		this.classifiedEmployers.remove(employerId, employer);
+	}
+	
+	private synchronized Collection<EmployerResponse> getEmployers(Map<String, Employer> employers) {
+		Collection<EmployerResponse> employersResponse = new LinkedList<>();
+		
+		for (Entry<String, Employer> entry : this.classifiedEmployers.entrySet()) {
+			String employerId = entry.getKey();
+			String employerName = entry.getValue().getName();
+			EmployerType type = entry.getValue().getType();
 			
-			if (employer.getType().equals(type)) {
-				Collection<String> registrations = entry.getValue();
-				filteredEmployers.put(employer, registrations);
-			}
+			EmployerResponse response = new EmployerResponse(employerName, employerId, type);
+			employersResponse.add(response);
 		}
 		
-		return filteredEmployers;
+		return employersResponse;
+	}
+	
+	public synchronized Collection<EmployerResponse> getUnsclassifiedEmployer() {
+		return this.getEmployers(this.unclassifiedEmployers);
+	}
+	
+	public synchronized Collection<EmployerResponse> getEmployers() {
+		return this.getEmployers(this.classifiedEmployers);
+	}
+	
+	public synchronized Collection<EmployerResponse> getEmployers(EmployerType type) {
+		return this.getEmployers().stream()
+				.filter(employer -> employer.getType().equals(type))
+				.collect(Collectors.toList());
 	}
 }

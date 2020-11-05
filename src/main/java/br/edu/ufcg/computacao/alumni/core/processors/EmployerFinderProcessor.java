@@ -19,18 +19,13 @@ public class EmployerFinderProcessor extends Thread {
 	public EmployerFinderProcessor() {
 	}
 	
-	// implementar eurística
-	private synchronized EmployerType getEmployerType(String jobTitle) {
-		return EmployerType.valueOf(jobTitle);
-	}
-	
 	@Override
 	public void run() {
 		boolean isActive = true;
 		
 		while (isActive) {
 			try {
-				Collection<EmployerResponse> consolidatedEmployers = EmployersHolder.getInstance().getEmployers().keySet(); 
+				Collection<EmployerResponse> consolidatedEmployers = EmployersHolder.getInstance().getEmployers(); 
 				Collection<LinkedinAlumnusData> linkedinProfiles = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
 				
 				for (LinkedinAlumnusData profile : linkedinProfiles) {
@@ -39,9 +34,8 @@ public class EmployerFinderProcessor extends Thread {
 					for (LinkedinJobData job : jobData) {
 						String name = job.getCompanyName();
 						String linkedinId = job.getCompanyUrl();
-						EmployerType type = getEmployerType(job.getJobTitle());
 						
-						EmployerResponse employer = new EmployerResponse(name, linkedinId, type);
+						EmployerResponse employer = new EmployerResponse(name, linkedinId, EmployerType.UNDEFINED);
 						
 						if (!consolidatedEmployers.contains(employer)) {
 							consolidatedEmployers.add(employer);

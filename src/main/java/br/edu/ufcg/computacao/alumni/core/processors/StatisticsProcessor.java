@@ -10,12 +10,14 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
+import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
 import br.edu.ufcg.computacao.alumni.api.http.response.StatisticsResponse;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.EmployersHolder;
+import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.StatisticsHolder;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
@@ -68,15 +70,26 @@ public class StatisticsProcessor extends Thread {
 	}
 	
 	private int getNumberTypeEmployed(Collection<UfcgAlumnusData> alumni, EmployerType type) {
-		Map<EmployerResponse, Collection<String>> employers = EmployersHolder.getInstance().getEmployers(type);
+		Collection<EmployerResponse> employers = EmployersHolder.getInstance().getEmployers(type);
+		Map<String, String> matches = MatchesHolder.getInstance().getMatches();
 		
-		Set<String> alumniRegistrations = alumni.stream().map(UfcgAlumnusData::getRegistration).collect(Collectors.toSet());
-		Set<String> employerRegistrations = new HashSet<>();
-		employers.values().forEach(registrations -> employerRegistrations.addAll(registrations));
 		
-		employerRegistrations.retainAll(alumniRegistrations);
+		Collection<String> employersCompanyNames = employers.stream()
+				.map(EmployerResponse::getName)
+				.collect(Collectors.toList());
+
+		int num = 0;
+		for (UfcgAlumnusData alumnus : alumni) {
+			String alumnusFullName = alumnus.getFullName();
+			String linkedinUrl = matches.get(alumnus.getRegistration());
+			
+			CurrentJob currentJob = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(alumnusFullName, linkedinUrl);
+			if (employersCompanyNames.contains(currentJob.getCurrentJob())) {
+				num++;
+			}
+		}
 		
-		return employerRegistrations.size();
+		return num;
 	}
 
 	@Override
