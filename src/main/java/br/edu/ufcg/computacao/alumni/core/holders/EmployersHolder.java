@@ -39,7 +39,7 @@ public class EmployersHolder {
 	
 	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException {
 		if (!this.unclassifiedEmployers.containsKey(employerId)) {
-			throw new FatalErrorException();
+			throw new InvalidParameterException();
 		} 
 
 		Employer employer = this.unclassifiedEmployers.get(employerId);
@@ -51,7 +51,7 @@ public class EmployersHolder {
 	// se o tipo será resetado, então o novo tipo é automaticamente "undefined"
 	public synchronized void resetEmployerType(String employerId) throws FatalErrorException {
 		if (!this.classifiedEmployers.containsKey(employerId)) {
-			throw new FatalErrorException();
+			throw new InvalidParameterException();
 		}
 		
 		Employer employer = this.classifiedEmployers.get(employerId);
