@@ -6,22 +6,23 @@ import java.util.TreeMap;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
+import br.edu.ufcg.computacao.alumni.core.util.ScoreComparator;
 
 public class PendingMatch {
 
 	private UfcgAlumnusData alumni;
-	private Map<Integer, Collection<LinkedinAlumnusData>> possibleMatches;
+	private Map<String, Collection<LinkedinAlumnusData>> possibleMatches;
 	
-	public PendingMatch(UfcgAlumnusData alumni, Map<Integer, Collection<LinkedinAlumnusData>> possibleMatches) {
+	public PendingMatch(UfcgAlumnusData alumni, Map<String, Collection<LinkedinAlumnusData>> possibleMatches) {
 		this.alumni = alumni;
 		this.possibleMatches = possibleMatches;
 	}
 	
-	public Map<Integer, Collection<LinkedinAlumnusData>> getPossibleMatches() {
-		return new TreeMap<>(this.possibleMatches);
+	public Map<String, Collection<LinkedinAlumnusData>> getPossibleMatches() {
+		return new TreeMap<>(new ScoreComparator());
 	}
 	
-	public Collection<LinkedinAlumnusData> getPossibleMatchesFromScore(int score) {
+	public Collection<LinkedinAlumnusData> getPossibleMatchesFromScore(String score) {
 		return this.possibleMatches.get(score);
 	}
 

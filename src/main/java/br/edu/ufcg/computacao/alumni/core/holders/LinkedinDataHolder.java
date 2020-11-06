@@ -1,32 +1,35 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
-import br.edu.ufcg.computacao.alumni.core.models.DateRange;
-import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
-import br.edu.ufcg.computacao.alumni.core.parsers.AlumnusParser;
-import br.edu.ufcg.computacao.alumni.core.util.ChecksumGenerator;
-import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
+import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+import br.edu.ufcg.computacao.alumni.constants.Messages;
+import br.edu.ufcg.computacao.alumni.core.models.DateRange;
+import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
+import br.edu.ufcg.computacao.alumni.core.parsers.AlumnusParser;
+import br.edu.ufcg.computacao.alumni.core.util.ChecksumGenerator;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 
 public class LinkedinDataHolder extends Thread {
     private Logger LOGGER = Logger.getLogger(LinkedinDataHolder.class);
@@ -130,7 +133,7 @@ public class LinkedinDataHolder extends Thread {
         }
         return pairs;
     }
-
+    
     /**
      * From time to time, updates Linkedin data with data recovered by the external scraping engine
      */

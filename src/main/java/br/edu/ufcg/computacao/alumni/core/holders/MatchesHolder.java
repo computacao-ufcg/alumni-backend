@@ -1,23 +1,28 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinNameProfilePair;
-import br.edu.ufcg.computacao.alumni.api.http.response.MatchResponse;
-import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
-import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
-import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.io.*;
-import java.util.*;
+import br.edu.ufcg.computacao.alumni.api.http.response.MatchResponse;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+import br.edu.ufcg.computacao.alumni.constants.Messages;
+import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 
 public class MatchesHolder {
     private Logger LOGGER = Logger.getLogger(MatchesHolder.class);
@@ -104,7 +109,7 @@ public class MatchesHolder {
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > this.matches.size() ?
                 this.matches.size() : (start + pageable.getPageSize()));
-        List list = getMatchesList();
+        List<MatchResponse> list = getMatchesList();
         Page<MatchResponse> page = new PageImpl<MatchResponse>(list.subList(start, end), pageable, list.size());
         return page;
     }
@@ -118,7 +123,7 @@ public class MatchesHolder {
     }
 
     public synchronized Map<String, String> getMatches() {
-    	return this.matches;
+    	return new HashMap<>(this.matches);
     }
 
     public synchronized String getLinkedinId(String registration) {
