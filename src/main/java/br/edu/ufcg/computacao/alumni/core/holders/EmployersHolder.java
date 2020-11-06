@@ -41,15 +41,11 @@ public class EmployersHolder {
 		if (!this.unclassifiedEmployers.containsKey(employerId)) {
 			throw new FatalErrorException();
 		} 
-		if (!this.classifiedEmployers.containsKey(employerId)) {
-			throw new FatalErrorException();
-		} 
 
 		Employer employer = this.unclassifiedEmployers.get(employerId);
-		employer.setType(type);
-		
-		this.classifiedEmployers.put(employerId, employer);
 		this.unclassifiedEmployers.remove(employerId, employer);
+		employer.setType(type);		
+		this.classifiedEmployers.put(employerId, employer);
 	}
 	
 	// se o tipo será resetado, então o novo tipo é automaticamente "undefined"
@@ -57,15 +53,11 @@ public class EmployersHolder {
 		if (!this.classifiedEmployers.containsKey(employerId)) {
 			throw new FatalErrorException();
 		}
-		if (!this.unclassifiedEmployers.containsKey(employerId)) {
-			throw new FatalErrorException();
-		}
 		
 		Employer employer = this.classifiedEmployers.get(employerId);
-		employer.setType(EmployerType.UNDEFINED);
-		
-		this.unclassifiedEmployers.put(employerId, employer);
 		this.classifiedEmployers.remove(employerId, employer);
+		employer.setType(EmployerType.UNDEFINED);		
+		this.unclassifiedEmployers.put(employerId, employer);
 	}
 	
 	private synchronized Collection<EmployerResponse> getEmployers(Map<String, Employer> employers) {
