@@ -50,6 +50,7 @@ public class PendingMatchesHolder extends Thread {
 	}
 
 	private synchronized List<PendingMatch> getPendingMatchesList() {
+		System.out.println();
 		List<PendingMatch> pendingMatchesList = new ArrayList<PendingMatch>();
 		for (PendingMatch pendingMatch : this.pendingMatches) {
 			pendingMatchesList.add(pendingMatch);
