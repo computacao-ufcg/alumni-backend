@@ -5,6 +5,7 @@ import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
+import br.edu.ufcg.computacao.alumni.core.processors.EmployerFinderProcessor;
 import br.edu.ufcg.computacao.alumni.core.processors.MatchesFinderProcessor;
 import br.edu.ufcg.computacao.alumni.core.util.PluginInstantiator;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;

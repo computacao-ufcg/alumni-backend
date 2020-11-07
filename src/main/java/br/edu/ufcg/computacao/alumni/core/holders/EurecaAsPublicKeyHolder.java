@@ -1,12 +1,11 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
+import java.security.interfaces.RSAPublicKey;
+
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.eureca.as.api.http.request.PublicKey;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.util.PublicKeyUtil;
-
-import java.io.IOException;
-import java.security.interfaces.RSAPublicKey;
 
 public class EurecaAsPublicKeyHolder {
     private RSAPublicKey asPublicKey;

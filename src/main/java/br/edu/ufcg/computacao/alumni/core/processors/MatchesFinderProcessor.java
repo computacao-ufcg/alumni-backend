@@ -87,7 +87,7 @@ public class MatchesFinderProcessor extends Thread {
 				for (UfcgAlumnusData alumnus : alumni) {
 					String registration = alumnus.getRegistration();
 					if (!consolidatedMatches.containsKey(registration)) {
-						Map<Integer, Collection<LinkedinAlumnusData>> possibleMatches =
+						Map<String, Collection<LinkedinAlumnusData>> possibleMatches =
 								MatchesFinder.getInstance().findMatches(alumnus, schoolName);
 						
 						if (!possibleMatches.isEmpty()) {

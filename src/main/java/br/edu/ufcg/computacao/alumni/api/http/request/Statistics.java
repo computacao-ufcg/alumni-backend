@@ -6,6 +6,8 @@ import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
+import br.edu.ufcg.computacao.alumni.core.models.CourseName;
+import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = Linkedin.ENDPOINT)
+@RequestMapping(value = Statistics.ENDPOINT)
 @Api(description = ApiDocumentation.Alumni.API)
 public class Statistics {
     protected static final String ENDPOINT = SystemConstants.SERVICE_BASE_ENDPOINT + "statistics";
@@ -34,7 +36,10 @@ public class Statistics {
             throws EurecaException {
 
         try {
-            StatisticsResponse statistics = ApplicationFacade.getInstance().getStatistics(token, level, courseName);
+            CourseName c = CourseName.valueOf(level);
+            Level l = Level.valueOf(courseName);
+            StatisticsResponse statistics = ApplicationFacade.getInstance().getStatistics(token,l , c);
+            System.out.println(statistics.toString());
             return new ResponseEntity<>(statistics, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
