@@ -39,7 +39,6 @@ public class Statistics {
             CourseName c = CourseName.valueOf(level);
             Level l = Level.valueOf(courseName);
             StatisticsResponse statistics = ApplicationFacade.getInstance().getStatistics(token,l , c);
-            System.out.println(statistics.toString());
             return new ResponseEntity<>(statistics, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

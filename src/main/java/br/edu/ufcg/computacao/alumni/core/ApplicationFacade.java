@@ -87,6 +87,10 @@ public class ApplicationFacade {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
+    public List<MatchResponse> getAlumnusMatches(String token, String registration) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
+        return MatchesHolder.getInstance().getAlumnusMatches(registration);
+    }
 
     public List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_NAME_PROFILE_PAIRS);

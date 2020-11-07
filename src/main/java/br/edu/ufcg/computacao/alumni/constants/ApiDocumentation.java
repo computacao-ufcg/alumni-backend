@@ -46,6 +46,7 @@ public class ApiDocumentation {
         public static final String REGISTRATION_PARAMETER = "Alumnus registration.";
         public static final String MATCH_PARAMETER = "A registrations number and its matching LinkedIn ID.";
         public static final String PAGE = "The list is paged. This parameter indicates which page should be fetched.";
+        public static final String GET_ALUMNUS_MATCHES_OPERATION = "lists matches of one alumnus";
     }
 
     public static class Version {

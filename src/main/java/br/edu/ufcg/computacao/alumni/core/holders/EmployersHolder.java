@@ -81,7 +81,6 @@ public class EmployersHolder {
 	}
 
 	public synchronized Page<EmployerResponse> getEmployersPage(int requiredPage) {
-		System.out.println(this.getUnclassifiedEmployer());
 		Pageable pageable= new PageRequest(requiredPage, 10);
 		Collection<EmployerResponse> employers = this.getEmployers();
 

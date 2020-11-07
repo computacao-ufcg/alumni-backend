@@ -115,10 +115,19 @@ public class MatchesHolder {
     }
 
     private synchronized List<MatchResponse> getMatchesList() {
-        System.out.println(this.matches.keySet());
         List<MatchResponse> matchesList = new ArrayList<MatchResponse>();
         for (String key : this.matches.keySet()) {
             matchesList.add(new MatchResponse(key, this.matches.get(key)));
+        }
+        return matchesList;
+    }
+
+    public synchronized  List<MatchResponse> getAlumnusMatches(String registration) {
+        List<MatchResponse> matchesList = new ArrayList<MatchResponse>();
+        for (String key : this.matches.keySet()) {
+            if(key.equals(registration)) {
+                matchesList.add(new MatchResponse(key, this.matches.get(key)));
+            }
         }
         return matchesList;
     }
