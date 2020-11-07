@@ -97,7 +97,7 @@ public class Employer {
                 }catch(NumberFormatException e) {
                     throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
                 }
-                Page<EmployerResponse> employers = ApplicationFacade.getInstance().getEmployersUndefined(token, p);
+                Page<EmployerResponse> employers = ApplicationFacade.getInstance().getUnclassifiedEmployers(token, p);
                 return new ResponseEntity(employers, HttpStatus.OK);
 
             } catch (EurecaException e) {

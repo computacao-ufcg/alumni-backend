@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import org.apache.log4j.Logger;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
 import br.edu.ufcg.computacao.alumni.core.models.Employer;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
-import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 
 public class EmployersHolder {
 	private Logger LOGGER = Logger.getLogger(EmployersHolder.class);
@@ -20,7 +20,7 @@ public class EmployersHolder {
 	private static EmployersHolder instance;
 	
 	// company url
-	private Map<String, Employer> classifiedEmployers; // associa um empregador com uma coleção de matrículas
+	private Map<String, Employer> classifiedEmployers;
 	private Map<String, Employer> unclassifiedEmployers;
 	
 	private EmployersHolder() {
@@ -37,7 +37,7 @@ public class EmployersHolder {
 		}
 	}
 	
-	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException {
+	public synchronized void setEmployerType(String employerId, EmployerType type) throws InvalidParameterException {
 		if (!this.unclassifiedEmployers.containsKey(employerId)) {
 			throw new InvalidParameterException();
 		} 
@@ -48,8 +48,7 @@ public class EmployersHolder {
 		this.classifiedEmployers.put(employerId, employer);
 	}
 	
-	// se o tipo será resetado, então o novo tipo é automaticamente "undefined"
-	public synchronized void resetEmployerType(String employerId) throws FatalErrorException {
+	public synchronized void resetEmployerType(String employerId) throws InvalidParameterException {
 		if (!this.classifiedEmployers.containsKey(employerId)) {
 			throw new InvalidParameterException();
 		}
@@ -63,7 +62,7 @@ public class EmployersHolder {
 	private synchronized Collection<EmployerResponse> getEmployers(Map<String, Employer> employers) {
 		Collection<EmployerResponse> employersResponse = new LinkedList<>();
 		
-		for (Entry<String, Employer> entry : this.classifiedEmployers.entrySet()) {
+		for (Entry<String, Employer> entry : employers.entrySet()) {
 			String employerId = entry.getKey();
 			String employerName = entry.getValue().getName();
 			EmployerType type = entry.getValue().getType();
