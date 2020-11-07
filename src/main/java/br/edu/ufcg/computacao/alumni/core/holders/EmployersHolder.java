@@ -25,7 +25,7 @@ public class EmployersHolder {
 	private static EmployersHolder instance;
 	
 	// company url
-	private Map<String, Employer> classifiedEmployers; // associa um empregador com uma coleção de matrículas
+	private Map<String, Employer> classifiedEmployers;
 	private Map<String, Employer> unclassifiedEmployers;
 	
 	private EmployersHolder() {
@@ -53,7 +53,6 @@ public class EmployersHolder {
 		this.classifiedEmployers.put(employerId, employer);
 	}
 	
-	// se o tipo será resetado, então o novo tipo é automaticamente "undefined"
 	public synchronized void resetEmployerType(String employerId) throws FatalErrorException, InvalidParameterException {
 		if (!this.classifiedEmployers.containsKey(employerId)) {
 			throw new InvalidParameterException(Messages.NO_SUCH_LINKEDIN_ID);
@@ -68,7 +67,7 @@ public class EmployersHolder {
 	private synchronized Collection<EmployerResponse> getEmployers(Map<String, Employer> employers) {
 		Collection<EmployerResponse> employersResponse = new LinkedList<>();
 		
-		for (Entry<String, Employer> entry : this.classifiedEmployers.entrySet()) {
+		for (Entry<String, Employer> entry : employers.entrySet()) {
 			String employerId = entry.getKey();
 			String employerName = entry.getValue().getName();
 			EmployerType type = entry.getValue().getType();
