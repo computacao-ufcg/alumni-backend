@@ -1,91 +1,169 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
+import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
+
 public class StatisticsResponse {
-    private int numberAlumni;
-    private int numberMappedAlumni;
-    private int numberAcademyEmployed;
-    private int numberIndustryEmployed;
-    private int numberGovernmentEmployed;
-    private int numberOngEmployed;
-    private int numberOthersEmployed;
+    private int numberAlumniCourse;
+    private int numberMappedAlumniCourse;
+    private int numberAcademyEmployedCourse;
+    private int numberIndustryEmployedCourse;
+    private int numberGovernmentEmployedCourse;
+    private int numberOngEmployedCourse;
+    private int numberOthersEmployedCourse;
+    private int numberAlumniLevel;
+    private int numberMappedAlumniLevel;
+    private int numberAcademyEmployedLevel;
+    private int numberIndustryEmployedLevel;
+    private int numberGovernmentEmployedLevel;
+    private int numberOngEmployedLevel;
+    private int numberOthersEmployedLevel;
 
-    public StatisticsResponse(int numberAlumni, int numberMappedAlumni, int numberAcademyEmployed, int numberIndustryEmployed,
-                              int numberGovernmentEmployed, int numberOngEmployed, int numberOthersEmployed) {
-        this.numberAlumni = numberAlumni;
-        this.numberMappedAlumni = numberMappedAlumni;
-        this.numberAcademyEmployed = numberAcademyEmployed;
-        this.numberIndustryEmployed = numberIndustryEmployed;
-        this.numberGovernmentEmployed = numberGovernmentEmployed;
-        this.numberOngEmployed = numberOngEmployed;
-        this.numberOthersEmployed = numberOthersEmployed;
+    public StatisticsResponse(StatisticsModel statisticsCourse, StatisticsModel statisticsLevel) {
+        this.numberAlumniCourse = statisticsCourse.getNumberAlumni();
+        this.numberMappedAlumniCourse = statisticsCourse.getNumberMappedAlumni();
+        this.numberAcademyEmployedCourse = statisticsCourse.getNumberAcademyEmployed();
+        this.numberIndustryEmployedCourse = statisticsCourse.getNumberIndustryEmployed();
+        this.numberGovernmentEmployedCourse = statisticsCourse.getNumberGovernmentEmployed();
+        this.numberOngEmployedCourse = statisticsCourse.getNumberOngEmployed();
+        this.numberOthersEmployedCourse = statisticsCourse.getNumberOthersEmployed();
+        this.numberAlumniLevel = statisticsLevel.getNumberAlumni();
+        this.numberMappedAlumniLevel = statisticsLevel.getNumberMappedAlumni();
+        this.numberAcademyEmployedLevel = statisticsLevel.getNumberAcademyEmployed();
+        this.numberIndustryEmployedLevel = statisticsLevel.getNumberIndustryEmployed();
+        this.numberGovernmentEmployedLevel = statisticsLevel.getNumberGovernmentEmployed();
+        this.numberOngEmployedLevel = statisticsLevel.getNumberOngEmployed();
+        this.numberOthersEmployedLevel = statisticsLevel.getNumberOthersEmployed();
     }
 
-    public int getNumberAlumni() {
-        return numberAlumni;
+    public int getNumberAlumniCourse() {
+        return numberAlumniCourse;
     }
 
-    public int getNumberMappedAlumni() {
-        return numberMappedAlumni;
+    public void setNumberAlumniCourse(int numberAlumniCourse) {
+        this.numberAlumniCourse = numberAlumniCourse;
     }
 
-    public int getNumberAcademyEmployed() {
-        return numberAcademyEmployed;
+    public int getNumberMappedAlumniCourse() {
+        return numberMappedAlumniCourse;
     }
 
-    public int getNumberIndustryEmployed() {
-        return numberIndustryEmployed;
+    public void setNumberMappedAlumniCourse(int numberMappedAlumniCourse) {
+        this.numberMappedAlumniCourse = numberMappedAlumniCourse;
     }
 
-    public int getNumberGovernmentEmployed() {
-        return numberGovernmentEmployed;
+    public int getNumberAcademyEmployedCourse() {
+        return numberAcademyEmployedCourse;
     }
 
-    public int getNumberOngEmployed() {
-        return numberOngEmployed;
+    public void setNumberAcademyEmployedCourse(int numberAcademyEmployedCourse) {
+        this.numberAcademyEmployedCourse = numberAcademyEmployedCourse;
     }
 
-    public int getNumberOthersEmployed() {
-        return numberOthersEmployed;
+    public int getNumberIndustryEmployedCourse() {
+        return numberIndustryEmployedCourse;
     }
 
-    public void setNumberAlumni(int numberAlumni) {
-        this.numberAlumni = numberAlumni;
+    public void setNumberIndustryEmployedCourse(int numberIndustryEmployedCourse) {
+        this.numberIndustryEmployedCourse = numberIndustryEmployedCourse;
     }
 
-    public void setNumberMappedAlumni(int numberMappedAlumni) {
-        this.numberMappedAlumni = numberMappedAlumni;
+    public int getNumberGovernmentEmployedCourse() {
+        return numberGovernmentEmployedCourse;
     }
 
-    public void setNumberAcademyEmployed(int numberAcademyEmployed) {
-        this.numberAcademyEmployed = numberAcademyEmployed;
+    public void setNumberGovernmentEmployedCourse(int numberGovernmentEmployedCourse) {
+        this.numberGovernmentEmployedCourse = numberGovernmentEmployedCourse;
     }
 
-    public void setNumberIndustryEmployed(int numberIndustryEmployed) {
-        this.numberIndustryEmployed = numberIndustryEmployed;
+    public int getNumberOngEmployedCourse() {
+        return numberOngEmployedCourse;
     }
 
-    public void setNumberGovernmentEmployed(int numberGovernmentEmployed) {
-        this.numberGovernmentEmployed = numberGovernmentEmployed;
+    public void setNumberOngEmployedCourse(int numberOngEmployedCourse) {
+        this.numberOngEmployedCourse = numberOngEmployedCourse;
     }
 
-    public void setNumberOngEmployed(int numberOngEmployed) {
-        this.numberOngEmployed = numberOngEmployed;
+    public int getNumberOthersEmployedCourse() {
+        return numberOthersEmployedCourse;
     }
 
-    public void setNumberOthersEmployed(int numberOthersEmployed) {
-        this.numberOthersEmployed = numberOthersEmployed;
+    public void setNumberOthersEmployedCourse(int numberOthersEmployedCourse) {
+        this.numberOthersEmployedCourse = numberOthersEmployedCourse;
+    }
+
+    public int getNumberAlumniLevel() {
+        return numberAlumniLevel;
+    }
+
+    public void setNumberAlumniLevel(int numberAlumniLevel) {
+        this.numberAlumniLevel = numberAlumniLevel;
+    }
+
+    public int getNumberMappedAlumniLevel() {
+        return numberMappedAlumniLevel;
+    }
+
+    public void setNumberMappedAlumniLevel(int numberMappedAlumniLevel) {
+        this.numberMappedAlumniLevel = numberMappedAlumniLevel;
+    }
+
+    public int getNumberAcademyEmployedLevel() {
+        return numberAcademyEmployedLevel;
+    }
+
+    public void setNumberAcademyEmployedLevel(int numberAcademyEmployedLevel) {
+        this.numberAcademyEmployedLevel = numberAcademyEmployedLevel;
+    }
+
+    public int getNumberIndustryEmployedLevel() {
+        return numberIndustryEmployedLevel;
+    }
+
+    public void setNumberIndustryEmployedLevel(int numberIndustryEmployedLevel) {
+        this.numberIndustryEmployedLevel = numberIndustryEmployedLevel;
+    }
+
+    public int getNumberGovernmentEmployedLevel() {
+        return numberGovernmentEmployedLevel;
+    }
+
+    public void setNumberGovernmentEmployedLevel(int numberGovernmentEmployedLevel) {
+        this.numberGovernmentEmployedLevel = numberGovernmentEmployedLevel;
+    }
+
+    public int getNumberOngEmployedLevel() {
+        return numberOngEmployedLevel;
+    }
+
+    public void setNumberOngEmployedLevel(int numberOngEmployedLevel) {
+        this.numberOngEmployedLevel = numberOngEmployedLevel;
+    }
+
+    public int getNumberOthersEmployedLevel() {
+        return numberOthersEmployedLevel;
+    }
+
+    public void setNumberOthersEmployedLevel(int numberOthersEmployedLevel) {
+        this.numberOthersEmployedLevel = numberOthersEmployedLevel;
     }
 
     @Override
     public String toString() {
-        return "StatisticsResponse{" +
-                "numberAlumni=" + numberAlumni +
-                ", numberMappedAlumni=" + numberMappedAlumni +
-                ", numberAcademyEmployed=" + numberAcademyEmployed +
-                ", numberIndustryEmployed=" + numberIndustryEmployed +
-                ", numberGovernmentEmployed=" + numberGovernmentEmployed +
-                ", numberOngEmployed=" + numberOngEmployed +
-                ", numberOthersEmployed=" + numberOthersEmployed +
+        return "StatisticsResponse2{" +
+                "numberAlumniCourse=" + numberAlumniCourse +
+                ", numberMappedAlumniCourse=" + numberMappedAlumniCourse +
+                ", numberAcademyEmployedCourse=" + numberAcademyEmployedCourse +
+                ", numberIndustryEmployedCourse=" + numberIndustryEmployedCourse +
+                ", numberGovernmentEmployedCourse=" + numberGovernmentEmployedCourse +
+                ", numberOngEmployedCourse=" + numberOngEmployedCourse +
+                ", numberOthersEmployedCourse=" + numberOthersEmployedCourse +
+                ", numberAlumniLevel=" + numberAlumniLevel +
+                ", numberMappedAlumniLevel=" + numberMappedAlumniLevel +
+                ", numberAcademyEmployedLevel=" + numberAcademyEmployedLevel +
+                ", numberIndustryEmployedLevel=" + numberIndustryEmployedLevel +
+                ", numberGovernmentEmployedLevel=" + numberGovernmentEmployedLevel +
+                ", numberOngEmployedLevel=" + numberOngEmployedLevel +
+                ", numberOthersEmployedLevel=" + numberOthersEmployedLevel +
                 '}';
     }
 }

@@ -122,6 +122,16 @@ public class MatchesHolder {
         return matchesList;
     }
 
+    public synchronized  List<MatchResponse> getAlumnusMatches(String registration) {
+        List<MatchResponse> matchesList = new ArrayList<MatchResponse>();
+        for (String key : this.matches.keySet()) {
+            if(key.equals(registration)) {
+                matchesList.add(new MatchResponse(key, this.matches.get(key)));
+            }
+        }
+        return matchesList;
+    }
+
     public synchronized Map<String, String> getMatches() {
     	return new HashMap<>(this.matches);
     }

@@ -39,10 +39,12 @@ public class PendingMatchesHolder extends Thread {
 
 	public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage) {
 		Pageable pageable= new PageRequest(requiredPage, 10);
-		int start = (int) pageable.getOffset();
-		int end = (int) ((start + pageable.getPageSize()) > this.pendingMatches.size() ?
-				this.pendingMatches.size() : (start + pageable.getPageSize()));
 		List<PendingMatch> list = getPendingMatchesList();
+
+		int start = (int) pageable.getOffset();
+		int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+				list.size() : (start + pageable.getPageSize()));
+
 		Page<PendingMatch> page = new PageImpl<PendingMatch>(list.subList(start, end), pageable, list.size());
 		return page;
 	}

@@ -3,9 +3,10 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.edu.ufcg.computacao.alumni.api.http.response.StatisticsResponse;
 import org.apache.log4j.Logger;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.StatisticsResponse;
+import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
 
@@ -14,8 +15,8 @@ public class StatisticsHolder {
 	
 	private static StatisticsHolder instance;
 		
-	private Map<CourseName, StatisticsResponse> courseNamesStatistics;
-	private Map<Level, StatisticsResponse> levelsStatistics;
+	private Map<CourseName, StatisticsModel> courseNamesStatistics;
+	private Map<Level, StatisticsModel> levelsStatistics;
 	
 	private StatisticsHolder() {
 		this.courseNamesStatistics = new HashMap<>();
@@ -31,19 +32,21 @@ public class StatisticsHolder {
 		}
 	}
 	
-	public synchronized void setLevelsStatistics(Map<Level, StatisticsResponse> statistics) {
+	public synchronized void setLevelsStatistics(Map<Level, StatisticsModel> statistics) {
 		this.levelsStatistics = statistics;
 	}
 	
-	public synchronized void setCourseNamesStatistics(Map<CourseName, StatisticsResponse> statistics) {
+	public synchronized void setCourseNamesStatistics(Map<CourseName, StatisticsModel> statistics) {
 		this.courseNamesStatistics = statistics;
 	}
 	
-	public synchronized StatisticsResponse getStatistics(CourseName courseName) {
+	public synchronized StatisticsModel getStatistics(CourseName courseName) {
 		return this.courseNamesStatistics.get(courseName);
 	}
 	
-	public synchronized StatisticsResponse getStatistics(Level level) {
+	public synchronized StatisticsModel getStatistics(Level level) {
 		return this.levelsStatistics.get(level);
 	}
+
+
 }

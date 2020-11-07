@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
-import br.edu.ufcg.computacao.alumni.api.http.response.StatisticsResponse;
+import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
@@ -102,8 +102,8 @@ public class StatisticsProcessor extends Thread {
 				CourseName[] courseNames = CourseName.values();
 				Level[] levels = Level.values();
 				
-				Map<CourseName, StatisticsResponse> courseStatistics = new HashMap<>();
-				Map<Level, StatisticsResponse> levelStatistics = new HashMap<>();
+				Map<CourseName, StatisticsModel> courseStatistics = new HashMap<>();
+				Map<Level, StatisticsModel> levelStatistics = new HashMap<>();
 				
 				for (CourseName courseName : courseNames) {
 					Collection<UfcgAlumnusData> filteredAlumniByCourse = filterAlumniByCourseName(alumni, courseName);
@@ -116,7 +116,7 @@ public class StatisticsProcessor extends Thread {
 					int numberOngEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.ONG);
 					int numberOthersEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.OTHERS);
 					
-					StatisticsResponse courseStatistic = new StatisticsResponse(numberAlumniCourse, numberMappedAlumniCourse, numberAcademyEmployedCourse, numberIndustryEmployedCourse, numberGovernmentEmployedCourse, numberOngEmployedCourse, numberOthersEmployedCourse);
+					StatisticsModel courseStatistic = new StatisticsModel(numberAlumniCourse, numberMappedAlumniCourse, numberAcademyEmployedCourse, numberIndustryEmployedCourse, numberGovernmentEmployedCourse, numberOngEmployedCourse, numberOthersEmployedCourse);
 					
 					courseStatistics.put(courseName, courseStatistic);
 					
@@ -131,7 +131,7 @@ public class StatisticsProcessor extends Thread {
 						int numberOngEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.ONG);
 						int numberOthersEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.OTHERS);
 						
-						StatisticsResponse levelStatistic = new StatisticsResponse(numberAlumniLevel, numberMappedAlumniLevel, numberAcademyEmployedLevel, numberIndustryEmployedLevel, numberGovernmentEmployedLevel, numberOngEmployedLevel, numberOthersEmployedLevel);
+						StatisticsModel levelStatistic = new StatisticsModel(numberAlumniLevel, numberMappedAlumniLevel, numberAcademyEmployedLevel, numberIndustryEmployedLevel, numberGovernmentEmployedLevel, numberOngEmployedLevel, numberOthersEmployedLevel);
 						
 						levelStatistics.put(level, levelStatistic);
 					}

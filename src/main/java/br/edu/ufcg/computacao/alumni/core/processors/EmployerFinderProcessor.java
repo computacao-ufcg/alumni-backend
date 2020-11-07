@@ -1,8 +1,11 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import br.edu.ufcg.computacao.alumni.core.models.Employer;
 import org.apache.log4j.Logger;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
@@ -27,6 +30,7 @@ public class EmployerFinderProcessor extends Thread {
 			try {
 				Collection<EmployerResponse> consolidatedEmployers = EmployersHolder.getInstance().getEmployers(); 
 				Collection<LinkedinAlumnusData> linkedinProfiles = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
+				Map<String, Employer> newEmployers = new HashMap<>();
 				
 				for (LinkedinAlumnusData profile : linkedinProfiles) {
 					LinkedinJobData[] jobData = profile.getJobs();
@@ -39,9 +43,11 @@ public class EmployerFinderProcessor extends Thread {
 						
 						if (!consolidatedEmployers.contains(employer)) {
 							consolidatedEmployers.add(employer);
+							newEmployers.put(employer.getLinkedinId(), new Employer(name, EmployerType.UNDEFINED));
 						}
 					}
 				}
+				EmployersHolder.getInstance().setEmployers(newEmployers);
 				
 				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(1))));
 			} catch (InterruptedException e) {

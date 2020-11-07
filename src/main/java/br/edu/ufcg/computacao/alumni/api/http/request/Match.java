@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -114,5 +115,24 @@ public class Match {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
         }
+    }
+
+    @RequestMapping(value = "alumnus/{registration}", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Match.GET_ALUMNUS_MATCHES_OPERATION)
+    public ResponseEntity<List<MatchResponse>> getAlumnusMatches(
+            @ApiParam(value = ApiDocumentation.Match.REGISTRATION_PARAMETER)
+            @PathVariable String registration,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws EurecaException {
+
+        try {
+            List<MatchResponse> response = ApplicationFacade.getInstance().getAlumnusMatches( token ,registration);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+
     }
 }

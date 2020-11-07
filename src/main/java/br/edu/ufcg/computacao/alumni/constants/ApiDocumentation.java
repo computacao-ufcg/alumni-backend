@@ -46,6 +46,7 @@ public class ApiDocumentation {
         public static final String REGISTRATION_PARAMETER = "Alumnus registration.";
         public static final String MATCH_PARAMETER = "A registrations number and its matching LinkedIn ID.";
         public static final String PAGE = "The list is paged. This parameter indicates which page should be fetched.";
+        public static final String GET_ALUMNUS_MATCHES_OPERATION = "lists matches of one alumnus";
     }
 
     public static class Version {
@@ -68,5 +69,9 @@ public class ApiDocumentation {
         public static final String SET_EMPLOYER_TYPE = "Assign type to the organization whose linkedinId is 'linkedinId'";
         public static final String GET_EMPLOYERS_UNDEFINED = "Lists information about organizations where graduates of a course work or have worked, whose type is undefined";
         public static final String DELETE_EMPLOYER_TYPE = "Sets employer type to undefined";
+    }
+
+    public static class Statistics {
+        public static final String GET_STATISTICS_OPERATION = "returns a Statistic response associated with graduates of the course";
     }
 }

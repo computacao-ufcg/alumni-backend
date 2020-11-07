@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = Linkedin.ENDPOINT)
+@RequestMapping(value = Employer.ENDPOINT)
 @Api(description = ApiDocumentation.Alumni.API)
 public class Employer {
     protected static final String ENDPOINT = SystemConstants.SERVICE_BASE_ENDPOINT + "employer";
@@ -84,7 +84,7 @@ public class Employer {
 
     @RequestMapping(value = "/undefined/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYERS_UNDEFINED)
-    public ResponseEntity<Void> getEmployersUndefined(
+    public ResponseEntity<Page<EmployerResponse>> getUnclassifiedEmployers(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)

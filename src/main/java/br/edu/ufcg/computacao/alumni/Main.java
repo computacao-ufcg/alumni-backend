@@ -1,10 +1,12 @@
 package br.edu.ufcg.computacao.alumni;
 
+import br.edu.ufcg.computacao.alumni.api.http.request.Employer;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
+import br.edu.ufcg.computacao.alumni.core.processors.EmployerFinderProcessor;
 import br.edu.ufcg.computacao.alumni.core.processors.MatchesFinderProcessor;
 import br.edu.ufcg.computacao.alumni.core.util.PluginInstantiator;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
@@ -39,9 +41,11 @@ public class Main implements ApplicationRunner {
             // Reading input data
             LinkedinDataHolder.getInstance().start();
             AlumniHolder.getInstance().start();
+            EmployersHolder.getInstance();
             MatchesHolder.getInstance();
             PendingMatchesHolder.getInstance();
             new MatchesFinderProcessor().start();
+            new EmployerFinderProcessor().start();
             LOGGER.info(Messages.ALL_SET);
         } catch (Exception e) {
             LOGGER.error(Messages.ERROR_READING_CONFIGURATION_FILE, e);
