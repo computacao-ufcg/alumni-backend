@@ -36,8 +36,8 @@ public class Statistics {
             throws EurecaException {
 
         try {
-            CourseName c = CourseName.valueOf(level);
-            Level l = Level.valueOf(courseName);
+            CourseName c = CourseName.valueOf(courseName);
+            Level l = Level.valueOf(level);
             StatisticsResponse statistics = ApplicationFacade.getInstance().getStatistics(token,l , c);
             return new ResponseEntity<>(statistics, HttpStatus.OK);
         } catch(EurecaException e) {
