@@ -84,7 +84,7 @@ public class Employer {
 
     @RequestMapping(value = "/undefined/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYERS_UNDEFINED)
-    public ResponseEntity<Void> getUnclassifiedEmployers(
+    public ResponseEntity<Page<EmployerResponse>> getUnclassifiedEmployers(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
