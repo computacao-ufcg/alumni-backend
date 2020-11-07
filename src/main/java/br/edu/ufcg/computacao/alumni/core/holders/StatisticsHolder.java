@@ -2,8 +2,6 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import br.edu.ufcg.computacao.alumni.api.http.response.StatisticsResponse;
 import org.apache.log4j.Logger;
 
 import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
@@ -47,6 +45,4 @@ public class StatisticsHolder {
 	public synchronized StatisticsModel getStatistics(Level level) {
 		return this.levelsStatistics.get(level);
 	}
-
-
 }

@@ -112,7 +112,7 @@ public class ApplicationFacade {
 
     public Page<EmployerResponse> getEmployersByType(String token, int page, EmployerType type) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_BY_TYPE);
-        return EmployersHolder.getInstance().getEmployersPage( page, type);
+        return EmployersHolder.getInstance().getEmployersPage(page, type);
     }
 
     public Page<EmployerResponse> getUnclassifiedEmployers(String token, int page) throws EurecaException {
