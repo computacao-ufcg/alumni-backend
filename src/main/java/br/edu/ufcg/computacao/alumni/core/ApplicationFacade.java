@@ -44,19 +44,19 @@ public class ApplicationFacade {
         this.authorizationPlugin = authorizationPlugin;
     }
 
-    public Collection<UfcgAlumnusData> getAlumniData(String token) throws EurecaException {
+    public Page<UfcgAlumnusData> getAlumniData(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI);
-        return AlumniHolder.getInstance().getAlumniData();
+        return AlumniHolder.getInstance().getAlumniDataPage(page);
     }
 
-    public List<String> getAlumniNames(String token) throws EurecaException {
+    public Page<String> getAlumniNames(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_NAMES);
-        return AlumniHolder.getInstance().getAlumniNames();
+        return AlumniHolder.getInstance().getAlumniNamesPage(page);
     }
 
-    public List<CurrentJob> getAlumniCurrentJob(String token) throws EurecaException {
+    public Page<CurrentJob> getAlumniCurrentJob(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_CURRENT_JOB);
-        return AlumniHolder.getInstance().getAlumniCurrentJob();
+        return AlumniHolder.getInstance().getAlumniCurrentJobPage(page);
     }
 
     public Page<PendingMatch> getAlumniPendingMatches(String token, int page) throws EurecaException {
@@ -74,9 +74,9 @@ public class ApplicationFacade {
         MatchesHolder.getInstance().deleteMatch(registration);
     }
 
-    public Collection<LinkedinAlumnusData> getLinkedinAlumniData(String token) throws EurecaException {
+    public Page<LinkedinAlumnusData> getLinkedinAlumniData(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
-        return LinkedinDataHolder.getInstance().getLinkedinAlumniData();
+        return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPage(page);
     }
 
     public Page<MatchResponse> getAlumniMatches(String token, int page) throws EurecaException {
@@ -92,9 +92,9 @@ public class ApplicationFacade {
         return MatchesHolder.getInstance().getAlumnusMatches(registration);
     }
 
-    public List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) throws EurecaException {
+    public Page<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_NAME_PROFILE_PAIRS);
-        return LinkedinDataHolder.getInstance().getLinkedinNameProfilePairs(token);
+        return LinkedinDataHolder.getInstance().getLinkedinNameProfilePairsPage(page);
     }
 
     public String getPublicKey() throws EurecaException {

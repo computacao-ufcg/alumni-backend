@@ -8,15 +8,15 @@ import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Collection;
-import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -28,15 +28,22 @@ public class Alumni {
 
     private static final Logger LOGGER = Logger.getLogger(Alumni.class);
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/{page}",method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_OPERATION)
-    public ResponseEntity<Collection<UfcgAlumnusData>> getAlumni(
+    public ResponseEntity<Page<UfcgAlumnusData>> getAlumni(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
-            Collection<UfcgAlumnusData> ufcgAlumniData = ApplicationFacade.getInstance().getAlumniData(token);
+            int p;
+            try {
+                p = Integer.parseInt(page);
+            } catch(NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+            }
+            Page<UfcgAlumnusData> ufcgAlumniData = ApplicationFacade.getInstance().getAlumniData(token, p);
             return new ResponseEntity<>(ufcgAlumniData, HttpStatus.OK);
         } catch (EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
@@ -44,15 +51,22 @@ public class Alumni {
         }
     }
 
-    @RequestMapping(value = "/names", method = RequestMethod.GET)
+    @RequestMapping(value = "/names/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_NAMES_OPERATION)
-    public ResponseEntity<List<String>> getAlumniNames(
+    public ResponseEntity<Page<String>> getAlumniNames(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
-            List<String> alumniNames = ApplicationFacade.getInstance().getAlumniNames(token);
+            int p;
+            try {
+                p = Integer.parseInt(page);
+            } catch(NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+            }
+            Page<String> alumniNames = ApplicationFacade.getInstance().getAlumniNames(token, p);
             return new ResponseEntity<>(alumniNames, HttpStatus.OK);
         } catch (EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
@@ -60,15 +74,22 @@ public class Alumni {
         }
     }
 
-    @RequestMapping(value = "/currentJob", method = RequestMethod.GET)
+    @RequestMapping(value = "/currentJob/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_CURRENT_JOB_OPERATION)
-    public ResponseEntity<List<CurrentJob>> getAlumniCurrentJob(
+    public ResponseEntity<Page<CurrentJob>> getAlumniCurrentJob(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
-            List<CurrentJob> currentJobs = ApplicationFacade.getInstance().getAlumniCurrentJob(token);
+            int p;
+            try {
+                p = Integer.parseInt(page);
+            } catch(NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+            }
+            Page<CurrentJob> currentJobs = ApplicationFacade.getInstance().getAlumniCurrentJob(token, p);
             return new ResponseEntity<>(currentJobs, HttpStatus.OK);
         } catch (EurecaException e) {
             LOGGER.debug(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

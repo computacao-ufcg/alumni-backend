@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +29,10 @@ import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
 import br.edu.ufcg.computacao.alumni.core.parsers.AlumnusParser;
 import br.edu.ufcg.computacao.alumni.core.util.ChecksumGenerator;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 public class LinkedinDataHolder extends Thread {
     private Logger LOGGER = Logger.getLogger(LinkedinDataHolder.class);
@@ -122,7 +125,27 @@ public class LinkedinDataHolder extends Thread {
         return this.linkedinAlumniData.values();
     }
 
-    public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) {
+    public synchronized Page<LinkedinAlumnusData> getLinkedinAlumniDataPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<LinkedinAlumnusData> list = this.getLinkedinAlumniDataList();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<LinkedinAlumnusData> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
+    }
+
+    private synchronized List<LinkedinAlumnusData> getLinkedinAlumniDataList() {
+        List<LinkedinAlumnusData> linkedinList = new ArrayList<>();
+        for (LinkedinAlumnusData alumnus : this.getLinkedinAlumniData()) {
+            linkedinList.add(alumnus);
+        }
+        return linkedinList;
+    }
+
+    public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs() {
         Collection<LinkedinAlumnusData> linkedinAlumniData = this.linkedinAlumniData.values();
         List<LinkedinNameProfilePair> pairs = new ArrayList<>(linkedinAlumniData.size());
 
@@ -132,6 +155,18 @@ public class LinkedinDataHolder extends Thread {
             pairs.add(new LinkedinNameProfilePair(alumnus.getFullName(), alumnus.getLinkedinProfile()));
         }
         return pairs;
+    }
+
+    public synchronized Page<LinkedinNameProfilePair> getLinkedinNameProfilePairsPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<LinkedinNameProfilePair> list = this.getLinkedinNameProfilePairs();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<LinkedinNameProfilePair> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
     }
     
     /**

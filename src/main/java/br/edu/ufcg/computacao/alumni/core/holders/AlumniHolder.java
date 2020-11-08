@@ -8,6 +8,10 @@ import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,6 +113,26 @@ public class AlumniHolder extends Thread {
         return alumniCollection;
     }
 
+    public synchronized Page<UfcgAlumnusData> getAlumniDataPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<UfcgAlumnusData> list = this.getAlumniDataList();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<UfcgAlumnusData> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
+    }
+
+    private synchronized List<UfcgAlumnusData> getAlumniDataList() {
+        List<UfcgAlumnusData> alumniList = new ArrayList<>();
+        for (UfcgAlumnusData alumnus : this.getAlumniData()) {
+            alumniList.add(alumnus);
+        }
+        return alumniList;
+    }
+
     public synchronized List<String> getAlumniNames() {
         List<String> alumniNames = new LinkedList<>();
 
@@ -115,6 +140,17 @@ public class AlumniHolder extends Thread {
             alumniNames.add(this.alumni[i].getFullName());
         }
         return alumniNames;
+    }
+    public synchronized Page<String> getAlumniNamesPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<String> list = this.getAlumniNames();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<String> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
     }
 
     public List<CurrentJob> getAlumniCurrentJob() {
@@ -130,6 +166,17 @@ public class AlumniHolder extends Thread {
             }
         }
         return alumniCurrentJob;
+    }
+    public Page<CurrentJob> getAlumniCurrentJobPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<CurrentJob> list = this.getAlumniCurrentJob();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<CurrentJob> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
     }
     
     private boolean dataHasChanged(String filePath) throws IOException {
