@@ -1,6 +1,7 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
+import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
 import br.edu.ufcg.computacao.alumni.constants.*;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Degree;
@@ -8,6 +9,10 @@ import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,6 +112,26 @@ public class AlumniHolder extends Thread {
             alumniCollection.add(this.alumni[i]);
         }
         return alumniCollection;
+    }
+
+    public synchronized Page<UfcgAlumnusData> getAlumniDataPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<UfcgAlumnusData> list = this.getAlumniDataList();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<UfcgAlumnusData> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
+    }
+
+    private synchronized List<UfcgAlumnusData> getAlumniDataList() {
+        List<UfcgAlumnusData> alumniList = new ArrayList<>();
+        for (UfcgAlumnusData alumnus : this.getAlumniData()) {
+            alumniList.add(alumnus);
+        }
+        return alumniList;
     }
 
     public synchronized List<String> getAlumniNames() {

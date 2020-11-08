@@ -44,9 +44,9 @@ public class ApplicationFacade {
         this.authorizationPlugin = authorizationPlugin;
     }
 
-    public Collection<UfcgAlumnusData> getAlumniData(String token) throws EurecaException {
+    public Page<UfcgAlumnusData> getAlumniData(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI);
-        return AlumniHolder.getInstance().getAlumniData();
+        return AlumniHolder.getInstance().getAlumniDataPage(page);
     }
 
     public List<String> getAlumniNames(String token) throws EurecaException {
