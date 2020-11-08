@@ -18,9 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
-
 @CrossOrigin
 @RestController
 @RequestMapping(value = Linkedin.ENDPOINT)
@@ -54,15 +51,22 @@ public class Linkedin {
         }
     }
 
-    @RequestMapping(value = "/entries", method = RequestMethod.GET)
+    @RequestMapping(value = "/entries/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_NAMES_OPERATION)
-    public ResponseEntity<List<LinkedinNameProfilePair>> getLinkedinNameProfilePairs(
+    public ResponseEntity<Page<LinkedinNameProfilePair>> getLinkedinNameProfilePairs(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
-            List<LinkedinNameProfilePair> alumniNames = ApplicationFacade.getInstance().getLinkedinNameProfilePairs(token);
+            int p;
+            try {
+                p = Integer.parseInt(page);
+            } catch(NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+            }
+            Page<LinkedinNameProfilePair> alumniNames = ApplicationFacade.getInstance().getLinkedinNameProfilePairs(token, p);
             return new ResponseEntity<>(alumniNames, HttpStatus.OK);
         } catch (EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

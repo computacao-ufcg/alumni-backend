@@ -92,9 +92,9 @@ public class ApplicationFacade {
         return MatchesHolder.getInstance().getAlumnusMatches(registration);
     }
 
-    public List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) throws EurecaException {
+    public Page<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_NAME_PROFILE_PAIRS);
-        return LinkedinDataHolder.getInstance().getLinkedinNameProfilePairs(token);
+        return LinkedinDataHolder.getInstance().getLinkedinNameProfilePairsPage(page);
     }
 
     public String getPublicKey() throws EurecaException {

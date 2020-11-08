@@ -1,7 +1,6 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
-import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
 import br.edu.ufcg.computacao.alumni.constants.*;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Degree;

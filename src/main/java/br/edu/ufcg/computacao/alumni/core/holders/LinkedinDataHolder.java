@@ -13,8 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -147,7 +145,7 @@ public class LinkedinDataHolder extends Thread {
         return linkedinList;
     }
 
-    public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) {
+    public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs() {
         Collection<LinkedinAlumnusData> linkedinAlumniData = this.linkedinAlumniData.values();
         List<LinkedinNameProfilePair> pairs = new ArrayList<>(linkedinAlumniData.size());
 
@@ -157,6 +155,18 @@ public class LinkedinDataHolder extends Thread {
             pairs.add(new LinkedinNameProfilePair(alumnus.getFullName(), alumnus.getLinkedinProfile()));
         }
         return pairs;
+    }
+
+    public synchronized Page<LinkedinNameProfilePair> getLinkedinNameProfilePairsPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<LinkedinNameProfilePair> list = this.getLinkedinNameProfilePairs();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<LinkedinNameProfilePair> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
     }
     
     /**
