@@ -53,15 +53,22 @@ public class Alumni {
         }
     }
 
-    @RequestMapping(value = "/names", method = RequestMethod.GET)
+    @RequestMapping(value = "/names/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_NAMES_OPERATION)
-    public ResponseEntity<List<String>> getAlumniNames(
+    public ResponseEntity<Page<String>> getAlumniNames(
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @PathVariable String page,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
-            List<String> alumniNames = ApplicationFacade.getInstance().getAlumniNames(token);
+            int p;
+            try {
+                p = Integer.parseInt(page);
+            } catch(NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+            }
+            Page<String> alumniNames = ApplicationFacade.getInstance().getAlumniNames(token, p);
             return new ResponseEntity<>(alumniNames, HttpStatus.OK);
         } catch (EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

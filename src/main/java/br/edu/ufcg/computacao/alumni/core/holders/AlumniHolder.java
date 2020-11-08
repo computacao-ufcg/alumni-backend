@@ -142,6 +142,17 @@ public class AlumniHolder extends Thread {
         }
         return alumniNames;
     }
+    public synchronized Page<String> getAlumniNamesPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<String> list = this.getAlumniNames();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<String> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
+    }
 
     public List<CurrentJob> getAlumniCurrentJob() {
         List<CurrentJob> alumniCurrentJob = new LinkedList<>();
