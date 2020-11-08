@@ -74,9 +74,9 @@ public class ApplicationFacade {
         MatchesHolder.getInstance().deleteMatch(registration);
     }
 
-    public Collection<LinkedinAlumnusData> getLinkedinAlumniData(String token) throws EurecaException {
+    public Page<LinkedinAlumnusData> getLinkedinAlumniData(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
-        return LinkedinDataHolder.getInstance().getLinkedinAlumniData();
+        return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPage(page);
     }
 
     public Page<MatchResponse> getAlumniMatches(String token, int page) throws EurecaException {

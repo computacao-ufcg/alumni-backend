@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +31,10 @@ import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
 import br.edu.ufcg.computacao.alumni.core.parsers.AlumnusParser;
 import br.edu.ufcg.computacao.alumni.core.util.ChecksumGenerator;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 public class LinkedinDataHolder extends Thread {
     private Logger LOGGER = Logger.getLogger(LinkedinDataHolder.class);
@@ -120,6 +125,26 @@ public class LinkedinDataHolder extends Thread {
 
     public synchronized Collection<LinkedinAlumnusData> getLinkedinAlumniData() {
         return this.linkedinAlumniData.values();
+    }
+
+    public synchronized Page<LinkedinAlumnusData> getLinkedinAlumniDataPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<LinkedinAlumnusData> list = this.getLinkedinAlumniDataList();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<LinkedinAlumnusData> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
+    }
+
+    private synchronized List<LinkedinAlumnusData> getLinkedinAlumniDataList() {
+        List<LinkedinAlumnusData> linkedinList = new ArrayList<>();
+        for (LinkedinAlumnusData alumnus : this.getLinkedinAlumniData()) {
+            linkedinList.add(alumnus);
+        }
+        return linkedinList;
     }
 
     public synchronized List<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token) {
