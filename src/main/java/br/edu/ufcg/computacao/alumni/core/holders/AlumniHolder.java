@@ -168,6 +168,17 @@ public class AlumniHolder extends Thread {
         }
         return alumniCurrentJob;
     }
+    public Page<CurrentJob> getAlumniCurrentJobPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+
+        List<CurrentJob> list = this.getAlumniCurrentJob();
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<CurrentJob> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return page;
+    }
     
     private boolean dataHasChanged(String filePath) throws IOException {
         BasicFileAttributes attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);

@@ -54,9 +54,9 @@ public class ApplicationFacade {
         return AlumniHolder.getInstance().getAlumniNamesPage(page);
     }
 
-    public List<CurrentJob> getAlumniCurrentJob(String token) throws EurecaException {
+    public Page<CurrentJob> getAlumniCurrentJob(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_CURRENT_JOB);
-        return AlumniHolder.getInstance().getAlumniCurrentJob();
+        return AlumniHolder.getInstance().getAlumniCurrentJobPage(page);
     }
 
     public Page<PendingMatch> getAlumniPendingMatches(String token, int page) throws EurecaException {
