@@ -12,17 +12,17 @@ public class UfcgAlumnusData {
     private String registration;
     @ApiModelProperty(position = 1, example = ApiDocumentation.Model.FULL_NAME)
     private String fullName;
-    private Degree[] graus;
+    private Degree[] degrees;
 
-    public UfcgAlumnusData(String registration, String fullName, Degree[] graus) {
+    public UfcgAlumnusData(String registration, String fullName, Degree[] degrees) {
         this.fullName = fullName;
-        this.graus = graus;
+        this.degrees = degrees;
         this.registration = registration;
     }
 
-    public UfcgAlumnusData(String fullName, Degree[] graus) {
+    public UfcgAlumnusData(String fullName, Degree[] degrees) {
         this.fullName = fullName;
-        this.graus = graus;
+        this.degrees = degrees;
     }
 
     public String getFullName() {
@@ -33,12 +33,12 @@ public class UfcgAlumnusData {
         this.fullName = fullName;
     }
 
-    public Degree[] getGraus() {
-        return graus;
+    public Degree[] getDegrees() {
+        return degrees;
     }
 
-    public void setGraus(Degree[] graus) {
-        this.graus = graus;
+    public void setDegrees(Degree[] degrees) {
+        this.degrees = degrees;
     }
 
     public String getRegistration() {
@@ -56,13 +56,13 @@ public class UfcgAlumnusData {
         UfcgAlumnusData that = (UfcgAlumnusData) o;
         return getRegistration().equals(that.getRegistration()) &&
                 getFullName().equals(that.getFullName()) &&
-                Arrays.equals(getGraus(), that.getGraus());
+                Arrays.equals(getDegrees(), that.getDegrees());
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(getRegistration(), getFullName());
-        result = 31 * result + Arrays.hashCode(getGraus());
+        result = 31 * result + Arrays.hashCode(getDegrees());
         return result;
     }
 
@@ -71,7 +71,7 @@ public class UfcgAlumnusData {
         return "UfcgAlumnusData{" +
                 "registration='" + registration + '\'' +
                 ", fullName='" + fullName + '\'' +
-                ", graus=" + Arrays.toString(graus) +
+                ", degrees=" + Arrays.toString(degrees) +
                 '}';
     }
 }

@@ -34,7 +34,7 @@ public class StatisticsProcessor extends Thread {
 	private Set<UfcgAlumnusData> filterAlumniByCourseName(Collection<UfcgAlumnusData> alumni, CourseName courseName) {
 		return alumni.stream()
 				.filter(alumnus -> {
-					Degree[] alumnusDegrees = alumnus.getGraus();
+					Degree[] alumnusDegrees = alumnus.getDegrees();
 					for (Degree degree : alumnusDegrees) {
 						if (degree.getCourseName().equals(courseName)) {
 							return true;
@@ -47,7 +47,7 @@ public class StatisticsProcessor extends Thread {
 	private Set<UfcgAlumnusData> filterAlumniByLevel(Collection<UfcgAlumnusData> alumni, Level level) {
 		return alumni.stream()
 				.filter(alumnus -> {
-					Degree[] alumnusDegrees = alumnus.getGraus();
+					Degree[] alumnusDegrees = alumnus.getDegrees();
 					for (Degree degree : alumnusDegrees) {
 						if (degree.getLevel().equals(level)) {
 							return true;

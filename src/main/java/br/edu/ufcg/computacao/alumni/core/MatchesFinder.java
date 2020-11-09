@@ -196,7 +196,7 @@ public class MatchesFinder {
 	private int getMatchesBasedOnSchoolData(UfcgAlumnusData alumni, LinkedinSchoolData schoolData, SchoolName school) {
 		CourseName courseName = getCourseName(schoolData);
 		Level degreeLevel = getDegreeLevel(schoolData);
-		Degree alumnusDegreeData = getDegreeData(alumni.getGraus(), courseName, degreeLevel);
+		Degree alumnusDegreeData = getDegreeData(alumni.getDegrees(), courseName, degreeLevel);
 
 		if (alumnusDegreeData == null) {
 			return 0;
