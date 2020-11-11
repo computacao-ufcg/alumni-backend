@@ -42,7 +42,6 @@ public class Main implements ApplicationRunner {
             AlumniHolder.getInstance().start();
             EmployersHolder.getInstance();
             MatchesHolder.getInstance();
-            PendingMatchesHolder.getInstance();
             new MatchesFinderProcessor().start();
             new EmployerFinderProcessor().start();
             LOGGER.info(Messages.ALL_SET);

@@ -5,11 +5,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +27,7 @@ public class MatchesHolder {
     private static final String FIELD_SEPARATOR = ",";
     
     private Map<String, String> matches;
+    private Collection<PendingMatch> pendingMatches;
     private String matchesFilePath;
     private static MatchesHolder instance;
 
@@ -37,6 +36,7 @@ public class MatchesHolder {
                 getProperty(ConfigurationPropertyKeys.MATCHES_INPUT_KEY,
                         ConfigurationPropertyDefaults.DEFAULT_MATCHES_FILE_NAME);
         this.loadMatches(this.matchesFilePath);
+        this.pendingMatches = new HashSet<>();
     }
 
     public static MatchesHolder getInstance() {
@@ -138,5 +138,33 @@ public class MatchesHolder {
 
     public synchronized String getLinkedinId(String registration) {
         return this.matches.get(registration);
+    }
+
+    public synchronized Collection<PendingMatch> getPendingMatches() {
+        return new LinkedList<>(this.pendingMatches);
+    }
+
+    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+        List<PendingMatch> list = getPendingMatchesList();
+
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<PendingMatch> page = new PageImpl<PendingMatch>(list.subList(start, end), pageable, list.size());
+        return page;
+    }
+
+    private synchronized List<PendingMatch> getPendingMatchesList() {
+        List<PendingMatch> pendingMatchesList = new ArrayList<PendingMatch>();
+        for (PendingMatch pendingMatch : this.pendingMatches) {
+            pendingMatchesList.add(pendingMatch);
+        }
+        return pendingMatchesList;
+    }
+
+    public synchronized void setPendingMatches(Collection<PendingMatch> newPendingMatches) {
+        this.pendingMatches = newPendingMatches;
     }
 }

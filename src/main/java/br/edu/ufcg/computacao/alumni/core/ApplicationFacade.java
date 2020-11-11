@@ -61,7 +61,7 @@ public class ApplicationFacade {
 
     public Page<PendingMatch> getAlumniPendingMatches(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_PENDING_MATCHES);
-        return PendingMatchesHolder.getInstance().getPendingMatchesPage(page);
+        return MatchesHolder.getInstance().getPendingMatchesPage(page);
     }
 
     public void setMatch(String token, String registration, String linkedinId) throws EurecaException {

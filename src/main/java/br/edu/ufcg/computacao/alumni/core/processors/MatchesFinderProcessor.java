@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import br.edu.ufcg.computacao.alumni.core.holders.PendingMatchesHolder;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
@@ -96,7 +95,7 @@ public class MatchesFinderProcessor extends Thread {
 					}
 				}
 
-				PendingMatchesHolder.getInstance().setPendingMatches(newPendingMatches);
+				MatchesHolder.getInstance().setPendingMatches(newPendingMatches);
 				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(1))));
 			} catch (InterruptedException e) {
 				isActive = false;
