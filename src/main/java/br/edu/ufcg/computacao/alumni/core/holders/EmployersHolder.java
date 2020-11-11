@@ -1,11 +1,19 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
+
 import org.apache.log4j.Logger;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
@@ -19,15 +27,20 @@ import org.springframework.data.domain.Pageable;
 
 public class EmployersHolder {
 	private Logger LOGGER = Logger.getLogger(EmployersHolder.class);
-	
+    private static final String FIELD_SEPARATOR = ",";
+
 	private static EmployersHolder instance;
 	
 	// company url
 	private Map<String, Employer> classifiedEmployers;
 	private Map<String, Employer> unclassifiedEmployers;
+	private String employerFilePath;
 	
 	private EmployersHolder() {
-		this.classifiedEmployers = new HashMap<>();
+		this.employerFilePath = HomeDir.getPath() + PropertiesHolder.getInstance()
+			.getProperty(ConfigurationPropertyKeys.EMPLOYERS_FILE_KEY);
+		
+		this.loadClassifiedEmployers(this.employerFilePath);
 		this.unclassifiedEmployers = new HashMap<>();
 	}
 	
@@ -60,6 +73,50 @@ public class EmployersHolder {
 		this.classifiedEmployers.remove(employerId, employer);
 		employer.setType(EmployerType.UNDEFINED);		
 		this.unclassifiedEmployers.put(employerId, employer);
+	}
+	
+	public synchronized void loadClassifiedEmployers(String filePath) throws FatalErrorException {
+		this.classifiedEmployers = new HashMap<>();
+		try (BufferedReader csvReader = new BufferedReader(new FileReader(filePath))) {
+			String row;
+			while ((row = csvReader.readLine()) != null) {
+				String data[] = row.split(FIELD_SEPARATOR);
+				String employerId = data[0];
+				String employerName = data[1];
+				EmployerType employerType = EmployerType.valueOf(data[2]);
+				
+				this.classifiedEmployers.put(employerId, new Employer(employerName, employerType));
+			}
+			csvReader.close();
+		} catch (IOException e) {
+			throw new FatalErrorException(e.getMessage());
+		}
+	}
+	
+	public synchronized void saveEmployers() throws IOException {
+		BufferedWriter csvWriter = new BufferedWriter(new FileWriter(this.employerFilePath, false));
+		for (Entry<String, Employer> entry : this.classifiedEmployers.entrySet()) {
+			String employerId = entry.getKey();
+			Employer employer = entry.getValue();
+			String employerName = employer.getName();
+			String employerType = employer.getType().getValue();
+			
+			csvWriter.write(employerId + FIELD_SEPARATOR + employerName + FIELD_SEPARATOR + employerType + System.lineSeparator());
+		}
+		csvWriter.close();
+	}
+	
+	public synchronized void addEmployers(String employerId, String employerName, String employerType) {
+		if (this.classifiedEmployers.containsKey(employerId)) {
+			this.classifiedEmployers.replace(employerId, new Employer(employerName, EmployerType.valueOf(employerType)));
+		} else {
+			this.classifiedEmployers.put(employerId, new Employer(employerName, EmployerType.valueOf(employerType)));
+		}
+		try {
+			this.saveEmployers();
+		} catch (IOException e) {
+			LOGGER.error(String.format(Messages.COULD_NOT_SAVE_EMPLOYERS_S, this.classifiedEmployers));
+		}
 	}
 	
 	private synchronized Collection<EmployerResponse> getEmployers(Map<String, Employer> employers) {
