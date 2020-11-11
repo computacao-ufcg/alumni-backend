@@ -43,9 +43,9 @@ public class Main implements ApplicationRunner {
             AlumniHolder.getInstance().start();
             EmployersHolder.getInstance();
             MatchesHolder.getInstance();
-            new MatchesFinderProcessor().run();
-            new EmployerFinderProcessor().run();
-            new StatisticsProcessor().run();
+            new MatchesFinderProcessor().start();
+            new EmployerFinderProcessor().start();
+            new StatisticsProcessor().start();
             LOGGER.info(Messages.ALL_SET);
         } catch (Exception e) {
             LOGGER.error(Messages.ERROR_READING_CONFIGURATION_FILE, e);
