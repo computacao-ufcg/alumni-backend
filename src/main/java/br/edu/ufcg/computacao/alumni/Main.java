@@ -7,6 +7,7 @@ import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
 import br.edu.ufcg.computacao.alumni.core.processors.EmployerFinderProcessor;
 import br.edu.ufcg.computacao.alumni.core.processors.MatchesFinderProcessor;
+import br.edu.ufcg.computacao.alumni.core.processors.StatisticsProcessor;
 import br.edu.ufcg.computacao.alumni.core.util.PluginInstantiator;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
@@ -42,8 +43,9 @@ public class Main implements ApplicationRunner {
             AlumniHolder.getInstance().start();
             EmployersHolder.getInstance();
             MatchesHolder.getInstance();
-            new MatchesFinderProcessor().start();
-            new EmployerFinderProcessor().start();
+            new MatchesFinderProcessor().run();
+            new EmployerFinderProcessor().run();
+            new StatisticsProcessor().run();
             LOGGER.info(Messages.ALL_SET);
         } catch (Exception e) {
             LOGGER.error(Messages.ERROR_READING_CONFIGURATION_FILE, e);

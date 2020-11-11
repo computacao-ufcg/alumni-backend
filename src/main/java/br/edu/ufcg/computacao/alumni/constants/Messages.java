@@ -7,6 +7,7 @@ public class Messages {
     public static final String COULD_NOT_PROCESS_ENTRY = "Could not process Linkedin entry.";
     public static final String COULD_NOT_REFRESH_LINKEDIN_DATA = "Could not refresh Linkedin data.";
     public static final String COULD_NOT_SAVE_MATCHES_S = "Could not save matches in file: %s.";
+    public static final String COULD_NOT_SAVE_EMPLOYERS_S = "Could not save employers in file: %s.";
     public static final String CREATING_ALUMNI_S = "Creating alumni: %s.";
     public static final String CREATING_EDUCATION_S = "Creating education: %s.";
     public static final String CREATING_JOB_S = "Creating job: %s.";
