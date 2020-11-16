@@ -32,18 +32,18 @@ public class Match {
     private static final Logger LOGGER = Logger.getLogger(Match.class);
 
     @ApiOperation(value = ApiDocumentation.Match.SET_MATCH_OPERATION)
-    @RequestMapping(value = "/{registration}/{linkedinId}", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<Void> setMatch(
-            @ApiParam(value = ApiDocumentation.Match.REGISTRATION_PARAMETER)
-            @PathVariable String registration,
-            @ApiParam(value = ApiDocumentation.Match.LINKEDIN_ID_PARAMETER)
-            @PathVariable String linkeinId,
+            @ApiParam(value = ApiDocumentation.Alumni.REGISTRATION_PARAMETER)
+            @RequestParam String registration,
+            @ApiParam(value = ApiDocumentation.Linkedin.LINKEDIN_ID_PARAMETER)
+            @RequestParam String linkedinId,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
-            ApplicationFacade.getInstance().setMatch(token, registration, linkeinId);
+            ApplicationFacade.getInstance().setMatch(token, registration, linkedinId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
@@ -54,7 +54,7 @@ public class Match {
     @RequestMapping(value = "/list/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Match.GET_MATCHES_OPERATION)
     public ResponseEntity<Page<LinkedinNameProfilePair>> getAlumniMatches(
-            @ApiParam(value = ApiDocumentation.Match.PAGE)
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
@@ -79,8 +79,9 @@ public class Match {
     @RequestMapping(value = "/pending/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Match.GET_PENDING_MATCHES_OPERATION)
     public ResponseEntity<Collection<PendingMatch>> getPendingMatches(
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
@@ -100,11 +101,11 @@ public class Match {
         }
     }
 
-    @RequestMapping(value = "/{registration}", method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     @ApiOperation(value = ApiDocumentation.Match.RESET_MATCH_OPERATION)
     public ResponseEntity<Void> resetMatch(
-            @ApiParam(value = ApiDocumentation.Match.REGISTRATION_PARAMETER)
-            @PathVariable String registration,
+            @ApiParam(value = ApiDocumentation.Alumni.REGISTRATION_PARAMETER)
+            @RequestParam String registration,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
@@ -118,11 +119,11 @@ public class Match {
         }
     }
 
-    @RequestMapping(value = "alumnus/{registration}", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Match.GET_ALUMNUS_MATCHES_OPERATION)
     public ResponseEntity<List<MatchResponse>> getAlumnusMatches(
-            @ApiParam(value = ApiDocumentation.Match.REGISTRATION_PARAMETER)
-            @PathVariable String registration,
+            @ApiParam(value = ApiDocumentation.Alumni.REGISTRATION_PARAMETER)
+            @RequestParam String registration,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {

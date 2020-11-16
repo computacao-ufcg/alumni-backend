@@ -20,19 +20,20 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = Alumni.ENDPOINT)
+@RequestMapping(value = Alumnus.ENDPOINT)
 @Api(description = ApiDocumentation.Alumni.API)
-public class Alumni {
+public class Alumnus {
 
-    protected static final String ENDPOINT = SystemConstants.SERVICE_BASE_ENDPOINT + "alumni";
+    protected static final String ENDPOINT = SystemConstants.SERVICE_BASE_ENDPOINT + "alumnus";
 
-    private static final Logger LOGGER = Logger.getLogger(Alumni.class);
+    private static final Logger LOGGER = Logger.getLogger(Alumnus.class);
 
     @RequestMapping(value = "/{page}",method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_OPERATION)
     public ResponseEntity<Page<UfcgAlumnusData>> getAlumni(
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
@@ -54,8 +55,9 @@ public class Alumni {
     @RequestMapping(value = "/names/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_NAMES_OPERATION)
     public ResponseEntity<Page<String>> getAlumniNames(
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
@@ -77,8 +79,9 @@ public class Alumni {
     @RequestMapping(value = "/currentJob/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Alumni.GET_CURRENT_JOB_OPERATION)
     public ResponseEntity<Page<CurrentJob>> getAlumniCurrentJob(
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 

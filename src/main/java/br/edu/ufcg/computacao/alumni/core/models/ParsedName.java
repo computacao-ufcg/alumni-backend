@@ -9,8 +9,8 @@ public class ParsedName {
 	private String suffix;
 	
 	public ParsedName(String[] names, String[] surnames, String suffix) {
-		this.names = names;
-		this.surnames = surnames;
+		this.names = (names == null ? new String[0] : names);
+		this.surnames = (surnames == null ? new String[0] : surnames);
 		this.suffix = suffix;
 	}
 
@@ -68,5 +68,4 @@ public class ParsedName {
 			return false;
 		return true;
 	}
-	
 }

@@ -63,6 +63,11 @@ public class EmployersHolder {
 		this.unclassifiedEmployers.remove(employerId, employer);
 		employer.setType(type);		
 		this.classifiedEmployers.put(employerId, employer);
+		try {
+			this.saveClassifiedEmployers();
+		} catch (IOException e) {
+			LOGGER.error(String.format(Messages.COULD_NOT_SAVE_EMPLOYERS_S, this.classifiedEmployers));
+		}
 	}
 	
 	public synchronized void resetEmployerType(String employerId) throws FatalErrorException, InvalidParameterException {
@@ -74,27 +79,34 @@ public class EmployersHolder {
 		this.classifiedEmployers.remove(employerId, employer);
 		employer.setType(EmployerType.UNDEFINED);		
 		this.unclassifiedEmployers.put(employerId, employer);
+		try {
+			this.saveClassifiedEmployers();
+		} catch (IOException e) {
+			LOGGER.error(String.format(Messages.COULD_NOT_SAVE_EMPLOYERS_S, this.classifiedEmployers));
+		}
 	}
 	
 	public synchronized void loadClassifiedEmployers(String filePath) throws FatalErrorException {
 		this.classifiedEmployers = new HashMap<>();
-		try (BufferedReader csvReader = new BufferedReader(new FileReader(filePath))) {
+		try {
+			BufferedReader csvReader = new BufferedReader(new FileReader(filePath));
 			String row;
 			while ((row = csvReader.readLine()) != null) {
 				String data[] = row.split(FIELD_SEPARATOR);
 				String employerId = data[0];
 				String employerName = data[1];
-				EmployerType employerType = EmployerType.valueOf(data[2]);
+				EmployerType employerType = EmployerType.getType(data[2]);
 				
 				this.classifiedEmployers.put(employerId, new Employer(employerName, employerType));
 			}
 			csvReader.close();
 		} catch (IOException e) {
+			LOGGER.info(Messages.COULD_NOT_LOAD_EMPLOYERS_S);
 			throw new FatalErrorException(e.getMessage());
 		}
 	}
 	
-	public synchronized void saveEmployers() throws IOException {
+	public synchronized void saveClassifiedEmployers() throws IOException {
 		BufferedWriter csvWriter = new BufferedWriter(new FileWriter(this.employerFilePath, false));
 		for (Entry<String, Employer> entry : this.classifiedEmployers.entrySet()) {
 			String employerId = entry.getKey();
@@ -106,20 +118,7 @@ public class EmployersHolder {
 		}
 		csvWriter.close();
 	}
-	
-	public synchronized void addEmployers(String employerId, String employerName, String employerType) {
-		if (this.classifiedEmployers.containsKey(employerId)) {
-			this.classifiedEmployers.replace(employerId, new Employer(employerName, EmployerType.valueOf(employerType)));
-		} else {
-			this.classifiedEmployers.put(employerId, new Employer(employerName, EmployerType.valueOf(employerType)));
-		}
-		try {
-			this.saveEmployers();
-		} catch (IOException e) {
-			LOGGER.error(String.format(Messages.COULD_NOT_SAVE_EMPLOYERS_S, this.classifiedEmployers));
-		}
-	}
-	
+
 	private synchronized Collection<EmployerResponse> getEmployers(Map<String, Employer> employers) {
 		Collection<EmployerResponse> employersResponse = new LinkedList<>();
 		
@@ -135,9 +134,9 @@ public class EmployersHolder {
 		return employersResponse;
 	}
 
-	public synchronized Page<EmployerResponse> getEmployersPage(int requiredPage) {
+	public synchronized Page<EmployerResponse> getClassifiedEmployersPage(int requiredPage) {
 		Pageable pageable= new PageRequest(requiredPage, 10);
-		Collection<EmployerResponse> employers = this.getEmployers();
+		Collection<EmployerResponse> employers = this.getClassifiedEmployers();
 
 		int start = (int) pageable.getOffset();
 		int end = (int) ((start + pageable.getPageSize()) > employers.size() ?
@@ -155,13 +154,13 @@ public class EmployersHolder {
 		return employersList;
 	}
 	
-	public synchronized Collection<EmployerResponse> getUnclassifiedEmployer() {
+	public synchronized Collection<EmployerResponse> getUnclassifiedEmployers() {
 		return this.getEmployers(this.unclassifiedEmployers);
 	}
 
 	public synchronized Page<EmployerResponse> getUnclassifiedEmployersPage(int requiredPage) {
 		Pageable pageable= new PageRequest(requiredPage, 10);
-		Collection<EmployerResponse> employers = this.getUnclassifiedEmployer();
+		Collection<EmployerResponse> employers = this.getUnclassifiedEmployers();
 
 		int start = (int) pageable.getOffset();
 		int end = (int) ((start + pageable.getPageSize()) > employers.size() ?
@@ -171,23 +170,23 @@ public class EmployersHolder {
 		return page;
 	}
 	
-	public synchronized Collection<EmployerResponse> getEmployers() {
+	public synchronized Collection<EmployerResponse> getClassifiedEmployers() {
 		return this.getEmployers(this.classifiedEmployers);
 	}
 
-	public synchronized void setEmployers(Map<String, Employer> employers) {
+	public synchronized void setUnclassifiedEmployers(Map<String, Employer> employers) {
 		this.unclassifiedEmployers = employers;
 	}
 	
-	public synchronized Collection<EmployerResponse> getEmployers(EmployerType type) {
-		return this.getEmployers().stream()
+	public synchronized Collection<EmployerResponse> getClassifiedEmployers(EmployerType type) {
+		return this.getClassifiedEmployers().stream()
 				.filter(employer -> employer.getType().equals(type))
 				.collect(Collectors.toList());
 	}
 
-	public synchronized Page<EmployerResponse> getEmployersPage(int requiredPage, EmployerType type) {
+	public synchronized Page<EmployerResponse> getClassifiedEmployersPage(int requiredPage, EmployerType type) {
 		Pageable pageable= new PageRequest(requiredPage, 10);
-		Collection<EmployerResponse> employers = this.getEmployers(type);
+		Collection<EmployerResponse> employers = this.getClassifiedEmployers(type);
 
 		int start = (int) pageable.getOffset();
 		int end = (int) ((start + pageable.getPageSize()) > employers.size() ?

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @RequestMapping(value = Linkedin.ENDPOINT)
-@Api(description = ApiDocumentation.Alumni.API)
+@Api(description = ApiDocumentation.Linkedin.API)
 public class Linkedin {
 
     protected static final String ENDPOINT = SystemConstants.SERVICE_BASE_ENDPOINT + "linkedin";
@@ -29,10 +29,11 @@ public class Linkedin {
     private static final Logger LOGGER = Logger.getLogger(Linkedin.class);
 
     @RequestMapping(value = "/{page}",method = RequestMethod.GET)
-    @ApiOperation(value = ApiDocumentation.Alumni.GET_OPERATION)
+    @ApiOperation(value = ApiDocumentation.Linkedin.GET_OPERATION)
     public ResponseEntity<Page<LinkedinAlumnusData>> getLinkedinData(
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
@@ -52,10 +53,11 @@ public class Linkedin {
     }
 
     @RequestMapping(value = "/entries/{page}", method = RequestMethod.GET)
-    @ApiOperation(value = ApiDocumentation.Alumni.GET_NAMES_OPERATION)
+    @ApiOperation(value = ApiDocumentation.Linkedin.GET_ENTRIES_OPERATION)
     public ResponseEntity<Page<LinkedinNameProfilePair>> getLinkedinNameProfilePairs(
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 

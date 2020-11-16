@@ -10,27 +10,29 @@ import br.edu.ufcg.computacao.alumni.core.util.ScoreComparator;
 
 public class PendingMatch {
 
-	private UfcgAlumnusData alumni;
+	private UfcgAlumnusData alumnus;
 	private Map<String, Collection<LinkedinAlumnusData>> possibleMatches;
 	
-	public PendingMatch(UfcgAlumnusData alumni, Map<String, Collection<LinkedinAlumnusData>> possibleMatches) {
-		this.alumni = alumni;
+	public PendingMatch(UfcgAlumnusData alumnus, Map<String, Collection<LinkedinAlumnusData>> possibleMatches) {
+		this.alumnus = alumnus;
 		this.possibleMatches = possibleMatches;
 	}
 	
 	public Map<String, Collection<LinkedinAlumnusData>> getPossibleMatches() {
-		return new TreeMap<>(new ScoreComparator());
+		Map<String, Collection<LinkedinAlumnusData>> map = new TreeMap<>(new ScoreComparator());
+		map.putAll(this.possibleMatches);
+		return map;
 	}
-	
-	public Collection<LinkedinAlumnusData> getPossibleMatchesFromScore(String score) {
-		return this.possibleMatches.get(score);
+
+	public UfcgAlumnusData getAlumnus() {
+		return this.alumnus;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((alumni == null) ? 0 : alumni.hashCode());
+		result = prime * result + ((alumnus == null) ? 0 : alumnus.hashCode());
 		return result;
 	}
 
@@ -43,10 +45,10 @@ public class PendingMatch {
 		if (getClass() != obj.getClass())
 			return false;
 		PendingMatch other = (PendingMatch) obj;
-		if (alumni == null) {
-			if (other.alumni != null)
+		if (alumnus == null) {
+			if (other.alumnus != null)
 				return false;
-		} else if (!alumni.equals(other.alumni))
+		} else if (!alumnus.equals(other.alumnus))
 			return false;
 		return true;
 	}

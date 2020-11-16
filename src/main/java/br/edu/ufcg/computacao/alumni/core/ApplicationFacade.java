@@ -105,14 +105,14 @@ public class ApplicationFacade {
         }
     }
 
-    public Page<EmployerResponse> getEmployers(String token, int page) throws EurecaException {
+    public Page<EmployerResponse> getClassifiedEmployers(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS);
-        return EmployersHolder.getInstance().getEmployersPage(page);
+        return EmployersHolder.getInstance().getClassifiedEmployersPage(page);
     }
 
-    public Page<EmployerResponse> getEmployersByType(String token, int page, EmployerType type) throws EurecaException {
+    public Page<EmployerResponse> getClassifiedEmployersByType(String token, int page, EmployerType type) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_BY_TYPE);
-        return EmployersHolder.getInstance().getEmployersPage(page, type);
+        return EmployersHolder.getInstance().getClassifiedEmployersPage(page, type);
     }
 
     public Page<EmployerResponse> getUnclassifiedEmployers(String token, int page) throws EurecaException {

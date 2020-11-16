@@ -3,7 +3,8 @@ package br.edu.ufcg.computacao.alumni.core.models;
 public enum Level {
     UNDERGRADUATE("undergraduate"),
     MASTER("master"),
-    DOCTORATE("doctorate");
+    DOCTORATE("doctorate"),
+    UNDEFINED("undefined");
 
     private String value;
 
@@ -13,5 +14,15 @@ public enum Level {
 
     public String getValue() {
         return value;
+    }
+
+    public static Level getLevel(String value) {
+        if (value.equals(UNDERGRADUATE.value)) {
+            return UNDERGRADUATE;
+        } else if (value.equals(MASTER.value)) {
+            return MASTER;
+        } else {
+            return DOCTORATE;
+        }
     }
 }

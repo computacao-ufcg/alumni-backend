@@ -20,25 +20,27 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @RequestMapping(value = Statistics.ENDPOINT)
-@Api(description = ApiDocumentation.Alumni.API)
+@Api(description = ApiDocumentation.Statistics.API)
 public class Statistics {
     protected static final String ENDPOINT = SystemConstants.SERVICE_BASE_ENDPOINT + "statistics";
 
     private static final Logger LOGGER = Logger.getLogger(Statistics.class);
 
-    @RequestMapping(value = "/{level}/{courseName}", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Statistics.GET_STATISTICS_OPERATION)
     public ResponseEntity<StatisticsResponse> getStatistics(
+            @ApiParam(value = ApiDocumentation.Statistics.LEVEL)
+            @RequestParam String level,
+            @ApiParam(value = ApiDocumentation.Statistics.COURSE_NAME)
+            @RequestParam String courseName,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @PathVariable String level,
-            @PathVariable String courseName,
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
-            CourseName c = CourseName.valueOf(courseName);
-            Level l = Level.valueOf(level);
-            StatisticsResponse statistics = ApplicationFacade.getInstance().getStatistics(token,l , c);
+            CourseName c = CourseName.getCourseName(courseName.toLowerCase());
+            Level l = Level.getLevel(level.toLowerCase());
+            StatisticsResponse statistics = ApplicationFacade.getInstance().getStatistics(token, l, c);
             return new ResponseEntity<>(statistics, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

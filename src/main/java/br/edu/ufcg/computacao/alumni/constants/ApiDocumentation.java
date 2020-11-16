@@ -5,8 +5,12 @@ public class ApiDocumentation {
         public static final String CONTACT_NAME = "Computação@UFCG";
         public static final String CONTACT_URL = "https://computacao.ufcg.edu.br/";
         public static final String CONTACT_EMAIL = "fubica@computacao.ufcg.edu.br";
-        public static final String API_TITLE = "Computação@UFCG Alumni Service API";
+        public static final String API_TITLE = "Computação@UFCG Alumnus Service API";
         public static final String API_DESCRIPTION = "This API allows management of information about Computação@UFCG alumni.";
+    }
+
+    public static class Common {
+        public static final String PAGE = "Page to be retrieved.";
     }
 
     public static class Model {
@@ -34,7 +38,14 @@ public class ApiDocumentation {
         public static final String GET_OPERATION = "Lists information about the alumni.";
         public static final String GET_NAMES_OPERATION = "Lists the names of the alumni.";
         public static final String GET_CURRENT_JOB_OPERATION = "Lists names and current position of alumni.";
+        public static final String REGISTRATION_PARAMETER = "Alumnus registration.";
+    }
 
+    public static class Linkedin {
+        public static final String API = "Queries information about the Linkeid profiles.";
+        public static final String LINKEDIN_ID_PARAMETER = "Linkedin identification.";
+        public static final String GET_ENTRIES_OPERATION = "Lists Linkedin entries (name, LinkedinId).";
+        public static final String GET_OPERATION = "Lists information about Linkedin profiles.";
     }
 
     public static class Match {
@@ -43,9 +54,6 @@ public class ApiDocumentation {
         public static final String GET_PENDING_MATCHES_OPERATION = "Lists alumni pending matches.";
         public static final String SET_MATCH_OPERATION = "Sets an alumnus match.";
         public static final String RESET_MATCH_OPERATION = "Resets an alumnus match.";
-        public static final String REGISTRATION_PARAMETER = "Alumnus registration.";
-        public static final String LINKEDIN_ID_PARAMETER = "Linkedin identification.";
-        public static final String PAGE = "The list is paged. This parameter indicates which page should be fetched.";
         public static final String GET_ALUMNUS_MATCHES_OPERATION = "lists matches of one alumnus";
     }
 
@@ -64,14 +72,19 @@ public class ApiDocumentation {
     }
 
     public static class Employers {
-        public static final String GET_EMPLOYER_OPERATION = "Lists information from organizations where graduates of a course work or have worked";
-        public static final String GET_EMPLOYER_BY_TYPE_OPERATION = "Lists information from organizations of a type where graduates of a course work or have worked";
-        public static final String SET_EMPLOYER_TYPE = "Assign type to the organization whose linkedinId is 'linkedinId'";
-        public static final String GET_EMPLOYERS_UNDEFINED = "Lists information about organizations where graduates of a course work or have worked, whose type is undefined";
-        public static final String DELETE_EMPLOYER_TYPE = "Sets employer type to undefined";
+        public static final String API = "Queries information about employers.";
+        public static final String GET_EMPLOYER_OPERATION = "Lists information from organizations where alumni of a course work or have worked.";
+        public static final String GET_EMPLOYER_BY_TYPE_OPERATION = "Lists information from organizations of a type where alumni of a course work or have worked.";
+        public static final String SET_EMPLOYER_TYPE = "Assign type to the organization whose identification is 'linkedinId'.";
+        public static final String GET_EMPLOYERS_UNDEFINED = "Lists information about organizations where alumni of a course work or have worked, whose type is undefined.";
+        public static final String DELETE_EMPLOYER_TYPE = "Sets employer type to undefined.";
+        public static final String TYPE = "The type of the employer.";
     }
 
     public static class Statistics {
-        public static final String GET_STATISTICS_OPERATION = "returns a Statistic response associated with graduates of the course";
+        public static final String API = "Provides statistics.";
+        public static final String GET_STATISTICS_OPERATION = "Returns a Statistic response associated with graduates of the course.";
+        public static final String COURSE_NAME = "The name of the course.";
+        public static final String LEVEL = "The level of the course.";
     }
 }

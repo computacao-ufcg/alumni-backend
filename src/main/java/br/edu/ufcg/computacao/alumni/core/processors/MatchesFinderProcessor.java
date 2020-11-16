@@ -86,17 +86,19 @@ public class MatchesFinderProcessor extends Thread {
 				for (UfcgAlumnusData alumnus : alumni) {
 					String registration = alumnus.getRegistration();
 					if (!consolidatedMatches.containsKey(registration)) {
+						LOGGER.debug(String.format(Messages.FINDING_MATCHES_FOR_S, alumnus.getFullName()));
 						Map<String, Collection<LinkedinAlumnusData>> possibleMatches =
 								MatchesFinder.getInstance().findMatches(alumnus, schoolName);
 						
 						if (!possibleMatches.isEmpty()) {
+							LOGGER.info(String.format(Messages.FOUND_D_POSSIBLE_MATCHES_FOR_S, possibleMatches.size(), alumnus.getFullName()));
 							newPendingMatches.add(new PendingMatch(alumnus, possibleMatches));
 						}
 					}
 				}
 
 				MatchesHolder.getInstance().setPendingMatches(newPendingMatches);
-				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(1))));
+				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(10))));
 			} catch (InterruptedException e) {
 				isActive = false;
                 LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);

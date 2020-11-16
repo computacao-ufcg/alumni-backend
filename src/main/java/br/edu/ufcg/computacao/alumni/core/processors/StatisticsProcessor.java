@@ -70,7 +70,7 @@ public class StatisticsProcessor extends Thread {
 	}
 	
 	private int getNumberTypeEmployed(Collection<UfcgAlumnusData> alumni, EmployerType type) {
-		Collection<EmployerResponse> employers = EmployersHolder.getInstance().getEmployers(type);
+		Collection<EmployerResponse> employers = EmployersHolder.getInstance().getClassifiedEmployers(type);
 		Map<String, String> matches = MatchesHolder.getInstance().getMatches();
 		
 		
