@@ -55,7 +55,7 @@ public class MatchesFinder {
 
 			String scoreString = String.format("%d", score);
 
-			if (score >= 1) {
+			if (score >= 20) {
 				if (!selectedProfilesList.containsKey(scoreString)) {
 					selectedProfilesList.put(scoreString, new ArrayList<>());
 				}
@@ -82,12 +82,18 @@ public class MatchesFinder {
 				count++;
 			}
 		}
+		
 		if (count == splitedFilteredName.length) return splitedFilteredName;
+		
 		String[] resizedSplitedFilteredName = new String[count];
-		for (int i = 0; i < count; i++) {
-			resizedSplitedFilteredName[i] = splitedFilteredName[i];
+		int index = 0;
+		for (String filteredName : splitedFilteredName) {
+			if (filteredName != null) {
+				resizedSplitedFilteredName[index] = filteredName;
+				index++;
+			}
 		}
-		return splitedFilteredName;
+		return resizedSplitedFilteredName;
 	}
 
 	private String[] normalize(String[] rawName) {
@@ -104,7 +110,7 @@ public class MatchesFinder {
 		for (String name1 : namesToCompare) {
 			for (String name2 : names) {
 				if (name1 != null && name2 != null && name1.equals(name2)) {
-					score += 20;
+					score += 10;
 				}
 			}
 		}
@@ -192,7 +198,7 @@ public class MatchesFinder {
 			String name = school.getNames()[i];
 
 			if (name.equals(schoolUrl)) {
-				score += 20;
+				score += 10;
 			} else {
 				continue;
 			}
