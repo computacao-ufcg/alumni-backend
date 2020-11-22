@@ -55,7 +55,7 @@ public class MatchesFinder {
 
 			String scoreString = String.format("%d", score);
 
-			if (score >= 20) {
+			if (score >= 1) {
 				if (!selectedProfilesList.containsKey(scoreString)) {
 					selectedProfilesList.put(scoreString, new ArrayList<>());
 				}
@@ -165,6 +165,11 @@ public class MatchesFinder {
 		ParsedName linkedinParsedName = getParsedName(linkedinName);
 
 		int score = 0;
+		
+		if (alumniParsedName.isComposed()) {
+			linkedinParsedName.turnComposed();
+		}
+		
 		score += compareNames(alumniParsedName.getNames(), linkedinParsedName.getNames());
 		score += compareNames(alumniParsedName.getSurnames(), linkedinParsedName.getSurnames());
 
