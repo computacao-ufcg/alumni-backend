@@ -37,6 +37,23 @@ public class ParsedName {
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
 	}
+	
+	public boolean isComposed() {
+		return names.length >= 2;
+	}
+	
+	public void turnComposed() {
+		if (isComposed()) {
+			return;
+		}
+		
+		this.names = new String[] { this.names[0], this.surnames[0] };
+		
+		this.surnames = new String[this.surnames.length - 1];
+		for (int i = 1; i < this.surnames.length; i++) {
+			this.surnames[i - 1] = this.surnames[i];
+		}
+	}
 
 	@Override
 	public int hashCode() {

@@ -78,16 +78,18 @@ public class MatchesFinder {
 		for (int i = 0; i < splitedName.length; i++) {
 			String namePart = splitedName[i];
 			if (!connectors.contains(namePart)) {
-				splitedFilteredName[i] = namePart;
-				count++;
+				splitedFilteredName[count++] = namePart;
 			}
 		}
+		
 		if (count == splitedFilteredName.length) return splitedFilteredName;
+		
 		String[] resizedSplitedFilteredName = new String[count];
 		for (int i = 0; i < count; i++) {
 			resizedSplitedFilteredName[i] = splitedFilteredName[i];
 		}
-		return splitedFilteredName;
+		
+		return resizedSplitedFilteredName;
 	}
 
 	private String[] normalize(String[] rawName) {
@@ -104,7 +106,7 @@ public class MatchesFinder {
 		for (String name1 : namesToCompare) {
 			for (String name2 : names) {
 				if (name1 != null && name2 != null && name1.equals(name2)) {
-					score += 20;
+					score += 10;
 				}
 			}
 		}
@@ -159,6 +161,11 @@ public class MatchesFinder {
 		ParsedName linkedinParsedName = getParsedName(linkedinName);
 
 		int score = 0;
+		
+		if (alumniParsedName.isComposed()) {
+			linkedinParsedName.turnComposed();
+		}
+		
 		score += compareNames(alumniParsedName.getNames(), linkedinParsedName.getNames());
 		score += compareNames(alumniParsedName.getSurnames(), linkedinParsedName.getSurnames());
 
@@ -192,7 +199,7 @@ public class MatchesFinder {
 			String name = school.getNames()[i];
 
 			if (name.equals(schoolUrl)) {
-				score += 20;
+				score += 10;
 			} else {
 				continue;
 			}
