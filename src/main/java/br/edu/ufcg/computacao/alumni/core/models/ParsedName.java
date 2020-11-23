@@ -43,6 +43,10 @@ public class ParsedName {
 	}
 	
 	public void turnComposed() {
+		if (isComposed()) {
+			return;
+		}
+		
 		this.names = new String[] { this.names[0], this.surnames[0] };
 		
 		this.surnames = new String[this.surnames.length - 1];

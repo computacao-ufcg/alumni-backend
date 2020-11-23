@@ -78,21 +78,17 @@ public class MatchesFinder {
 		for (int i = 0; i < splitedName.length; i++) {
 			String namePart = splitedName[i];
 			if (!connectors.contains(namePart)) {
-				splitedFilteredName[i] = namePart;
-				count++;
+				splitedFilteredName[count++] = namePart;
 			}
 		}
 		
 		if (count == splitedFilteredName.length) return splitedFilteredName;
 		
 		String[] resizedSplitedFilteredName = new String[count];
-		int index = 0;
-		for (String filteredName : splitedFilteredName) {
-			if (filteredName != null) {
-				resizedSplitedFilteredName[index] = filteredName;
-				index++;
-			}
+		for (int i = 0; i < count; i++) {
+			resizedSplitedFilteredName[i] = splitedFilteredName[i];
 		}
+		
 		return resizedSplitedFilteredName;
 	}
 
