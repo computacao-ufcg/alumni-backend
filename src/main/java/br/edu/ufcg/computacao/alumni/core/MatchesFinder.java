@@ -1,12 +1,13 @@
 package br.edu.ufcg.computacao.alumni.core;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +21,6 @@ import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
 import br.edu.ufcg.computacao.alumni.core.models.ParsedName;
 import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
-import br.edu.ufcg.computacao.alumni.core.util.ScoreComparator;
 
 public class MatchesFinder {
 	private static final Logger LOGGER = Logger.getLogger(MatchesFinder.class);
@@ -39,21 +39,25 @@ public class MatchesFinder {
 
 	public Map<String, Collection<LinkedinAlumnusData>> findMatches(UfcgAlumnusData alumnus, SchoolName school) {
 		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
-		Map<String, Collection<LinkedinAlumnusData>> selectedProfilesList = new TreeMap<>(new ScoreComparator()); // relaciona o score com uma lista
+		Map<String, Collection<LinkedinAlumnusData>> selectedProfilesList = new HashMap<>(); // relaciona o score com uma lista
 		
 		String alumnusName = alumnus.getFullName().toUpperCase();
 
-		linkedinProfilesList.forEach(linkedinProfile -> {
+		for (LinkedinAlumnusData linkedinProfile : linkedinProfilesList) {
 			int score = 0;
 
 			LinkedinSchoolData[] linkedinSchoolData = linkedinProfile.getSchools();
 			String linkedinAlumniFullName = linkedinProfile.getFullName().toUpperCase();
 
 			score += getScoreFromName(alumnusName, linkedinAlumniFullName);
+			if (score == 0) {
+				continue;
+			}
+			
 			LOGGER.debug(String.format("Comparing: %s com %s: %d", alumnusName, linkedinAlumniFullName, score));
 			score += getScoreFromSchool(alumnus, linkedinSchoolData, school);
 
-			String scoreString = String.format("%d", score);
+			String scoreString = String.valueOf(score);
 
 			if (score >= 1) {
 				if (!selectedProfilesList.containsKey(scoreString)) {
@@ -61,8 +65,8 @@ public class MatchesFinder {
 				}
 				selectedProfilesList.get(scoreString).add(linkedinProfile);
 			}
-		});
-
+		}
+		
 		return selectedProfilesList;
 	}
 
@@ -95,18 +99,24 @@ public class MatchesFinder {
 	private String[] normalize(String[] rawName) {
 		String[] normalizedName = new String[rawName.length];
 		for (int i = 0; i < rawName.length; i++) {
-			normalizedName[i] = (rawName[i].trim()).toUpperCase();
+			String str = rawName[i].trim().toUpperCase();
+			Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+			normalizedName[i] = str;
 		}
 		return normalizedName;
 	}
 
-	private int compareNames(String[] namesToCompare, String[] names) {
+	private int compareNames(String[] namesToCompare, String[] names, int base) {
+		if (Arrays.asList(namesToCompare).isEmpty() && Arrays.asList(names).isEmpty()) {
+			return 30;
+		}
+		
 		int score = 0;
 
 		for (String name1 : namesToCompare) {
 			for (String name2 : names) {
 				if (name1 != null && name2 != null && name1.equals(name2)) {
-					score += 10;
+					score += base;
 				}
 			}
 		}
@@ -162,12 +172,12 @@ public class MatchesFinder {
 
 		int score = 0;
 		
-		if (alumniParsedName.isComposed()) {
+		if (alumniParsedName.isComposed() && !linkedinParsedName.isComposed()) {
 			linkedinParsedName.turnComposed();
 		}
 		
-		score += compareNames(alumniParsedName.getNames(), linkedinParsedName.getNames());
-		score += compareNames(alumniParsedName.getSurnames(), linkedinParsedName.getSurnames());
+		score += compareNames(alumniParsedName.getNames(), linkedinParsedName.getNames(), 20);
+		score += compareNames(alumniParsedName.getSurnames(), linkedinParsedName.getSurnames(), 10);
 
 		if (alumniParsedName.getSuffix() != null && linkedinParsedName.getSuffix() != null
 				&& alumniParsedName.getSuffix().equals(linkedinParsedName.getSuffix())) score += 20;
@@ -189,8 +199,8 @@ public class MatchesFinder {
 		if (alumnusDegreeData == null) {
 			return 0;
 		}
-
-		String schoolUrl = schoolData.getSchoolUrl();
+		
+		String schoolUrl = schoolData.getSchoolUrl().trim();
 		DateRange linkedinSchoolDateRange = schoolData.getDateRange();
 
 		int score = 0;
@@ -199,10 +209,8 @@ public class MatchesFinder {
 			String name = school.getNames()[i];
 
 			if (name.equals(schoolUrl)) {
-				score += 10;
-			} else {
-				continue;
-			}
+				score += 30;
+			} 
 
 			DateRange schoolDateRange = school.getDateRanges()[i];
 			score += getScoreFromDateRange(linkedinSchoolDateRange, schoolDateRange);
@@ -212,24 +220,28 @@ public class MatchesFinder {
 	}
 
 	private int getScoreFromDateRange(DateRange linkedinSchoolDateRange, DateRange schoolDateRange) {
+		if (schoolDateRange.equals(linkedinSchoolDateRange)) {
+			return 60;
+		}
+		
 		int score = 0;
 
 		if (schoolDateRange.isCurrent()) {
-			if (Integer.parseInt(linkedinSchoolDateRange.getEndYear()) >= 2002
-					&& !(linkedinSchoolDateRange.getEndMonth().equals("Jan")
-						|| linkedinSchoolDateRange.getEndMonth().equals("Fev")
-						|| linkedinSchoolDateRange.getEndMonth().equals("Mar"))) {
+			if (!linkedinSchoolDateRange.getEndYear().trim().isEmpty() && Integer.parseInt(linkedinSchoolDateRange.getEndYear()) >= 2002
+					&& !linkedinSchoolDateRange.getEndMonth().trim().isEmpty() && !(linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("jan")
+						|| linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("fev")
+						|| linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("mar"))) {
 				score += 20;
 			}
 		} else {
-			if (Integer.parseInt(linkedinSchoolDateRange.getStartYear()) >= 1950 && Integer.parseInt(linkedinSchoolDateRange.getEndYear()) <= 2002
-					&& (linkedinSchoolDateRange.getEndMonth().equals("Jan")
-						|| linkedinSchoolDateRange.getEndMonth().equals("Fev")
-						|| linkedinSchoolDateRange.getEndMonth().equals("Mar"))) {
+			if (!linkedinSchoolDateRange.getStartYear().trim().isEmpty() && Integer.parseInt(linkedinSchoolDateRange.getStartYear()) >= 1950 && Integer.parseInt(linkedinSchoolDateRange.getEndYear()) <= 2002
+					&& !linkedinSchoolDateRange.getEndMonth().trim().isEmpty() && (linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("jan")
+						|| linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("fev")
+						|| linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("mar"))) {
 				score += 20;
 			}
 		}
-
+		
 		return score;
 	}
 
@@ -238,8 +250,33 @@ public class MatchesFinder {
 
 		for (LinkedinSchoolData linkedinSchool : linkedinSchoolData) {
 			score += getMatchesBasedOnSchoolData(alumni, linkedinSchool, school);
+			score += getScoreFromDegreeData(alumni.getDegrees(), linkedinSchool);
 		}
 
+		return score;
+	}
+
+	private int getScoreFromDegreeData(Degree[] degrees, LinkedinSchoolData linkedinSchool) {
+		Level linkedinLevel = linkedinSchool.getDegreeLevel();
+		CourseName linkedinCourseName = linkedinSchool.getCourseName();
+		
+		if (linkedinLevel == null || linkedinCourseName == null) {
+			return 0;
+		}
+		
+		int score = 0;
+		
+		for (Degree degree : degrees) {
+			Level alumniLevel = degree.getLevel();
+			CourseName alumniCourseName = degree.getCourseName();
+			
+			if (alumniLevel.equals(linkedinLevel)) {
+				score += 10;
+			}
+			if (alumniCourseName.equals(linkedinCourseName)) {
+				score += 10;
+			}
+		}
 		return score;
 	}
 }

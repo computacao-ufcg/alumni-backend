@@ -15,7 +15,8 @@ public class PendingMatch {
 	
 	public PendingMatch(UfcgAlumnusData alumnus, Map<String, Collection<LinkedinAlumnusData>> possibleMatches) {
 		this.alumnus = alumnus;
-		this.possibleMatches = possibleMatches;
+		this.possibleMatches = new TreeMap<>(new ScoreComparator());
+		this.possibleMatches.putAll(possibleMatches);
 	}
 	
 	public Map<String, Collection<LinkedinAlumnusData>> getPossibleMatches() {
