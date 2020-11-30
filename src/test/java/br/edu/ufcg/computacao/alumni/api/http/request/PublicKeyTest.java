@@ -1,6 +1,6 @@
 package br.edu.ufcg.computacao.alumni.api.http.request;
 
-import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,17 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.powermock.api.mockito.PowerMockito.*;
-
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringRunner.class)
-@WebMvcTest(value = Version.class, secure = false)
+@WebMvcTest(value = PublicKey.class, secure = false)
 @PrepareForTest({ApplicationFacade.class})
-public class VersionTest {
+public class PublicKeyTest {
 
-    private static final String VERSION_END_POINT =  Version.VERSION_ENDPOINT;
+    private static final String PUBLIC_KEY_ENDPOINT =  PublicKey.PUBLIC_KEY_ENDPOINT;
 
     private ApplicationFacade facade;
 
@@ -45,26 +41,19 @@ public class VersionTest {
     }
 
     @Test
-    public void getVersionNumberTest() throws Exception {
-
+    public void getPublicKeyTest() throws Exception {
         PowerMockito.mockStatic(ApplicationFacade.class);
         BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
 
-        Mockito.doReturn(SystemConstants.API_VERSION_NUMBER).when(this.facade).getVersionNumber();
+        Mockito.doReturn(ConfigurationPropertyKeys.ALUMNI_PUBLICKEY_FILE_KEY).when(this.facade).getPublicKey();
 
         HttpHeaders headers = new HttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(VERSION_END_POINT)
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(PUBLIC_KEY_ENDPOINT)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
-        String expectedResponse = String.format("{\"version\":\"%s\"}", SystemConstants.API_VERSION_NUMBER);
 
-        String versionNumber = result.getResponse().getContentAsString();
-
-
-        Assert.assertEquals(expectedResponse, versionNumber);
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-
     }
 }
