@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -107,10 +108,6 @@ public class MatchesFinder {
 	}
 
 	private int compareNames(String[] namesToCompare, String[] names, int base) {
-		if (Arrays.asList(namesToCompare).isEmpty() && Arrays.asList(names).isEmpty()) {
-			return 30;
-		}
-		
 		int score = 0;
 
 		for (String name1 : namesToCompare) {
@@ -218,31 +215,47 @@ public class MatchesFinder {
 
 		return score;
 	}
+	
+	private List<String> getMonthRange(String startMonth, String endMonth) {
+		List<String> months = Arrays.asList("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec");
+		
+		startMonth = startMonth.isEmpty() ? "" : startMonth.substring(0, 3).trim().toLowerCase();
+		endMonth = endMonth.isEmpty() ? "" : endMonth.substring(0, 3).trim().toLowerCase();
+		return months.subList((startMonth.isEmpty() ? 0 : months.indexOf(startMonth)), (endMonth.isEmpty() ? months.size() : months.indexOf(endMonth) + 1));
+	}
+	
+	private boolean containsMonth(List<String> months, String month) {
+		if (month.isEmpty()) return true;
+		return month.contains(month);
+	}
+	
+	private int compareDateRanges(DateRange linkedinSchoolDateRange, DateRange schoolDateRange) {
+		List<String> monthsRange = getMonthRange(linkedinSchoolDateRange.getStartMonth(), linkedinSchoolDateRange.getEndMonth());
+		
+		if (schoolDateRange.isCurrent()) {
+			if (!linkedinSchoolDateRange.getEndYear().trim().isEmpty() && Integer.parseInt(linkedinSchoolDateRange.getEndYear()) >= Integer.parseInt(schoolDateRange.getStartYear())
+					&& containsMonth(monthsRange, linkedinSchoolDateRange.getEndMonth())) {
+				return 10;
+			}
+		} else {
+			if (!linkedinSchoolDateRange.getStartYear().trim().isEmpty() && Integer.parseInt(linkedinSchoolDateRange.getStartYear()) >= Integer.parseInt(schoolDateRange.getStartYear()) && Integer.parseInt(linkedinSchoolDateRange.getEndYear()) <= Integer.parseInt(schoolDateRange.getEndYear())
+					&& containsMonth(monthsRange, linkedinSchoolDateRange.getEndMonth())) {
+				return 10;
+			}
+		}
+		return 0;
+	}
 
 	private int getScoreFromDateRange(DateRange linkedinSchoolDateRange, DateRange schoolDateRange) {
+		if (linkedinSchoolDateRange == null || schoolDateRange == null) {
+			return 0;
+		}
+		
 		if (schoolDateRange.equals(linkedinSchoolDateRange)) {
 			return 60;
 		}
 		
-		int score = 0;
-
-		if (schoolDateRange.isCurrent()) {
-			if (!linkedinSchoolDateRange.getEndYear().trim().isEmpty() && Integer.parseInt(linkedinSchoolDateRange.getEndYear()) >= 2002
-					&& !linkedinSchoolDateRange.getEndMonth().trim().isEmpty() && !(linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("jan")
-						|| linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("fev")
-						|| linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("mar"))) {
-				score += 20;
-			}
-		} else {
-			if (!linkedinSchoolDateRange.getStartYear().trim().isEmpty() && Integer.parseInt(linkedinSchoolDateRange.getStartYear()) >= 1950 && Integer.parseInt(linkedinSchoolDateRange.getEndYear()) <= 2002
-					&& !linkedinSchoolDateRange.getEndMonth().trim().isEmpty() && (linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("jan")
-						|| linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("fev")
-						|| linkedinSchoolDateRange.getEndMonth().toLowerCase().startsWith("mar"))) {
-				score += 20;
-			}
-		}
-		
-		return score;
+		return compareDateRanges(linkedinSchoolDateRange, schoolDateRange);
 	}
 
 	private int getScoreFromSchool(UfcgAlumnusData alumni, LinkedinSchoolData[] linkedinSchoolData, SchoolName school) {
@@ -256,7 +269,7 @@ public class MatchesFinder {
 		return score;
 	}
 
-	private int getScoreFromDegreeData(Degree[] degrees, LinkedinSchoolData linkedinSchool) {
+	private int getScoreFromDegreeData(Degree[] alumniDegrees, LinkedinSchoolData linkedinSchool) {
 		Level linkedinLevel = linkedinSchool.getDegreeLevel();
 		CourseName linkedinCourseName = linkedinSchool.getCourseName();
 		
@@ -266,7 +279,7 @@ public class MatchesFinder {
 		
 		int score = 0;
 		
-		for (Degree degree : degrees) {
+		for (Degree degree : alumniDegrees) {
 			Level alumniLevel = degree.getLevel();
 			CourseName alumniCourseName = degree.getCourseName();
 			
