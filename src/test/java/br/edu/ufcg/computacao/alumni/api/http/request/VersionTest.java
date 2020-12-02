@@ -22,10 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.powermock.api.mockito.PowerMockito.*;
-
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringRunner.class)
 @WebMvcTest(value = Version.class, secure = false)
@@ -42,13 +38,12 @@ public class VersionTest {
     @Before
     public void setUp() {
         this.facade = Mockito.spy(ApplicationFacade.class);
+        PowerMockito.mockStatic(ApplicationFacade.class);
+        BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
     }
 
     @Test
     public void getVersionNumberTest() throws Exception {
-
-        PowerMockito.mockStatic(ApplicationFacade.class);
-        BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
 
         Mockito.doReturn(SystemConstants.API_VERSION_NUMBER).when(this.facade).getVersionNumber();
 
@@ -61,7 +56,6 @@ public class VersionTest {
         String expectedResponse = String.format("{\"version\":\"%s\"}", SystemConstants.API_VERSION_NUMBER);
 
         String versionNumber = result.getResponse().getContentAsString();
-
 
         Assert.assertEquals(expectedResponse, versionNumber);
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
