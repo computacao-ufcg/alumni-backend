@@ -38,12 +38,12 @@ public class PublicKeyTest {
     @Before
     public void setUp() {
         this.facade = Mockito.spy(ApplicationFacade.class);
+        PowerMockito.mockStatic(ApplicationFacade.class);
+        BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
     }
 
     @Test
     public void getPublicKeyTest() throws Exception {
-        PowerMockito.mockStatic(ApplicationFacade.class);
-        BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
 
         Mockito.doReturn(ConfigurationPropertyKeys.ALUMNI_PUBLICKEY_FILE_KEY).when(this.facade).getPublicKey();
 
