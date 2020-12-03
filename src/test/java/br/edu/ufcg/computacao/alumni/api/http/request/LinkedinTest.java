@@ -2,7 +2,8 @@ package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
-import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthenticatedUserException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthorizedRequestException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,6 @@ import java.util.List;
 public class LinkedinTest {
 
     private static final String LINKEDIN_ENDPOINT = Linkedin.ENDPOINT;
-    private static final String LINKEDIN_ENTRIES_SUFIX = Linkedin.ENDPOINT + "/entries";
 
     @Autowired
     private MockMvc mockMvc;
@@ -53,7 +53,8 @@ public class LinkedinTest {
 
     @Test
     public void getLinkedinDataTest() throws Exception {
-        Mockito.doReturn(getFakePage()).when(this.facade).getLinkedinAlumniData(Mockito.anyString(),Mockito.anyInt());
+        Mockito.doReturn(createFakePage()).when(this.facade)
+                .getLinkedinAlumniData(Mockito.anyString(),Mockito.anyInt());
 
         HttpHeaders headers = getHttpHeaders();
 
@@ -63,25 +64,105 @@ public class LinkedinTest {
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        System.out.println(result.getResponse().getContentAsString());
-        Mockito.verify(this.facade, Mockito.times(1)).getLinkedinAlumniData(Mockito.anyString(),Mockito.anyInt());
+
+        Mockito.verify(this.facade, Mockito.times(1))
+                .getLinkedinAlumniData(Mockito.anyString(),Mockito.anyInt());
     }
 
     @Test
     public void getLinkedinNameProfilePairsTest() throws Exception {
-        Mockito.doReturn(getFakePage()).when(this.facade).getLinkedinNameProfilePairs(Mockito.anyString(),Mockito.anyInt());
+        String linkedinNameProfilePairsEndpoint = LINKEDIN_ENDPOINT + "/entries/0";
+
+        Mockito.doReturn(createFakePage()).when(this.facade)
+                .getLinkedinNameProfilePairs(Mockito.anyString(),Mockito.anyInt());
 
         HttpHeaders headers = getHttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(LINKEDIN_ENTRIES_SUFIX + "/0")
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(linkedinNameProfilePairsEndpoint)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        System.out.println(result.getResponse().getContentAsString());
+
         Mockito.verify(this.facade, Mockito.times(1)).
                 getLinkedinNameProfilePairs(Mockito.anyString(),Mockito.anyInt());
+    }
+
+    @Test
+    public void getLinkedinDataUnauthorizedExceptionTest() throws Exception {
+        String getLinkedinDataEndpoint = LINKEDIN_ENDPOINT + "/0";
+
+        Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
+                .getLinkedinAlumniData(Mockito.anyString(), Mockito.anyInt());
+
+        HttpHeaders headers = getHttpHeaders();
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(getLinkedinDataEndpoint)
+                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+        int expectedStatus = HttpStatus.FORBIDDEN.value();
+
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Mockito.verify(this.facade, Mockito.times(1))
+                .getLinkedinAlumniData(Mockito.anyString(), Mockito.anyInt());
+    }
+
+    @Test
+    public void getLinkedinNameProfilePairsUnauthorizedExceptionTest() throws Exception {
+        String getLinkedinProfilePairsEndpoint = LINKEDIN_ENDPOINT + "/entries/0";
+
+        Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
+                .getLinkedinNameProfilePairs(Mockito.anyString(), Mockito.anyInt());
+
+        HttpHeaders headers = getHttpHeaders();
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(getLinkedinProfilePairsEndpoint)
+                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+        int expectedStatus = HttpStatus.FORBIDDEN.value();
+
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Mockito.verify(this.facade, Mockito.times(1))
+                .getLinkedinNameProfilePairs(Mockito.anyString(), Mockito.anyInt());
+    }
+
+    @Test
+    public void getLinkedindataUnauthenticatedExceptionTest() throws Exception {
+        String getLinkedinDataEndpoint = LINKEDIN_ENDPOINT + "/0";
+
+        Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
+                .getLinkedinAlumniData(Mockito.anyString(), Mockito.anyInt());
+
+        HttpHeaders headers = getHttpHeaders();
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(getLinkedinDataEndpoint)
+                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+        int expectedStatus = HttpStatus.UNAUTHORIZED.value();
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        Mockito.verify(this.facade, Mockito.times(1))
+                .getLinkedinAlumniData(Mockito.anyString(), Mockito.anyInt());
+    }
+
+    @Test
+    public void getLinkedinNameProfilePairsUnauthenticatedExceptionTest() throws Exception {
+        String getLinkedinNameProfilePairsEndpoint = LINKEDIN_ENDPOINT + "/entries/0";
+
+        Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
+                .getLinkedinNameProfilePairs(Mockito.anyString(), Mockito.anyInt());
+
+        HttpHeaders headers = getHttpHeaders();
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(getLinkedinNameProfilePairsEndpoint)
+                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+        int expectedStatus = HttpStatus.UNAUTHORIZED.value();
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        Mockito.verify(this.facade, Mockito.times(1))
+                .getLinkedinNameProfilePairs(Mockito.anyString(), Mockito.anyInt());
     }
 
     private HttpHeaders getHttpHeaders() {
@@ -91,7 +172,7 @@ public class LinkedinTest {
         return headers;
     }
 
-    private Page getFakePage() {
+    private Page createFakePage() {
         Pageable pageable= new PageRequest(0, 10);
 
         List list = new ArrayList<>();
