@@ -3,8 +3,9 @@ package br.edu.ufcg.computacao.alumni.api.http.request;
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.api.http.response.StatisticsResponse;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
+import br.edu.ufcg.computacao.alumni.core.models.CourseName;
+import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
-import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,17 +48,19 @@ public class StatisticsTest {
 
     @Test
     public void getStatisticsTest() throws Exception {
-        Mockito.doReturn(getFakeStatistics()).when(this.facade).getStatistics(Mockito.anyString(),Mockito.anyObject(), Mockito.anyObject());
+        String getStatisticsEndpoint = STATISTICS_ENDPOINT + "/?level=undergraduate&courseName=computing-science";
+        Mockito.doReturn(getFakeStatistics()).when(this.facade)
+                .getStatistics(Mockito.anyString(),Mockito.any(Level.class), Mockito.any(CourseName.class));
         HttpHeaders headers = getHttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(STATISTICS_ENDPOINT + "/?level=undergraduate&courseName=computing-science")
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(getStatisticsEndpoint)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
-                .getStatistics(Mockito.anyString(), Mockito.anyObject(), Mockito.anyObject());
+                .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
     }
 
     private HttpHeaders getHttpHeaders() {
