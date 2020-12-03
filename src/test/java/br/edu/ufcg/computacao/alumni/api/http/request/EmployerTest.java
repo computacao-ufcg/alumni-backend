@@ -4,6 +4,7 @@ import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.management.InstanceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,9 +39,7 @@ import java.util.List;
 @PrepareForTest(ApplicationFacade.class)
 public class EmployerTest {
 
-    private static final String CLASSIFIED_EMPLOYERS_ENDPOINT = Employer.ENDPOINT + "/classified";
-    private static final String CLASSIFIED_EMPLOYERS_BY_TYPE_SUFIX = Employer.ENDPOINT + "/classifiedByType";
-    private static final String UNCLASSIFIED_EMPLOYERS_SUFIX = Employer.ENDPOINT + "/unclassified";
+    private static final String EMPLOYERS_ENDPOINT = Employer.ENDPOINT;
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,11 +55,13 @@ public class EmployerTest {
 
     @Test
     public void getClassifiedEmployersTest() throws Exception {
+        String classifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/classified/0";
+
         Mockito.doReturn(getFakePage()).when(this.facade).getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
 
         HttpHeaders headers = getHttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(CLASSIFIED_EMPLOYERS_ENDPOINT + "/0")
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(classifiedEmployersEndpoint)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
@@ -72,19 +74,20 @@ public class EmployerTest {
 
     @Test
     public void getClassifiedEmployersByTypeTest() throws Exception {
-        EmployerType type = EmployerType.getType("academy");
+        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
+
         Mockito.doReturn(getFakePage()).when(this.facade)
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyObject());
 
         HttpHeaders headers = getHttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(CLASSIFIED_EMPLOYERS_BY_TYPE_SUFIX + "/0" + "?type=academy" )
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(classifiedEmployersByTypeEndpoint)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        System.out.println(result.getResponse().getContentAsString());
+
         Mockito.verify(this.facade, Mockito.times(1))
                 .getClassifiedEmployersByType(Mockito.anyString(),Mockito.anyInt(), Mockito.anyObject());
 
@@ -92,18 +95,20 @@ public class EmployerTest {
 
     @Test
     public void getUnclassifiedEmployersTest() throws Exception {
+        String unclassifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/unclassified/0";
+
         Mockito.doReturn(getFakePage()).when(this.facade)
                 .getUnclassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
 
         HttpHeaders headers = getHttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(UNCLASSIFIED_EMPLOYERS_SUFIX + "/0")
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(unclassifiedEmployersEndpoint)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        System.out.println(result.getResponse().getContentAsString());
+
         Mockito.verify(this.facade, Mockito.times(1))
                 .getUnclassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
     }
@@ -111,27 +116,56 @@ public class EmployerTest {
     @Test
     public void deleteEmployerTypeTest() throws Exception {
         final String FAKE_ID = "fake-Id-1";
+
+        String deleteEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?linkedinId=" + FAKE_ID;
+
         Mockito.doNothing().when(this.facade).setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
 
         HttpHeaders headers = getHttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete("/employer/?linkedinId=" + FAKE_ID )
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete(deleteEmployerTypeEndpoint)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        Mockito.verify(this.facade, Mockito.times(1)).setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(this.facade, Mockito.times(1))
+                .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
+    }
+
+    @Test
+    public void deleteEmployerTypeNotFoundTest() throws Exception {
+
+        final String FAKE_ID = "fake-Id-1";
+
+        String deleteEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?linkedinId=" + FAKE_ID;
+
+        Mockito.doThrow(new InvalidParameterException()).when(this.facade)
+                .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
+
+        HttpHeaders headers = getHttpHeaders();
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete(deleteEmployerTypeEndpoint)
+                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+        int expectedStatus = HttpStatus.BAD_REQUEST.value();
+
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Mockito.verify(this.facade, Mockito.times(1))
+                .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
     public void setEmployerTypeTest() throws Exception {
         final String FAKE_ID = "fake-Id-1";
+
+        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=" + FAKE_ID;
+
         Mockito.doNothing().when(this.facade).setEmployerType(Mockito.anyString(), Mockito.anyObject(), Mockito.anyString());
 
         HttpHeaders headers = getHttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put("/employer/?type=academy&linkedinId=" + FAKE_ID )
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(setEmployerTypeEndpoint)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
@@ -141,6 +175,29 @@ public class EmployerTest {
                 .setEmployerType(Mockito.anyString(), Mockito.anyObject(), Mockito.anyString());
 
     }
+
+    @Test
+    public void setTypeEmployerNotFoundTest() throws Exception {
+        final String FAKE_ID = "fake-Id-1";
+
+        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=" + FAKE_ID;
+
+        Mockito.doThrow(new InvalidParameterException()).when(this.facade)
+                .setEmployerType(Mockito.anyString(), Mockito.anyObject(), Mockito.anyString());
+
+        HttpHeaders headers = getHttpHeaders();
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(setEmployerTypeEndpoint)
+                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+        int expectedStatus = HttpStatus.BAD_REQUEST.value();
+
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Mockito.verify(this.facade, Mockito.times(1))
+                .setEmployerType(Mockito.anyString(), Mockito.anyObject(), Mockito.anyString());
+    }
+
+
 
     private HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
