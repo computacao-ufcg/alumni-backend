@@ -42,16 +42,20 @@ public class PublicKeyTest {
         BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
     }
 
+    // Test case: Requests the public key and test a successfully return. Also call
+    // the facade to get the public key.
     @Test
     public void getPublicKeyTest() throws Exception {
-
+        // set up
         Mockito.doReturn(ConfigurationPropertyKeys.ALUMNI_PUBLICKEY_FILE_KEY).when(this.facade).getPublicKey();
 
         HttpHeaders headers = new HttpHeaders();
 
+        // exercise
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(PUBLIC_KEY_ENDPOINT)
                 .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());

@@ -6,6 +6,9 @@ import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthenticatedUserException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthorizedRequestException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,11 +22,13 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @RunWith(PowerMockRunner.class)
@@ -46,19 +51,101 @@ public class StatisticsTest {
         BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
     }
 
+    // Test case: Requests the statistics and test a successfully return. Also call
+    // the facade to get the statistics
     @Test
     public void getStatisticsTest() throws Exception {
+        // set up
         String getStatisticsEndpoint = STATISTICS_ENDPOINT + "/?level=undergraduate&courseName=computing-science";
-        Mockito.doReturn(getFakeStatistics()).when(this.facade)
+
+        Mockito.doReturn(createFakeStatistics()).when(this.facade)
                 .getStatistics(Mockito.anyString(),Mockito.any(Level.class), Mockito.any(CourseName.class));
-        HttpHeaders headers = getHttpHeaders();
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(getStatisticsEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getStatisticsEndpoint, getHttpHeaders(), "");
 
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
+
+        // verify
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Assert.assertEquals("{\"numberAlumniCourse\":0,\"numberMappedAlumniCourse\":0,\"numberAcademyEmployedCourse\":0," +
+                        "\"numberIndustryEmployedCourse\":0,\"numberGovernmentEmployedCourse\":0,\"numberOngEmployedCourse\":0," +
+                        "\"numberOthersEmployedCourse\":0,\"numberAlumniLevel\":0,\"numberMappedAlumniLevel\":0,\"numberAcademyEmployedLevel\":0," +
+                        "\"numberIndustryEmployedLevel\":0,\"numberGovernmentEmployedLevel\":0,\"numberOngEmployedLevel\":0,\"numberOthersEmployedLevel\":0}",
+                result.getResponse().getContentAsString());
+        Mockito.verify(this.facade, Mockito.times(1))
+                .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
+    }
+
+    // Test case: Requests the statistics with unauthorized user. Also call
+    // the facade to get the statistics.
+    @Test
+    public void getStatisticsUnauthorizedExceptionTest() throws Exception {
+        // set up
+        String getStatisticsEndpoint = STATISTICS_ENDPOINT + "/?level=undergraduate&courseName=computing-science";
+
+        Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
+                .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
+
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getStatisticsEndpoint, getHttpHeaders(), "");
+
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
+
+        // verify
+        int expectedStatus = HttpStatus.FORBIDDEN.value();
+
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Mockito.verify(this.facade, Mockito.times(1))
+                .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
+    }
+
+    // Test case: Requests the statistics with unauthenticated user. Also call
+    // the facade to get the statistics.
+    @Test
+    public void getStatisticsUnauthenticatedExceptionTest() throws Exception {
+        // set up
+        String getStatisticsEndpoint = STATISTICS_ENDPOINT + "/?level=undergraduate&courseName=computing-science";
+
+        Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
+                .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
+
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getStatisticsEndpoint, getHttpHeaders(), "");
+
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
+
+        // verify
+        int expectedStatus = HttpStatus.UNAUTHORIZED.value();
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        Mockito.verify(this.facade, Mockito.times(1))
+                .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
+    }
+
+    // Test case: Requests the statistics with invalid parameter. Also call
+    // the facade to get the statistics.
+    @Test
+    public void getStatisticsInvalidParameterTest() throws Exception {
+        // set up
+        String getStatisticsEndpoint = STATISTICS_ENDPOINT + "/?level=undergraduate&courseName=computing-science";
+
+        Mockito.doThrow(new InvalidParameterException()).when(this.facade)
+                .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
+
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getStatisticsEndpoint, getHttpHeaders(), "");
+
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
+
+        // verify
+        int expectedStatus = HttpStatus.BAD_REQUEST.value();
+
+        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Assert.assertEquals("{\"message\":\"Unexpected error.\",\"details\":\"uri=/statistics/\"}", result.getResponse().getContentAsString());
+
         Mockito.verify(this.facade, Mockito.times(1))
                 .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
     }
@@ -70,12 +157,25 @@ public class StatisticsTest {
         return headers;
     }
 
-    private StatisticsResponse getFakeStatistics() {
+    private StatisticsResponse createFakeStatistics() {
         StatisticsModel modelCourse =  new StatisticsModel(0,0,0
                 ,0, 0, 0, 0);
         StatisticsModel modelLevel = new StatisticsModel(0, 0
                 , 0, 0, 0, 0, 0);
         StatisticsResponse statistics = new StatisticsResponse(modelCourse, modelLevel);
         return statistics;
+    }
+
+    private RequestBuilder createRequestBuilder(HttpMethod method, String urlTemplate, HttpHeaders headers, String body) {
+        switch (method) {
+            case GET:
+                return MockMvcRequestBuilders.get(urlTemplate)
+                        .headers(headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON);
+            default:
+                return null;
+        }
     }
 }

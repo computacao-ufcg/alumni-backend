@@ -23,11 +23,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
@@ -53,81 +55,107 @@ public class EmployerTest {
         BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
     }
 
+    // Test case: Requests a page of classified employers and tests a successfully return. Checks the response and also call
+    // the facade to get classified employers.
     @Test
     public void getClassifiedEmployersTest() throws Exception {
+        // set up
         String classifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/classified/0";
 
         Mockito.doReturn(getFakePage()).when(this.facade).getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(classifiedEmployersEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        System.out.println(result.getResponse().getContentAsString());
+
+        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
+                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
+                result.getResponse().getContentAsString());
+
         Mockito.verify(this.facade, Mockito.times(1))
                 .getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
     }
 
 
-
+    // Test case: Requests a page of classified employers by type and tests a successfully return. Checks the
+    // response and also call the facade to get classified by type employers.
     @Test
     public void getClassifiedEmployersByTypeTest() throws Exception {
+        // set up
         String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
 
         Mockito.doReturn(getFakePage()).when(this.facade)
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersByTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(classifiedEmployersByTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
+                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
+                result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getClassifiedEmployersByType(Mockito.anyString(),Mockito.anyInt(), Mockito.any(EmployerType.class));
 
     }
 
+    // Test case: Requests a page of unclassified employers and tests a successfully return. Checks the response and also call
+    // the facade to get unclassified employers
     @Test
     public void getUnclassifiedEmployersTest() throws Exception {
+        // set up
         String unclassifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/unclassified/0";
 
         Mockito.doReturn(getFakePage()).when(this.facade)
                 .getUnclassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, unclassifiedEmployersEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(unclassifiedEmployersEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
+                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
+                result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getUnclassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
     }
 
+    // Test case: Delete an employer type and test successfully return. Also call the facade
+    // to delete employer type
     @Test
     public void deleteEmployerTypeTest() throws Exception {
+        // set up
         final String FAKE_ID = "fake-Id-1";
 
         String deleteEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?linkedinId=" + FAKE_ID;
 
         Mockito.doNothing().when(this.facade).setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.DELETE, deleteEmployerTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete(deleteEmployerTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
@@ -135,9 +163,11 @@ public class EmployerTest {
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
     }
 
+    // Test case: Delete an employer type with invalid parameter. Checks the response and also call the facade
+    // to delete employer type
     @Test
-    public void deleteEmployerTypeNotFoundTest() throws Exception {
-
+    public void deleteEmployerTypeInvalidParameter() throws Exception {
+        // set up
         final String FAKE_ID = "fake-Id-1";
 
         String deleteEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?linkedinId=" + FAKE_ID;
@@ -145,20 +175,26 @@ public class EmployerTest {
         Mockito.doThrow(new InvalidParameterException()).when(this.facade)
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.DELETE, deleteEmployerTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete(deleteEmployerTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.BAD_REQUEST.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Assert.assertEquals("{\"message\":\"Unexpected error.\",\"details\":\"uri=/employer\"}", result.getResponse().getContentAsString());
+
         Mockito.verify(this.facade, Mockito.times(1))
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
     }
 
+    // Test case: Set an employer type and test successfully return. Also call the
+    // facade to set employer type
     @Test
     public void setEmployerTypeTest() throws Exception {
+        // set up
         final String FAKE_ID = "fake-Id-1";
 
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=" + FAKE_ID;
@@ -166,11 +202,12 @@ public class EmployerTest {
         Mockito.doNothing().when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(setEmployerTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
@@ -179,8 +216,11 @@ public class EmployerTest {
 
     }
 
+    // Test case: Set an employer type with invalid parameter. Checks the response and also call the facade
+    // to set employer type
     @Test
-    public void setTypeEmployerNotFoundTest() throws Exception {
+    public void setEmployerTypeInvalidParameter() throws Exception {
+        // set up
         final String FAKE_ID = "fake-Id-1";
 
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=" + FAKE_ID;
@@ -188,30 +228,37 @@ public class EmployerTest {
         Mockito.doThrow(new InvalidParameterException()).when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(setEmployerTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.BAD_REQUEST.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Assert.assertEquals("{\"message\":\"Unexpected error.\",\"details\":\"uri=/employer\"}", result.getResponse().getContentAsString());
+
         Mockito.verify(this.facade, Mockito.times(1))
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
     }
 
+    // Test case: Requests a page of classified employers with unauthorized user. Also call
+     // the facade to get classified employers
     @Test
     public void getClassifiedEmployersUnauthorizedExceptionTest() throws Exception {
+        // set up
         String classifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/classified/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getClassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(classifiedEmployersEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.FORBIDDEN.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
@@ -219,18 +266,22 @@ public class EmployerTest {
                 .getClassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
     }
 
+    // Test case: Requests a page of classified employers by type with unauthorized user. Also call the
+    // facade to get classified employers by type.
     @Test
     public void getClassifiedEmployersByTypeUnauthorizedExceptionTest() throws Exception {
+        // set up
         String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersByTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(classifiedEmployersByTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.FORBIDDEN.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
@@ -238,18 +289,22 @@ public class EmployerTest {
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
     }
 
+    // Test case: Requests a page of unclassified employers with unauthorized user. Also call the
+    // facade to get unclassified employers.
     @Test
     public void getUnclassifiedEmployersByTypeUnauthorizedExceptionTest() throws Exception {
+        // set up
         String unclassifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/unclassified/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getUnclassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, unclassifiedEmployersEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(unclassifiedEmployersEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.FORBIDDEN.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
@@ -257,8 +312,11 @@ public class EmployerTest {
                 .getUnclassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
     }
 
+    // Test case: Delete an employer type with unauthorized user. Also call the
+    // facade to delete an employer type.
     @Test
     public void deleteEmployerTypeUnauthorizedExceptionTest() throws Exception {
+        // set up
         final String FAKE_ID = "fake-Id-1";
 
         String deleteEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?linkedinId=" + FAKE_ID;
@@ -266,11 +324,12 @@ public class EmployerTest {
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.DELETE, deleteEmployerTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete(deleteEmployerTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.FORBIDDEN.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
@@ -278,8 +337,11 @@ public class EmployerTest {
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
     }
 
+    // Test case: Set employer type with unauthorized user. Also call the
+    // facade to set an employer type.
     @Test
     public void setEmployerTypeUnauthorizedExceptionTest() throws Exception {
+        // set up
         final String FAKE_ID = "fake-Id-1";
 
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=" + FAKE_ID;
@@ -287,11 +349,12 @@ public class EmployerTest {
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(setEmployerTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.FORBIDDEN.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
@@ -299,18 +362,22 @@ public class EmployerTest {
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
     }
 
+    // Test case: Requests a page of classified employers with unauthenticated user. Also call the
+    // facade to get classified employers.
     @Test
     public void getClassifiedEmployersUnauthenticatedExceptionTest() throws Exception {
+        // set up
         String classifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/classified/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getClassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(classifiedEmployersEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.UNAUTHORIZED.value();
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
@@ -318,18 +385,22 @@ public class EmployerTest {
                 .getClassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
     }
 
+    // Test case: Requests a page of employers classified by type with unauthenticated user. Also call the
+    // facade to get classified employers by type.
     @Test
     public void getClassifiedEmployersByTypeUnauthenticatedExceptionTest() throws Exception {
+        // set up
         String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersByTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(classifiedEmployersByTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.UNAUTHORIZED.value();
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
@@ -337,18 +408,22 @@ public class EmployerTest {
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
     }
 
+    // Test case: Requests a page of unclassified employers with unauthenticated user. Also call the
+    // facade to get unclassified employers by type.
     @Test
     public void getUnclassifiedEmployersByTypeUnauthenticatedExceptionTest() throws Exception {
+        // set up
         String unclassifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/unclassified/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getUnclassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, unclassifiedEmployersEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(unclassifiedEmployersEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.UNAUTHORIZED.value();
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
@@ -356,8 +431,11 @@ public class EmployerTest {
                 .getUnclassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
     }
 
+    // Test case: Delete employer type with unauthenticated user. Also call the
+    // facade to delete an employer type.
     @Test
     public void deleteEmployerTypeUnauthenticatedExceptionTest() throws Exception {
+        // set up
         final String FAKE_ID = "fake-Id-1";
 
         String deleteEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?linkedinId=" + FAKE_ID;
@@ -365,20 +443,24 @@ public class EmployerTest {
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.DELETE, deleteEmployerTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete(deleteEmployerTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
         int expectedStatus = HttpStatus.UNAUTHORIZED.value();
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
+        // verify
         Mockito.verify(this.facade, Mockito.times(1))
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
     }
 
+    // Test case: Set employer type with unauthenticated user. Also call the
+    // facade to set an employer type.
     @Test
     public void setEmployerTypeUnauthenticatedExceptionTest() throws Exception {
+        // set up
         final String FAKE_ID = "fake-Id-1";
 
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=" + FAKE_ID;
@@ -386,11 +468,12 @@ public class EmployerTest {
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
 
-        HttpHeaders headers = getHttpHeaders();
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
 
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(setEmployerTypeEndpoint)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
+        // verify
         int expectedStatus = HttpStatus.UNAUTHORIZED.value();
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
@@ -417,4 +500,30 @@ public class EmployerTest {
         return page;
 
     }
+
+    private RequestBuilder createRequestBuilder(HttpMethod method, String urlTemplate, HttpHeaders headers, String body) {
+        switch (method) {
+            case GET:
+                return MockMvcRequestBuilders.get(urlTemplate)
+                        .headers(headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON);
+            case DELETE:
+                return MockMvcRequestBuilders.delete(urlTemplate)
+                        .headers(headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON);
+            case PUT:
+                return MockMvcRequestBuilders.put(urlTemplate)
+                        .headers(headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON);
+            default:
+                return null;
+        }
+    }
+
 }
