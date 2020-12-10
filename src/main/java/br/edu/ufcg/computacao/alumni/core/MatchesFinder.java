@@ -1,27 +1,13 @@
 package br.edu.ufcg.computacao.alumni.core;
 
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
-import br.edu.ufcg.computacao.alumni.core.models.CourseName;
-import br.edu.ufcg.computacao.alumni.core.models.DateRange;
-import br.edu.ufcg.computacao.alumni.core.models.Degree;
-import br.edu.ufcg.computacao.alumni.core.models.Level;
-import br.edu.ufcg.computacao.alumni.core.models.LinkedinSchoolData;
-import br.edu.ufcg.computacao.alumni.core.models.ParsedName;
-import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
+import br.edu.ufcg.computacao.alumni.core.models.*;
+import org.apache.log4j.Logger;
+
+import java.text.Normalizer;
+import java.util.*;
 
 public class MatchesFinder {
 	private static final Logger LOGGER = Logger.getLogger(MatchesFinder.class);
@@ -39,6 +25,10 @@ public class MatchesFinder {
 	}
 
 	public Map<String, Collection<LinkedinAlumnusData>> findMatches(UfcgAlumnusData alumnus, SchoolName school) {
+		if (alumnus == null) {
+			return null;
+		}
+
 		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
 		Map<String, Collection<LinkedinAlumnusData>> selectedProfilesList = new HashMap<>(); // relaciona o score com uma lista
 		
@@ -74,14 +64,13 @@ public class MatchesFinder {
 	private String[] filterName(String name) {
 		if (name == null) return new String[] {};
 
-		Set<String> connectors = new HashSet<>(Arrays.asList(new String[] {"DE", "DA", "DO", "DOS", "DAS", "DI", "E"}));
+		Set<String> connectors = new HashSet<>(Arrays.asList("DE", "DA", "DO", "DOS", "DAS", "DI", "E"));
 		String[] rawName = name.split(" ");
 		String[] splitedName = normalize(rawName);
 		String[] splitedFilteredName = new String[splitedName.length];
 
 		int count = 0;
-		for (int i = 0; i < splitedName.length; i++) {
-			String namePart = splitedName[i];
+		for (String namePart : splitedName) {
 			if (!connectors.contains(namePart)) {
 				splitedFilteredName[count++] = namePart;
 			}
@@ -90,9 +79,7 @@ public class MatchesFinder {
 		if (count == splitedFilteredName.length) return splitedFilteredName;
 		
 		String[] resizedSplitedFilteredName = new String[count];
-		for (int i = 0; i < count; i++) {
-			resizedSplitedFilteredName[i] = splitedFilteredName[i];
-		}
+		System.arraycopy(splitedFilteredName, 0, resizedSplitedFilteredName, 0, count);
 		
 		return resizedSplitedFilteredName;
 	}
@@ -128,7 +115,7 @@ public class MatchesFinder {
 		int nameLength;
 		int suffixLength = 0;
 
-		Set<String> suffixes = new HashSet<>(Arrays.asList(new String[]{"JUNIOR", "JR", "NETO", "SOBRINHO", "JR.", "FILHO"}));
+		Set<String> suffixes = new HashSet<>(Arrays.asList("JUNIOR", "JR", "NETO", "SOBRINHO", "JR.", "FILHO"));
 
 		String[] splitedName = filterName(name);
 		namePartsSize = splitedName.length;
@@ -182,16 +169,15 @@ public class MatchesFinder {
 		return score;
 	}
 
-	private Degree getDegreeData(Degree[] alumniGraus, CourseName curso, Level degreeLevel) {
-		return Arrays.asList(alumniGraus)
-				.stream()
+	private Degree getDegreeData(Degree[] alumniGraus, CourseName curso) {
+		return Arrays.stream(alumniGraus)
 				.filter(grau -> grau.getCourseName().equals(curso))
 				.findAny()
 				.orElse(null);
 	}
 
 	private int getMatchesBasedOnSchoolData(UfcgAlumnusData alumnus, LinkedinSchoolData schoolData, SchoolName school) {
-		Degree alumnusDegreeData = getDegreeData(alumnus.getDegrees(), schoolData.getCourseName(), schoolData.getDegreeLevel());
+		Degree alumnusDegreeData = getDegreeData(alumnus.getDegrees(), schoolData.getCourseName());
 
 		if (alumnusDegreeData == null) {
 			return 0;
@@ -226,7 +212,7 @@ public class MatchesFinder {
 	
 	private boolean containsMonth(List<String> months, String month) {
 		if (month.isEmpty()) return true;
-		return month.contains(month);
+		return months.contains(month);
 	}
 	
 	private int compareDateRanges(DateRange linkedinSchoolDateRange, DateRange schoolDateRange) {
@@ -252,7 +238,7 @@ public class MatchesFinder {
 		}
 		
 		if (schoolDateRange.equals(linkedinSchoolDateRange)) {
-			return 60;
+			return 40;
 		}
 		
 		return compareDateRanges(linkedinSchoolDateRange, schoolDateRange);

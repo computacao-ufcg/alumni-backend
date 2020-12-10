@@ -1,15 +1,14 @@
 package br.edu.ufcg.computacao.alumni.core.models;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
-
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.util.ScoreComparator;
 
-public class PendingMatch {
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
+public class PendingMatch {
 	private UfcgAlumnusData alumnus;
 	private Map<String, Collection<LinkedinAlumnusData>> possibleMatches;
 	
@@ -53,5 +52,5 @@ public class PendingMatch {
 			return false;
 		return true;
 	}
-	
+
 }

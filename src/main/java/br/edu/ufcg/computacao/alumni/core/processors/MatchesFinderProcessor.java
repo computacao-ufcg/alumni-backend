@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
-import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
@@ -25,6 +23,8 @@ import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.models.DateRange;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
+import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 
 public class MatchesFinderProcessor extends Thread {
 	private Logger LOGGER = Logger.getLogger(MatchesFinderProcessor.class);
@@ -72,7 +72,7 @@ public class MatchesFinderProcessor extends Thread {
 		
 		return new SchoolName(names, dateRanges);
 	}
-
+	
 	@Override
 	public void run() {
 		boolean isActive = true;
