@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import java.text.Normalizer;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class MatchesFinder {
 	private static final Logger LOGGER = Logger.getLogger(MatchesFinder.class);
@@ -24,13 +25,13 @@ public class MatchesFinder {
 		return instance;
 	}
 
-	public Map<String, Collection<LinkedinAlumnusData>> findMatches(UfcgAlumnusData alumnus, SchoolName school) {
+	public Collection<PossibleMatch> findMatches(UfcgAlumnusData alumnus, SchoolName school) {
 		if (alumnus == null) {
 			return null;
 		}
 
 		Collection<LinkedinAlumnusData> linkedinProfilesList = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
-		Map<String, Collection<LinkedinAlumnusData>> selectedProfilesList = new HashMap<>(); // relaciona o score com uma lista
+		List<PossibleMatch> selectedProfilesList = new ArrayList<>();
 		
 		String alumnusName = alumnus.getFullName().toUpperCase();
 
@@ -48,13 +49,8 @@ public class MatchesFinder {
 			LOGGER.debug(String.format("Comparing: %s com %s: %d", alumnusName, linkedinAlumniFullName, score));
 			score += getScoreFromSchool(alumnus, linkedinSchoolData, school);
 
-			String scoreString = String.valueOf(score);
-
 			if (score >= 1) {
-				if (!selectedProfilesList.containsKey(scoreString)) {
-					selectedProfilesList.put(scoreString, new ArrayList<>());
-				}
-				selectedProfilesList.get(scoreString).add(linkedinProfile);
+				selectedProfilesList.add(new PossibleMatch(score, linkedinProfile));
 			}
 		}
 		
@@ -88,7 +84,6 @@ public class MatchesFinder {
 		String[] normalizedName = new String[rawName.length];
 		for (int i = 0; i < rawName.length; i++) {
 			String str = rawName[i].trim().toUpperCase();
-			Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 			normalizedName[i] = str;
 		}
 		return normalizedName;
@@ -105,6 +100,12 @@ public class MatchesFinder {
 			}
 		}
 		return score;
+	}
+
+	private String deAccent(String str) {
+		String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
+		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		return pattern.matcher(nfdNormalizedString).replaceAll("");
 	}
 
 	private ParsedName getParsedName(String name) {
@@ -149,6 +150,9 @@ public class MatchesFinder {
 	}
 
 	private int getScoreFromName(String alumniName, String linkedinName) {
+		alumniName = deAccent(alumniName);
+		linkedinName = deAccent(linkedinName);
+
 		if (alumniName.equals(linkedinName)) return 200;
 
 		ParsedName alumniParsedName = getParsedName(alumniName);
@@ -169,20 +173,7 @@ public class MatchesFinder {
 		return score;
 	}
 
-	private Degree getDegreeData(Degree[] alumniGraus, CourseName curso) {
-		return Arrays.stream(alumniGraus)
-				.filter(grau -> grau.getCourseName().equals(curso))
-				.findAny()
-				.orElse(null);
-	}
-
-	private int getMatchesBasedOnSchoolData(UfcgAlumnusData alumnus, LinkedinSchoolData schoolData, SchoolName school) {
-		Degree alumnusDegreeData = getDegreeData(alumnus.getDegrees(), schoolData.getCourseName());
-
-		if (alumnusDegreeData == null) {
-			return 0;
-		}
-		
+	private int getMatchesBasedOnSchoolData(LinkedinSchoolData schoolData, SchoolName school) {
 		String schoolUrl = schoolData.getSchoolUrl().trim();
 		DateRange linkedinSchoolDateRange = schoolData.getDateRange();
 
@@ -193,12 +184,11 @@ public class MatchesFinder {
 
 			if (name.equals(schoolUrl)) {
 				score += 30;
-			} 
 
-			DateRange schoolDateRange = school.getDateRanges()[i];
-			score += getScoreFromDateRange(linkedinSchoolDateRange, schoolDateRange);
+				DateRange schoolDateRange = school.getDateRanges()[i];
+				score += getScoreFromDateRange(linkedinSchoolDateRange, schoolDateRange);
+			}
 		}
-
 		return score;
 	}
 	
@@ -248,7 +238,7 @@ public class MatchesFinder {
 		int score = 0;
 
 		for (LinkedinSchoolData linkedinSchool : linkedinSchoolData) {
-			score += getMatchesBasedOnSchoolData(alumni, linkedinSchool, school);
+			score += getMatchesBasedOnSchoolData(linkedinSchool, school);
 			score += getScoreFromDegreeData(alumni.getDegrees(), linkedinSchool);
 		}
 

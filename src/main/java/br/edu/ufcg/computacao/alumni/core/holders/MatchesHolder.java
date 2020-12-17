@@ -5,10 +5,6 @@ import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
-import br.edu.ufcg.computacao.alumni.core.models.SortMethod;
-import br.edu.ufcg.computacao.alumni.core.util.PendingMatchNameComparator;
-import br.edu.ufcg.computacao.alumni.core.util.PendingMatchNumberComparator;
-import br.edu.ufcg.computacao.alumni.core.util.SortStrategy;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
@@ -139,9 +135,9 @@ public class MatchesHolder {
         return this.matches.get(registration);
     }
 
-    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage, String sortStrategy) {
+    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
-        List<PendingMatch> list = getPendingMatches(SortMethod.toEnum(sortStrategy));
+        List<PendingMatch> list = getPendingMatches();
 
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
@@ -151,21 +147,8 @@ public class MatchesHolder {
         return page;
     }
 
-    private synchronized SortStrategy getSortStrategy(SortMethod sortMethod) {
-        switch (sortMethod) {
-            case NAME:
-                return new PendingMatchNameComparator();
-            case NUMBER_OF_MATCHES:
-                return new PendingMatchNumberComparator();
-            default:
-                return null;
-        }
-    }
-
-    private synchronized List<PendingMatch> getPendingMatches(SortMethod sortMethod) {
-    	List<PendingMatch> list = new LinkedList<>(this.pendingMatches);
-    	list.sort(getSortStrategy(sortMethod));
-    	return list;
+    private synchronized List<PendingMatch> getPendingMatches() {
+        return new LinkedList<>(this.pendingMatches);
     }
 
     public synchronized void setPendingMatches(Collection<PendingMatch> newPendingMatches) {

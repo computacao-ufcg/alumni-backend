@@ -1,17 +1,5 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
-
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
@@ -22,9 +10,17 @@ import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.PropertiesHolder;
 import br.edu.ufcg.computacao.alumni.core.models.DateRange;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
+import br.edu.ufcg.computacao.alumni.core.models.PossibleMatch;
 import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
+import org.apache.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class MatchesFinderProcessor extends Thread {
 	private Logger LOGGER = Logger.getLogger(MatchesFinderProcessor.class);
@@ -72,7 +68,7 @@ public class MatchesFinderProcessor extends Thread {
 		
 		return new SchoolName(names, dateRanges);
 	}
-	
+
 	@Override
 	public void run() {
 		boolean isActive = true;
@@ -87,9 +83,9 @@ public class MatchesFinderProcessor extends Thread {
 					String registration = alumnus.getRegistration();
 					if (!consolidatedMatches.containsKey(registration)) {
 						LOGGER.debug(String.format(Messages.FINDING_MATCHES_FOR_S, alumnus.getFullName()));
-						Map<String, Collection<LinkedinAlumnusData>> possibleMatches =
+						Collection<PossibleMatch> possibleMatches =
 								MatchesFinder.getInstance().findMatches(alumnus, schoolName);
-						
+
 						if (!possibleMatches.isEmpty()) {
 							LOGGER.info(String.format(Messages.FOUND_D_POSSIBLE_MATCHES_FOR_S, possibleMatches.size(), alumnus.getFullName()));
 							newPendingMatches.add(new PendingMatch(alumnus, possibleMatches));
