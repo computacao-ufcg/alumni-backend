@@ -1,15 +1,13 @@
 package br.edu.ufcg.computacao.alumni.core.util;
 
+import br.edu.ufcg.computacao.alumni.core.models.PossibleMatch;
+
 import java.util.Comparator;
 
-public class ScoreComparator implements Comparator<String> {
+public class ScoreComparator implements Comparator<PossibleMatch> {
 
-	@Override
-	public int compare(String score1, String score2) {
-		Integer score1Int = Integer.parseInt(score1);
-		Integer score2Int = Integer.parseInt(score2);
-		
-		return score2Int.compareTo(score1Int);
-	}
-
+    @Override
+    public int compare(PossibleMatch o1, PossibleMatch o2) {
+        return Integer.compare(o2.getScore(), o1.getScore());
+    }
 }

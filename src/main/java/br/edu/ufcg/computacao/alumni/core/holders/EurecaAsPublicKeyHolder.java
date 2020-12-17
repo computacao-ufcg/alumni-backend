@@ -28,7 +28,7 @@ public class EurecaAsPublicKeyHolder {
             String asPort = null;
             asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
             asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
-            this.asPublicKey = PublicKeyUtil.getPublicKey(asAddress, asPort, PublicKey.PUBLIC_KEY_ENDPOINT);
+            this.asPublicKey = PublicKeyUtil.getPublicKey(asAddress, asPort, PublicKey.ENDPOINT);
         }
         return this.asPublicKey;
     }

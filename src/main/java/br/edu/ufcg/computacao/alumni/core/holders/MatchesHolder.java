@@ -1,26 +1,21 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-
+import br.edu.ufcg.computacao.alumni.api.http.response.MatchResponse;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
+import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
+import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.MatchResponse;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
-import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
-import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
-import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
-import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
+import java.io.*;
+import java.util.*;
 
 public class MatchesHolder {
     private Logger LOGGER = Logger.getLogger(MatchesHolder.class);
@@ -140,13 +135,9 @@ public class MatchesHolder {
         return this.matches.get(registration);
     }
 
-    public synchronized Collection<PendingMatch> getPendingMatches() {
-        return new LinkedList<>(this.pendingMatches);
-    }
-
     public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
-        List<PendingMatch> list = getPendingMatchesList();
+        List<PendingMatch> list = getPendingMatches();
 
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
@@ -156,12 +147,8 @@ public class MatchesHolder {
         return page;
     }
 
-    private synchronized List<PendingMatch> getPendingMatchesList() {
-        List<PendingMatch> pendingMatchesList = new ArrayList<PendingMatch>();
-        for (PendingMatch pendingMatch : this.pendingMatches) {
-            pendingMatchesList.add(pendingMatch);
-        }
-        return pendingMatchesList;
+    private synchronized List<PendingMatch> getPendingMatches() {
+        return new LinkedList<>(this.pendingMatches);
     }
 
     public synchronized void setPendingMatches(Collection<PendingMatch> newPendingMatches) {

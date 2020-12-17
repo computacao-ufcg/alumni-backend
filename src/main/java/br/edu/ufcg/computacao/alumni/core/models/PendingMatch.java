@@ -1,28 +1,24 @@
 package br.edu.ufcg.computacao.alumni.core.models;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
-
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.core.util.ScoreComparator;
 
-public class PendingMatch {
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
+public class PendingMatch implements Comparable<PendingMatch> {
 	private UfcgAlumnusData alumnus;
-	private Map<String, Collection<LinkedinAlumnusData>> possibleMatches;
-	
-	public PendingMatch(UfcgAlumnusData alumnus, Map<String, Collection<LinkedinAlumnusData>> possibleMatches) {
+	private List<PossibleMatch> possibleMatches;
+
+	public PendingMatch(UfcgAlumnusData alumnus, Collection<PossibleMatch> possibleMatches) {
 		this.alumnus = alumnus;
-		this.possibleMatches = new TreeMap<>(new ScoreComparator());
-		this.possibleMatches.putAll(possibleMatches);
+		this.possibleMatches = new LinkedList<>(possibleMatches);
+		this.possibleMatches.sort(new ScoreComparator());
 	}
 	
-	public Map<String, Collection<LinkedinAlumnusData>> getPossibleMatches() {
-		Map<String, Collection<LinkedinAlumnusData>> map = new TreeMap<>(new ScoreComparator());
-		map.putAll(this.possibleMatches);
-		return map;
+	public Collection<PossibleMatch> getPossibleMatches() {
+		return new LinkedList<>(this.possibleMatches);
 	}
 
 	public UfcgAlumnusData getAlumnus() {
@@ -53,5 +49,9 @@ public class PendingMatch {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public int compareTo(PendingMatch o) {
+		return Integer.compare(this.getPossibleMatches().size(), o.getPossibleMatches().size());
+	}
 }
