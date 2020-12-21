@@ -1,6 +1,7 @@
 package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
+import br.edu.ufcg.computacao.alumni.api.http.response.MatchResponse;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthenticatedUserException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthorizedRequestException;
@@ -33,6 +34,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringRunner.class)
 @WebMvcTest(value = Match.class, secure = false)
@@ -58,12 +61,12 @@ public class MatchTest {
     @Test
     public void getAlumniMatches() throws Exception {
         // set up
-        String getMatchesEndpoint = MATCH_ENDPOINT  + "/list/0";
+        String matchesEndpoint = MATCH_ENDPOINT  + "/list/0";
 
-        Mockito.doReturn(getFakePage()).when(this.facade)
+        Mockito.doReturn(createFakePage()).when(this.facade)
                 .getAlumniMatches(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, matchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -77,17 +80,40 @@ public class MatchTest {
                 .getAlumniMatches(Mockito.anyString(),Mockito.anyInt());
     }
 
+    // Test case: Requests a page of linkedin data with page value that is not a number and checks the response.
+    @Test
+    public void getLinkedinDataWithInvalidPageParameterTest() throws Exception {
+        // set up
+        String matchesEndpointWrongParameter = MATCH_ENDPOINT  + "/list/k";
+
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, matchesEndpointWrongParameter, getHttpHeaders(), "");
+
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
+
+        // verify
+        int expectedStatus = HttpStatus.BAD_REQUEST.value();
+
+        assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        assertEquals("{\"message\":\"Page parameter must be an integer.\",\"details\":\"uri=/match/list/k\"}",
+                result.getResponse().getContentAsString());
+
+        Mockito.verify(this.facade, Mockito.times(0))
+                .getAlumniMatches(Mockito.anyString(),Mockito.anyInt());
+    }
+
     // Test case: Requests a page of pending matches and test a successfully return. Also call
     // the facade to get the pending matches.
     @Test
     public void getPendingMatchesTest() throws Exception {
         // set up
-        String getPendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
+        String pendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
 
-        Mockito.doReturn(getFakePage()).when(this.facade)
+        Mockito.doReturn(createFakePage()).when(this.facade)
                 .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getPendingMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, pendingMatchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -106,15 +132,16 @@ public class MatchTest {
     @Test
     public void getAlumnusMatchesTest() throws Exception {
         // set up
-        final String FAKE_REGISTRATION = "fake-registration1";
+        String alumnusMatchesEndpoint = MATCH_ENDPOINT + "/?registration=";
 
-        String getAlumnusMatchesEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION;
+        List<MatchResponse> list = new ArrayList();
+        list.add(new MatchResponse("1","1"));
+        list.add(new MatchResponse("2", "2"));
 
-        List list = new ArrayList();
         Mockito.doReturn(list).when(this.facade)
                 .getAlumnusMatches(Mockito.anyString(), Mockito.anyString());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumnusMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumnusMatchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -123,6 +150,8 @@ public class MatchTest {
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        Assert.assertEquals("[{\"registration\":\"1\",\"linkedinId\":\"1\"},{\"registration\":\"2\",\"linkedinId\":\"2\"}]"
+                , result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumnusMatches(Mockito.anyString(),Mockito.anyString());
@@ -133,10 +162,7 @@ public class MatchTest {
     @Test
     public void setMatchTest() throws Exception {
         // set up
-        final String FAKE_REGISTRATION = "fake-registration1";
-        final String FAKE_LINKEIDINID = "fake-id-1";
-
-        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION + "&linkedinId=" + FAKE_LINKEIDINID;
+        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=&linkedinId=";
 
         Mockito.doNothing().when(this.facade).setMatch(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 
@@ -158,9 +184,7 @@ public class MatchTest {
     @Test
     public void resetMatchTest() throws Exception {
         // set up
-        String FAKE_REGISTRATION = "fake-registration1";
-
-        String resetMatchEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION;
+        String resetMatchEndpoint = MATCH_ENDPOINT + "/?registration=";
 
         Mockito.doNothing().when(this.facade).resetMatch(Mockito.anyString(), Mockito.anyString());
 
@@ -182,12 +206,12 @@ public class MatchTest {
     @Test
     public void getAlumniMatchesUnauthorizedExceptionTest() throws Exception {
         // set up
-        String getMatchesEndpoint = MATCH_ENDPOINT  + "/list/0";
+        String matchesEndpoint = MATCH_ENDPOINT  + "/list/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getAlumniMatches(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, matchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -205,12 +229,12 @@ public class MatchTest {
     @Test
     public void getAlumniPendingMatchesUnauthorizedExceptionTest() throws Exception {
         // set up
-        String getPendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
+        String pendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getPendingMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, pendingMatchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -228,14 +252,12 @@ public class MatchTest {
     @Test
     public void getAlumnusMatchesUnauthorizedExceptionTest() throws Exception {
         // set up
-        final String FAKE_REGISTRATION = "fake-registration1";
-
-        String getAlumnusMatchesEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION;
+        String alumnusMatchesEndpoint = MATCH_ENDPOINT + "/?registration=";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getAlumnusMatches(Mockito.anyString(), Mockito.anyString());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumnusMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumnusMatchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -253,10 +275,7 @@ public class MatchTest {
     @Test
     public void setMatchUnauthorizedExceptionTest() throws Exception {
         // set up
-        final String FAKE_REGISTRATION = "fake-registration1";
-        final String FAKE_LINKEIDINID = "fake-id-1";
-
-        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION + "&linkedinId=" + FAKE_LINKEIDINID;
+        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=&linkedinId=";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .setMatch(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
@@ -279,9 +298,7 @@ public class MatchTest {
     @Test
     public void resetMatchUnauthorizedExceptionTest() throws Exception {
         // set up
-        final String FAKE_REGISTRATION = "fake-registration1";
-
-        String resetMatchEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION;
+        String resetMatchEndpoint = MATCH_ENDPOINT + "/?registration=";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .resetMatch(Mockito.anyString(), Mockito.anyString());
@@ -304,12 +321,12 @@ public class MatchTest {
     @Test
     public void getAlumniMatchesUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String getMatchesEndpoint = MATCH_ENDPOINT  + "/list/0";
+        String matchesEndpoint = MATCH_ENDPOINT  + "/list/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getAlumniMatches(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, matchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -327,12 +344,12 @@ public class MatchTest {
     @Test
     public void getPendingMatchesUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String getPendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
+        String pendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getPendingMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, pendingMatchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -350,14 +367,12 @@ public class MatchTest {
     @Test
     public void getAlumnusMatchesUnauthenticatedExceptionTest() throws Exception {
         // set up
-        final String FAKE_REGISTRATION = "fake-registration1";
-
-        String getAlumnusMatchesEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION;
+        String alumnusMatchesEndpoint = MATCH_ENDPOINT + "/?registration=";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getAlumnusMatches(Mockito.anyString(), Mockito.anyString());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumnusMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumnusMatchesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -375,10 +390,7 @@ public class MatchTest {
     @Test
     public void setMatchUnauthenticatedExceptionTest() throws Exception {
         // set up
-        final String FAKE_REGISTRATION = "fake-registration1";
-        final String FAKE_LINKEIDINID = "fake-id-1";
-
-        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION + "&linkedinId=" + FAKE_LINKEIDINID;
+        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=&linkedinId=";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .setMatch(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
@@ -401,9 +413,7 @@ public class MatchTest {
     @Test
     public void resetMatchUnauthenticatedExceptionTest() throws Exception {
         // set up
-        final String FAKE_REGISTRATION = "fake-registration1";
-
-        String resetMatchEndpoint = MATCH_ENDPOINT + "/?registration=" + FAKE_REGISTRATION;
+        String resetMatchEndpoint = MATCH_ENDPOINT + "/?registration=";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .resetMatch(Mockito.anyString(), Mockito.anyString());
@@ -428,7 +438,7 @@ public class MatchTest {
         return headers;
     }
 
-    private Page getFakePage() {
+    private Page createFakePage() {
         Pageable pageable= new PageRequest(0, 10);
 
         List list = new ArrayList<>();

@@ -33,6 +33,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringRunner.class)
 @WebMvcTest(value = Linkedin.class, secure = false)
@@ -80,6 +82,29 @@ public class LinkedinTest {
                 .getLinkedinAlumniData(Mockito.anyString(),Mockito.anyInt());
     }
 
+    // Test case: Requests a page of linkedin data with page value that is not a number and checks the response.
+    @Test
+    public void getLinkedinDataWithInvalidPageParameterTest() throws Exception {
+        // set up
+        String linkedinDataEndpointWrongParameter = LINKEDIN_ENDPOINT + "/k";
+
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, linkedinDataEndpointWrongParameter, getHttpHeaders(), "");
+
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
+
+        // verify
+        int expectedStatus = HttpStatus.BAD_REQUEST.value();
+
+        assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        assertEquals("{\"message\":\"Page parameter must be an integer.\",\"details\":\"uri=/linkedin/k\"}",
+                result.getResponse().getContentAsString());
+
+        Mockito.verify(this.facade, Mockito.times(0))
+                .getLinkedinAlumniData(Mockito.anyString(),Mockito.anyInt());
+    }
+
     // Test case: Requests a page of linkedin linkedin name profile pairs and test a successfully return. Also call
     // the facade to get linkedin name profile pairs
     @Test
@@ -113,12 +138,12 @@ public class LinkedinTest {
     @Test
     public void getLinkedinDataUnauthorizedExceptionTest() throws Exception {
         // set up
-        String getLinkedinDataEndpoint = LINKEDIN_ENDPOINT + "/0";
+        String linkedinDataEndpoint = LINKEDIN_ENDPOINT + "/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getLinkedinAlumniData(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getLinkedinDataEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, linkedinDataEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -136,12 +161,12 @@ public class LinkedinTest {
     @Test
     public void getLinkedinNameProfilePairsUnauthorizedExceptionTest() throws Exception {
         // set up
-        String getLinkedinProfilePairsEndpoint = LINKEDIN_ENDPOINT + "/entries/0";
+        String linkedinProfilePairsEndpoint = LINKEDIN_ENDPOINT + "/entries/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getLinkedinNameProfilePairs(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getLinkedinProfilePairsEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, linkedinProfilePairsEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -159,12 +184,12 @@ public class LinkedinTest {
     @Test
     public void getLinkedindataUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String getLinkedinDataEndpoint = LINKEDIN_ENDPOINT + "/0";
+        String linkedinDataEndpoint = LINKEDIN_ENDPOINT + "/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getLinkedinAlumniData(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getLinkedinDataEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, linkedinDataEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -182,12 +207,12 @@ public class LinkedinTest {
     @Test
     public void getLinkedinNameProfilePairsUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String getLinkedinNameProfilePairsEndpoint = LINKEDIN_ENDPOINT + "/entries/0";
+        String linkedinNameProfilePairsEndpoint = LINKEDIN_ENDPOINT + "/entries/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getLinkedinNameProfilePairs(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getLinkedinNameProfilePairsEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, linkedinNameProfilePairsEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();

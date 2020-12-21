@@ -2,9 +2,10 @@ package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
+import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
+import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthenticatedUserException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthorizedRequestException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
+
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringRunner.class)
 @WebMvcTest(value = Alumnus.class, secure = false)
@@ -48,7 +52,7 @@ public class AlumnusTest {
 
     @Before
     public void setUp() {
-        this.facade = Mockito.spy(ApplicationFacade.class);
+        this.facade = spy(ApplicationFacade.class);
         PowerMockito.mockStatic(ApplicationFacade.class);
         BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
     }
@@ -58,11 +62,11 @@ public class AlumnusTest {
     @Test
     public void getAlumniTest() throws Exception {
         // set up
-        String getAlumniEndpoint = ALUMNUS_ENDPOINT + "/0";
+        String alumniEndpoint = ALUMNUS_ENDPOINT + "/0";
 
         Mockito.doReturn(createFakePage()).when(this.facade).getAlumniData(Mockito.anyString(),Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -70,13 +74,36 @@ public class AlumnusTest {
         // verify
         int expectedStatus = HttpStatus.OK.value();
 
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
+        assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
                         "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
+                .getAlumniData(Mockito.anyString(),Mockito.anyInt());
+    }
+
+    // Test case: Requests a page of alumni data with page value that is not a number and Checks the response.
+    @Test
+    public void getAlumnWithInvalidPageParameterTest() throws Exception {
+        // set up
+        String alumniEndpointWrongPageParameter = ALUMNUS_ENDPOINT + "/k";
+
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniEndpointWrongPageParameter, getHttpHeaders(), "");
+
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
+
+        // verify
+        int expectedStatus = HttpStatus.BAD_REQUEST.value();
+
+        assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        assertEquals("{\"message\":\"Page parameter must be an integer.\",\"details\":\"uri=/alumnus/k\"}",
+                result.getResponse().getContentAsString());
+
+        Mockito.verify(this.facade, Mockito.times(0))
                 .getAlumniData(Mockito.anyString(),Mockito.anyInt());
     }
 
@@ -85,11 +112,11 @@ public class AlumnusTest {
     @Test
     public void getAlumniNamesTest() throws Exception {
         // set up
-        String getAlumniNamesEndpoint = ALUMNUS_ENDPOINT + "/names/0";
+        String alumniNamesEndpoint = ALUMNUS_ENDPOINT + "/names/0";
 
         Mockito.doReturn(createFakePage()).when(this.facade).getAlumniNames(Mockito.anyString(),Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniNamesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniNamesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -97,9 +124,9 @@ public class AlumnusTest {
         // verify
         int expectedStatus = HttpStatus.OK.value();
 
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
+        assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
                         "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
                 result.getResponse().getContentAsString());
 
@@ -112,11 +139,11 @@ public class AlumnusTest {
     @Test
     public void getAlumniCurrentJobTest() throws Exception {
         // set up
-        String getAlumniCurrentJobEndpoint = ALUMNUS_ENDPOINT + "/currentJob/0";
+        String alumniCurrentJobEndpoint = ALUMNUS_ENDPOINT + "/currentJob/0";
 
         Mockito.doReturn(createFakePage()).when(this.facade).getAlumniCurrentJob(Mockito.anyString(),Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniCurrentJobEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniCurrentJobEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -124,9 +151,9 @@ public class AlumnusTest {
         // verify
         int expectedStatus = HttpStatus.OK.value();
 
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
+        assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
                         "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
                 result.getResponse().getContentAsString());
 
@@ -140,12 +167,12 @@ public class AlumnusTest {
     @Test
     public void getAlumniUnauthorizedExceptionTest() throws Exception {
         // set up
-        String getAlumniEndpoint = ALUMNUS_ENDPOINT + "/0";
+        String alumniEndpoint = ALUMNUS_ENDPOINT + "/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getAlumniData(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -153,7 +180,7 @@ public class AlumnusTest {
         // verify
         int expectedStatus = HttpStatus.FORBIDDEN.value();
 
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniData(Mockito.anyString(), Mockito.anyInt());
     }
@@ -163,11 +190,11 @@ public class AlumnusTest {
     @Test
     public void getAlumniNamesUnauthorizedExceptionTest() throws Exception {
         // set up
-        String getAlumniNamesEndpoint = ALUMNUS_ENDPOINT + "/names/0";
+        String alumniNamesEndpoint = ALUMNUS_ENDPOINT + "/names/0";
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getAlumniNames(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniNamesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniNamesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -175,7 +202,7 @@ public class AlumnusTest {
         // verify
         int expectedStatus = HttpStatus.FORBIDDEN.value();
 
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniNames(Mockito.anyString(), Mockito.anyInt());
     }
@@ -185,12 +212,12 @@ public class AlumnusTest {
     @Test
     public void getAlumniCurrentJobUnauthorizedExceptionTest() throws Exception {
         // set up
-        String getAlumniCurrentJobEndpoint = ALUMNUS_ENDPOINT + "/currentJob/0";
+        String alumniCurrentJobEndpoint = ALUMNUS_ENDPOINT + "/currentJob/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getAlumniCurrentJob(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniCurrentJobEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniCurrentJobEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -198,7 +225,7 @@ public class AlumnusTest {
         // verify
         int expectedStatus = HttpStatus.FORBIDDEN.value();
 
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniCurrentJob(Mockito.anyString(), Mockito.anyInt());
     }
@@ -208,19 +235,19 @@ public class AlumnusTest {
     @Test
     public void getAlumniUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String getAlumniEndpoint = ALUMNUS_ENDPOINT + "/0";
+        String alumniEndpoint = ALUMNUS_ENDPOINT + "/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getAlumniData(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
         // verify
         int expectedStatus = HttpStatus.UNAUTHORIZED.value();
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniData(Mockito.anyString(), Mockito.anyInt());
@@ -231,19 +258,19 @@ public class AlumnusTest {
     @Test
     public void getAlumniNamesUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String getAlumniNamesEndpoint = ALUMNUS_ENDPOINT + "/names/0";
+        String alumniNamesEndpoint = ALUMNUS_ENDPOINT + "/names/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getAlumniNames(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniNamesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniNamesEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
         // verify
         int expectedStatus = HttpStatus.UNAUTHORIZED.value();
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniNames(Mockito.anyString(), Mockito.anyInt());
@@ -254,19 +281,19 @@ public class AlumnusTest {
     @Test
     public void getAlumniCurrentjobUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String getAlumniCurrentJobEndpoint = ALUMNUS_ENDPOINT + "/currentJob/0";
+        String alumniCurrentJobEndpoint = ALUMNUS_ENDPOINT + "/currentJob/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getAlumniCurrentJob(Mockito.anyString(), Mockito.anyInt());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, getAlumniCurrentJobEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniCurrentJobEndpoint, getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
 
         // verify
         int expectedStatus = HttpStatus.UNAUTHORIZED.value();
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
+        assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniCurrentJob(Mockito.anyString(), Mockito.anyInt());
