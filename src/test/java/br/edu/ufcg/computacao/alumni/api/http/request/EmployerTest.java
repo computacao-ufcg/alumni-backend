@@ -112,7 +112,7 @@ public class EmployerTest {
     @Test
     public void getClassifiedEmployersByTypeTest() throws Exception {
         // set up
-        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=";
+        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
 
         Mockito.doReturn(createFakePage()).when(this.facade)
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
@@ -136,8 +136,9 @@ public class EmployerTest {
 
     }
 
+    // Test case: Requests a page of classified employers by type and tests with invalid type parameter and checks the response
     @Test
-    public void getClassifiedByTypeEmployersWithInvalidParameter() throws Exception {
+    public void getClassifiedByTypeEmployersWithInvalidTypeParameter() throws Exception {
         // set up
         String classifiedEmployersEndpointWrongParameter = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=k";
 
@@ -151,11 +152,34 @@ public class EmployerTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Type must be one of employer types\",\"details\":\"uri=/employer/classified/0?type=k\"}",
+        assertEquals("{\"message\":\"Type must be one of employer types\",\"details\":\"uri=/employer/classifiedByType/0\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
                 .getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
+    }
+
+    // Test case: Set employer type with invalid type parameter and checks the response.
+    @Test
+    public void setEmployerTypeInvalidTypeParameterTest() throws Exception {
+        // set up
+        String setEmployerTypeWrongparameterEndpoint = EMPLOYERS_ENDPOINT + "?type=k&linkedinId=";
+
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeWrongparameterEndpoint, getHttpHeaders(), "");
+
+        // exercise
+        MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
+
+        // verify
+        int expectedStatus = HttpStatus.BAD_REQUEST.value();
+
+        assertEquals(expectedStatus, result.getResponse().getStatus());
+
+        assertEquals("{\"message\":\"Type must be one of employer types\",\"details\":\"uri=/employer\"}",
+                result.getResponse().getContentAsString());
+
+        Mockito.verify(this.facade, Mockito.times(0))
+                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
     }
 
     // Test case: Requests a page of unclassified employers and tests a successfully return. Checks the response and also call
@@ -238,7 +262,7 @@ public class EmployerTest {
     @Test
     public void setEmployerTypeTest() throws Exception {
         // set up
-        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=&linkedinId=";
+        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
         Mockito.doNothing().when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
@@ -262,7 +286,7 @@ public class EmployerTest {
     @Test
     public void setEmployerTypeInvalidParameter() throws Exception {
         // set up
-        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=&linkedinId=";
+        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
         Mockito.doThrow(new InvalidParameterException()).when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
@@ -310,7 +334,7 @@ public class EmployerTest {
     @Test
     public void getClassifiedEmployersByTypeUnauthorizedExceptionTest() throws Exception {
         // set up
-        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=";
+        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
@@ -379,7 +403,7 @@ public class EmployerTest {
     @Test
     public void setEmployerTypeUnauthorizedExceptionTest() throws Exception {
         // set up
-        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=&linkedinId=";
+        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());
@@ -425,7 +449,7 @@ public class EmployerTest {
     @Test
     public void getClassifiedEmployersByTypeUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=";
+        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
@@ -494,7 +518,7 @@ public class EmployerTest {
     @Test
     public void setEmployerTypeUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=&linkedinId=";
+        String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());

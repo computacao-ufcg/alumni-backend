@@ -29,6 +29,8 @@ public class Messages {
     public static final String SOMETHING_WENT_WRONG = "Something went wrong.";
     public static final String THREAD_HAS_BEEN_INTERRUPTED = "Thread has been interrupted.";
     public static final String TYPE_MUST_BE_AN_EMPLOYER_TYPE = "Type must be one of employer types";
+    public static final String COURSE_NAME_PARAM_MUST_BE_A_VALID_COURSE_NAME = "Course name must be one of CourseName options";
+    public static final String LEVEL_PARAM_MUST_BE_A_VALID_LEVEL = "Level must be one of Level options";
     public static final String UNABLE_TO_CLOSE_FILE_S = "Unable to close file: %s.";
     public static final String UNABLE_TO_FIND_CLASS_S = "Unable to find plugin class: %s.";
 }

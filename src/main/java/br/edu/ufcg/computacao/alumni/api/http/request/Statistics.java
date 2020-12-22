@@ -9,6 +9,7 @@ import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -40,6 +41,13 @@ public class Statistics {
         try {
             CourseName c = CourseName.getCourseName(courseName.toLowerCase());
             Level l = Level.getLevel(level.toLowerCase());
+
+            if(c.getValue().equals("undefined")) {
+                throw new InvalidParameterException(Messages.COURSE_NAME_PARAM_MUST_BE_A_VALID_COURSE_NAME);
+
+            } else if(l.getValue().equals("undefined")) {
+                throw new InvalidParameterException(Messages.LEVEL_PARAM_MUST_BE_A_VALID_LEVEL);
+            }
             StatisticsResponse statistics = ApplicationFacade.getInstance().getStatistics(token, l, c);
             return new ResponseEntity<>(statistics, HttpStatus.OK);
         } catch(EurecaException e) {
