@@ -69,13 +69,15 @@ public class Employer {
             try{
                 p = Integer.parseInt(page);
                 t =  EmployerType.getType(type.toLowerCase());
+
+                if(t.getValue().equals("undefined")) {
+                    throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
+                }
+
             } catch(NumberFormatException e) {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
 
-            } catch(IllegalArgumentException e) {
-                throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
             }
-
             Page<EmployerResponse> employers = ApplicationFacade.getInstance().getClassifiedEmployersByType(token, p, t);
             return new ResponseEntity(employers, HttpStatus.OK);
         } catch(EurecaException e) {
@@ -140,12 +142,13 @@ public class Employer {
             throws EurecaException {
 
         try {
-            EmployerType t;
-            try {
-                t = EmployerType.getType(type.toLowerCase());
-            } catch (IllegalArgumentException e) {
+
+            EmployerType t = EmployerType.getType(type.toLowerCase());
+
+            if(t.getValue().equals("undefined")) {
                 throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
             }
+
             ApplicationFacade.getInstance().setEmployerType(token, t, linkedinId);
             return new ResponseEntity<>(HttpStatus.OK);
 

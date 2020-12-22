@@ -21,8 +21,10 @@ public enum Level {
             return UNDERGRADUATE;
         } else if (value.equals(MASTER.value)) {
             return MASTER;
-        } else {
+        } else if(value.equals(DOCTORATE.value)){
             return DOCTORATE;
+        } else {
+            return UNDEFINED;
         }
     }
 }

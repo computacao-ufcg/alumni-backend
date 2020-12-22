@@ -21,8 +21,10 @@ public enum CourseName {
             return DATA_PROCESSING;
         } else if (value.equals(COMPUTING_SCIENCE.value)) {
             return COMPUTING_SCIENCE;
-        } else {
+        } else if(value.equals(INFORMATICS.value)){
             return INFORMATICS;
+        } else {
+            return UNDEFINED;
         }
     }
 }
