@@ -109,6 +109,7 @@ public class MatchesFinder {
 	}
 
 	private ParsedName getParsedName(String name) {
+		name = deAccent(name);
 		String[] names = new String[0];
 		String[] surnames = new String [0];
 		String suffix = null;
@@ -150,16 +151,13 @@ public class MatchesFinder {
 	}
 
 	private int getScoreFromName(String alumniName, String linkedinName) {
-		alumniName = deAccent(alumniName);
-		linkedinName = deAccent(linkedinName);
-
-		if (alumniName.equals(linkedinName)) return 200;
-
 		ParsedName alumniParsedName = getParsedName(alumniName);
 		ParsedName linkedinParsedName = getParsedName(linkedinName);
 
+		if (alumniParsedName.equals(linkedinParsedName)) return 200;
+
 		int score = 0;
-		
+
 		if (alumniParsedName.isComposed() && !linkedinParsedName.isComposed()) {
 			linkedinParsedName.turnComposed();
 		}
