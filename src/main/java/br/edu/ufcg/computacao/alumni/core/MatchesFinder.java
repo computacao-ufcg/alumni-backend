@@ -42,7 +42,7 @@ public class MatchesFinder {
 			String linkedinAlumniFullName = linkedinProfile.getFullName().toUpperCase();
 
 			score += getScoreFromName(alumnusName, linkedinAlumniFullName);
-			if (score == 0) {
+			if (score < 20) {
 				continue;
 			}
 			
