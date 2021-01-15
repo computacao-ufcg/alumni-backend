@@ -1,7 +1,12 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
+import br.edu.ufcg.computacao.alumni.constants.CourseNameCode;
+import br.edu.ufcg.computacao.alumni.constants.LevelCode;
+import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Degree;
+import br.edu.ufcg.computacao.alumni.core.models.Level;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniPerStudentSummary;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Arrays;
@@ -23,6 +28,47 @@ public class UfcgAlumnusData {
     public UfcgAlumnusData(String fullName, Degree[] degrees) {
         this.fullName = fullName;
         this.degrees = degrees;
+    }
+
+    public UfcgAlumnusData(AlumniPerStudentSummary alumnus) {
+        this.registration = alumnus.getRegistration();
+        this.fullName = alumnus.getName();
+
+        CourseName courseName = null;
+        switch (Integer.toString(alumnus.getCourse())) {
+            case CourseNameCode.DATA_PROCESSING:
+                courseName = CourseName.DATA_PROCESSING;
+                break;
+            case CourseNameCode.COMPUTING_SCIENCE:
+                courseName = CourseName.COMPUTING_SCIENCE;
+                break;
+            case CourseNameCode.INFORMATICS:
+                courseName = CourseName.INFORMATICS;
+                break;
+            default:
+                break;
+        }
+
+        Level level = null;
+        switch (Integer.toString(alumnus.getLevel())) {
+            case LevelCode.UNDERGRADUATE:
+                level = Level.UNDERGRADUATE;
+                break;
+            case LevelCode.MASTER:
+                level = Level.MASTER;
+                break;
+            case LevelCode.DOCTORATE:
+                level = Level.DOCTORATE;
+                break;
+            default:
+                break;
+        }
+
+        String admission = alumnus.getAdmissionTerm();
+        String graduation = alumnus.getGraduationTerm();
+
+        this.degrees = new Degree[1];
+        this.degrees[0] = new Degree(courseName, level, admission, graduation);
     }
 
     public String getFullName() {

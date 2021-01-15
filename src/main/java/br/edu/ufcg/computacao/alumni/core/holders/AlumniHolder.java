@@ -1,28 +1,36 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
+import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.constants.*;
-import br.edu.ufcg.computacao.alumni.core.models.CourseName;
-import br.edu.ufcg.computacao.alumni.core.models.Degree;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
-import br.edu.ufcg.computacao.alumni.core.models.Level;
-import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
+import br.edu.ufcg.computacao.eureca.as.api.http.request.Token;
+import br.edu.ufcg.computacao.eureca.backend.api.http.request.Alumni;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniPerStudentSummary;
+import br.edu.ufcg.computacao.eureca.common.constants.HttpMethod;
+import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.InternalServerErrorException;
+import br.edu.ufcg.computacao.eureca.common.exceptions.UnavailableProviderException;
+import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
+import br.edu.ufcg.computacao.eureca.common.util.connectivity.HttpRequestClient;
+import br.edu.ufcg.computacao.eureca.common.util.connectivity.HttpResponse;
+import com.google.gson.Gson;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpResponseException;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class AlumniHolder extends Thread {
@@ -45,63 +53,71 @@ public class AlumniHolder extends Thread {
         }
     }
 
-    public synchronized void loadAlumni(String filePath) throws IOException {
-        if (!dataHasChanged(filePath)) {
-            return;
-        }
-        List<UfcgAlumnusData> alumniList = new LinkedList<>();
-        BufferedReader csvReader = new BufferedReader(new FileReader(filePath));
-        String row;
-        while ((row = csvReader.readLine()) != null) {
-            String[] data = row.split(",");
-            String registration = data[0];
-            String name = data[1];
-            String courseNameCode = data[2];
-            String levelCode = data[3];
-            String admission = data[4];
-            String graduation = data[5];
+    public synchronized void loadAlumni() throws EurecaException {
+        String backendAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_URL_KEY);
+        String backendPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_PORT_KEY);
+        String suffix = Alumni.ENDPOINT;
+        AlumniPerStudentSummary[] alumniBasicData;
 
-            CourseName courseName = null;
-            Level level = null;
-            switch (courseNameCode) {
-                case CourseNameCode.DATA_PROCESSING:
-                    courseName = CourseName.DATA_PROCESSING;
-                    break;
-                case CourseNameCode.COMPUTING_SCIENCE:
-                    courseName = CourseName.COMPUTING_SCIENCE;
-                    break;
-                case CourseNameCode.INFORMATICS:
-                    courseName = CourseName.INFORMATICS;
-                    break;
-                default:
-                    LOGGER.error(String.format(Messages.INVALID_INPUT_S, row));
-                    break;
-            }
-            switch (levelCode) {
-                case LevelCode.UNDERGRADUATE:
-                    level = Level.UNDERGRADUATE;
-                    break;
-                case LevelCode.MASTER:
-                    level = Level.MASTER;
-                    break;
-                case LevelCode.DOCTORATE:
-                    level = Level.DOCTORATE;
-                    break;
-                default:
-                    LOGGER.error(String.format(Messages.INVALID_INPUT_S, row));
-                    break;
-            }
-            Degree[] degrees = new Degree[1];
-            degrees[0] = new Degree(courseName, level, admission, graduation);
-            UfcgAlumnusData alumnus = new UfcgAlumnusData(registration, name, degrees);
-            alumniList.add(alumnus);
+        URI uri = null;
+        try {
+            uri = new URI(backendAddress);
+        } catch (URISyntaxException e) {
+            throw new InternalServerErrorException(String.format(br.edu.ufcg.computacao.eureca.common.constants.Messages.INVALID_SERVICE_URL_S, backendAddress));
         }
-        csvReader.close();
-        this.alumni = new UfcgAlumnusData[alumniList.size()];
-        for(int i = 0; i < alumniList.size(); i++) {
-            this.alumni[i] = alumniList.get(i);
-            LOGGER.info(String.format(Messages.LOADING_ALUMNI_D_S, i, this.alumni[i].getFullName()));
+        uri = UriComponentsBuilder.fromUri(uri).port(backendPort).path(suffix).build(true).toUri();
+
+        String endpoint = uri.toString();
+        HashMap<String, String> headers = new HashMap<>();
+        String token = getToken();
+        headers.put(CommonKeys.AUTHENTICATION_TOKEN_KEY, token);
+        HttpResponse response = HttpRequestClient.doGenericRequest(HttpMethod.GET, endpoint, headers, new HashMap<>());
+        if (response.getHttpCode() > HttpStatus.SC_OK) {
+            Throwable e = new HttpResponseException(response.getHttpCode(), response.getContent());
+            throw new UnavailableProviderException(e.getMessage());
+        } else {
+            int i = 0;
+            Gson gson = new Gson();
+            alumniBasicData = gson.fromJson(response.getContent(), AlumniPerStudentSummary[].class);
+            this.alumni = new UfcgAlumnusData[alumniBasicData.length];
+            for (AlumniPerStudentSummary alumnus : alumniBasicData) {
+                this.alumni[i++] = new UfcgAlumnusData(alumnus);
+            }
         }
+    }
+
+    private String getToken() throws EurecaException {
+        String username = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.USERNAME);
+        String password = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.PASSWORD);
+        String asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
+        String asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
+        String suffix = Token.ENDPOINT;
+        br.edu.ufcg.computacao.eureca.as.api.http.response.Token token = null;
+
+        URI uri = null;
+        try {
+            uri = new URI(asAddress);
+        } catch (URISyntaxException e) {
+            throw new InternalServerErrorException(String.format(br.edu.ufcg.computacao.eureca.common.constants.Messages.INVALID_SERVICE_URL_S, asAddress));
+        }
+        uri = UriComponentsBuilder.fromUri(uri).port(asPort).path(suffix).build(true).toUri();
+
+        String endpoint = uri.toString();
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        Map<String, String> body = new HashMap<>();
+        body.put("credentials", "{ \"" + ConfigurationPropertyKeys.USERNAME + "\" : \"" + username + "\", " +
+                "\"" + ConfigurationPropertyKeys.PASSWORD + "\" : \"" + password + "\" }");
+        body.put("publicKey", ServiceAsymmetricKeysHolder.getInstance().getPublicKeyString());
+        HttpResponse response = HttpRequestClient.doGenericRequest(HttpMethod.POST, endpoint, headers, body);
+        if (response.getHttpCode() >= HttpStatus.SC_BAD_REQUEST) {
+            Throwable e = new HttpResponseException(response.getHttpCode(), response.getContent());
+            throw new UnavailableProviderException(e.getMessage());
+        } else {
+            Gson gson = new Gson();
+            token = gson.fromJson(response.getContent(), br.edu.ufcg.computacao.eureca.as.api.http.response.Token.class);
+        }
+        return token.getToken();
     }
 
     public synchronized Collection<UfcgAlumnusData> getAlumniData() {
@@ -199,16 +215,15 @@ public class AlumniHolder extends Thread {
 
         while (isActive) {
             try {
-                String filePath = HomeDir.getPath() + PropertiesHolder.getInstance().
-                        getProperty(ConfigurationPropertyKeys.ALUMNI_INPUT_FILE_KEY,
-                        ConfigurationPropertyDefaults.DEFAULT_ALUMNI_FILE_NAME);
-                this.loadAlumni(filePath);
-                Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));
-            } catch (InterruptedException e) {
-                isActive = false;
-                LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);
-            } catch (IOException e) {
+                this.loadAlumni();
+            } catch (EurecaException e) {
                 LOGGER.error(Messages.COULD_NOT_LOAD_ALUMNI_DATA, e);
+            } finally {
+                try {
+                    Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));
+                } catch (InterruptedException e) {
+                    isActive = false;
+                    LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);                }
             }
         }
     }

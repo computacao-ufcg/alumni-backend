@@ -9,14 +9,11 @@ import br.edu.ufcg.computacao.alumni.core.plugins.AuthorizationPlugin;
 import br.edu.ufcg.computacao.eureca.as.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.eureca.as.core.AuthenticationUtil;
 import br.edu.ufcg.computacao.eureca.as.core.models.SystemUser;
-import br.edu.ufcg.computacao.eureca.common.exceptions.ConfigurationErrorException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InternalServerErrorException;
-import br.edu.ufcg.computacao.eureca.common.util.CryptoUtil;
 import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
 import org.apache.log4j.Logger;
 
-import java.security.GeneralSecurityException;
 import org.springframework.data.domain.Page;
 
 import java.security.interfaces.RSAPublicKey;
@@ -98,11 +95,7 @@ public class ApplicationFacade {
     }
 
     public String getPublicKey() throws EurecaException {
-        try {
-            return CryptoUtil.toBase64(ServiceAsymmetricKeysHolder.getInstance().getPublicKey());
-        } catch (GeneralSecurityException e) {
-            throw new ConfigurationErrorException(e.getMessage());
-        }
+        return ServiceAsymmetricKeysHolder.getInstance().getPublicKeyString();
     }
 
     public Page<EmployerResponse> getClassifiedEmployers(String token, int page) throws EurecaException {

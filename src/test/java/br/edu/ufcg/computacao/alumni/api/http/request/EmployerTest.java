@@ -44,6 +44,8 @@ import static org.junit.Assert.assertEquals;
 public class EmployerTest {
 
     private static final String EMPLOYERS_ENDPOINT = Employer.ENDPOINT;
+    private static final String EXPECTED_RESPONSE = "{\"content\":[],\"totalElements\":0,\"totalPages\":0,\"last\":true," +
+        "\"size\":10,\"number\":0,\"sort\":null,\"first\":true,\"numberOfElements\":0}";
 
     @Autowired
     private MockMvc mockMvc;
@@ -75,9 +77,10 @@ public class EmployerTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
-                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
-                result.getResponse().getContentAsString());
+        Assert.assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
+//        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
+//                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
+//                result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
@@ -127,9 +130,10 @@ public class EmployerTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
-                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
-                result.getResponse().getContentAsString());
+        Assert.assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
+//        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"last\":true,\"totalElements\":0,\"size\":10," +
+//                "\"number\":0,\"sort\":null,\"numberOfElements\":0,\"first\":true}",
+//                result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getClassifiedEmployersByType(Mockito.anyString(),Mockito.anyInt(), Mockito.any(EmployerType.class));
@@ -202,9 +206,10 @@ public class EmployerTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
-                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
-                result.getResponse().getContentAsString());
+        Assert.assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
+//        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
+//                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
+//                result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getUnclassifiedEmployers(Mockito.anyString(),Mockito.anyInt());

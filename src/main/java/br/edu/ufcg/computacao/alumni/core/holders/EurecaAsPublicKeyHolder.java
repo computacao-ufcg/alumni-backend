@@ -24,10 +24,8 @@ public class EurecaAsPublicKeyHolder {
 
     public RSAPublicKey getAsPublicKey() throws EurecaException {
         if (this.asPublicKey == null) {
-            String asAddress = null;
-            String asPort = null;
-            asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
-            asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
+            String asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
+            String asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
             this.asPublicKey = PublicKeyUtil.getPublicKey(asAddress, asPort, PublicKey.ENDPOINT);
         }
         return this.asPublicKey;
