@@ -75,13 +75,13 @@ public class MatchesFinderProcessor extends Thread {
 
 		while (isActive) {
 			try {
-				Map<String, String> consolidatedMatches = MatchesHolder.getInstance().getMatches();
+				Set<String> consolidatedMatches = MatchesHolder.getInstance().getMatches().keySet();
 				Collection<UfcgAlumnusData> alumni = AlumniHolder.getInstance().getAlumniData();
 				Collection<PendingMatch> newPendingMatches = new LinkedList<>();
 			
 				for (UfcgAlumnusData alumnus : alumni) {
 					String registration = alumnus.getRegistration();
-					if (!consolidatedMatches.containsKey(registration)) {
+					if (!consolidatedMatches.contains(registration)) {
 						LOGGER.debug(String.format(Messages.FINDING_MATCHES_FOR_S, alumnus.getFullName()));
 						Collection<PossibleMatch> possibleMatches =
 								MatchesFinder.getInstance().findMatches(alumnus, schoolName);

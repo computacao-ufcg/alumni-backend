@@ -58,10 +58,8 @@ public class StatisticsProcessor extends Thread {
 	}
 	
 	private int getNumberMappedAlumni(Collection<UfcgAlumnusData> alumni) {
-		Map<String, String> matches = MatchesHolder.getInstance().getMatches();
-		
 		Set<String> alumniRegistrations = alumni.stream().map(UfcgAlumnusData::getRegistration).collect(Collectors.toSet());
-		Set<String> matchesRegistrations = matches.keySet();
+		Set<String> matchesRegistrations = MatchesHolder.getInstance().getMatches().keySet();
 		
 		Set<String> mappedAlumni = new HashSet<>(matchesRegistrations);
 		mappedAlumni.retainAll(alumniRegistrations);
@@ -71,9 +69,7 @@ public class StatisticsProcessor extends Thread {
 	
 	private int getNumberTypeEmployed(Collection<UfcgAlumnusData> alumni, EmployerType type) {
 		Collection<EmployerResponse> employers = EmployersHolder.getInstance().getClassifiedEmployers(type);
-		Map<String, String> matches = MatchesHolder.getInstance().getMatches();
-		
-		
+
 		Collection<String> employersCompanyNames = employers.stream()
 				.map(EmployerResponse::getName)
 				.collect(Collectors.toList());
@@ -81,7 +77,7 @@ public class StatisticsProcessor extends Thread {
 		int num = 0;
 		for (UfcgAlumnusData alumnus : alumni) {
 			String alumnusFullName = alumnus.getFullName();
-			String linkedinUrl = matches.get(alumnus.getRegistration());
+			String linkedinUrl = MatchesHolder.getInstance().getLinkedinId(alumnus.getRegistration());
 			
 			CurrentJob currentJob = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(alumnusFullName, linkedinUrl);
 			if (employersCompanyNames.contains(currentJob.getCurrentJob())) {
