@@ -19,19 +19,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class AlumniHolder extends Thread {
     private Logger LOGGER = Logger.getLogger(AlumniHolder.class);
 
     private static AlumniHolder instance;
     private long lastModificationDate;
-    private UfcgAlumnusData[] alumni;
-
+    private Map<String, UfcgAlumnusData> alumni;
     private AlumniHolder() {
         this.lastModificationDate = 0;
     }
@@ -43,6 +40,34 @@ public class AlumniHolder extends Thread {
             }
             return instance;
         }
+    }
+
+    private synchronized CourseName getCourseName(String courseNameCode, String row) {
+        switch (courseNameCode) {
+            case CourseNameCode.DATA_PROCESSING:
+                return CourseName.DATA_PROCESSING;
+            case CourseNameCode.COMPUTING_SCIENCE:
+                return CourseName.COMPUTING_SCIENCE;
+            case CourseNameCode.INFORMATICS:
+                return CourseName.INFORMATICS;
+            default:
+                LOGGER.error(String.format(Messages.INVALID_INPUT_S, row));
+                return null;
+        }
+    } 
+
+    private synchronized Level getLevel(String levelCode, String row) {
+        switch (levelCode) {
+            case LevelCode.UNDERGRADUATE:
+                return Level.UNDERGRADUATE;
+            case LevelCode.MASTER:
+                return Level.MASTER;
+            case LevelCode.DOCTORATE:
+                return Level.DOCTORATE;
+            default:
+                LOGGER.error(String.format(Messages.INVALID_INPUT_S, row));
+                return null;
+            }
     }
 
     public synchronized void loadAlumni(String filePath) throws IOException {
@@ -61,62 +86,31 @@ public class AlumniHolder extends Thread {
             String admission = data[4];
             String graduation = data[5];
 
-            CourseName courseName = null;
-            Level level = null;
-            switch (courseNameCode) {
-                case CourseNameCode.DATA_PROCESSING:
-                    courseName = CourseName.DATA_PROCESSING;
-                    break;
-                case CourseNameCode.COMPUTING_SCIENCE:
-                    courseName = CourseName.COMPUTING_SCIENCE;
-                    break;
-                case CourseNameCode.INFORMATICS:
-                    courseName = CourseName.INFORMATICS;
-                    break;
-                default:
-                    LOGGER.error(String.format(Messages.INVALID_INPUT_S, row));
-                    break;
-            }
-            switch (levelCode) {
-                case LevelCode.UNDERGRADUATE:
-                    level = Level.UNDERGRADUATE;
-                    break;
-                case LevelCode.MASTER:
-                    level = Level.MASTER;
-                    break;
-                case LevelCode.DOCTORATE:
-                    level = Level.DOCTORATE;
-                    break;
-                default:
-                    LOGGER.error(String.format(Messages.INVALID_INPUT_S, row));
-                    break;
-            }
+            CourseName courseName = getCourseName(courseNameCode, row);
+            Level level = getLevel(levelCode, row);
+
             Degree[] degrees = new Degree[1];
             degrees[0] = new Degree(courseName, level, admission, graduation);
             UfcgAlumnusData alumnus = new UfcgAlumnusData(registration, name, degrees);
             alumniList.add(alumnus);
         }
         csvReader.close();
-        this.alumni = new UfcgAlumnusData[alumniList.size()];
+        this.alumni = new HashMap<>();
         for(int i = 0; i < alumniList.size(); i++) {
-            this.alumni[i] = alumniList.get(i);
-            LOGGER.info(String.format(Messages.LOADING_ALUMNI_D_S, i, this.alumni[i].getFullName()));
+            UfcgAlumnusData alumnus = alumniList.get(i);
+            this.alumni.put(alumnus.getRegistration(), alumnus);
+            LOGGER.info(String.format(Messages.LOADING_ALUMNI_D_S, i, alumnus.getFullName()));
         }
     }
 
     public synchronized Collection<UfcgAlumnusData> getAlumniData() {
-        Collection<UfcgAlumnusData> alumniCollection = new LinkedList<>();
-
-        for(int i = 0; i < this.alumni.length; i++) {
-            alumniCollection.add(this.alumni[i]);
-        }
-        return alumniCollection;
+        return this.alumni.values();
     }
 
     public synchronized Page<UfcgAlumnusData> getAlumniDataPage(int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
 
-        List<UfcgAlumnusData> list = this.getAlumniDataList();
+        List<UfcgAlumnusData> list = new ArrayList<>(this.getAlumniData());
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
                 list.size() : (start + pageable.getPageSize()));
@@ -125,22 +119,14 @@ public class AlumniHolder extends Thread {
         return page;
     }
 
-    private synchronized List<UfcgAlumnusData> getAlumniDataList() {
-        List<UfcgAlumnusData> alumniList = new ArrayList<>();
-        for (UfcgAlumnusData alumnus : this.getAlumniData()) {
-            alumniList.add(alumnus);
-        }
-        return alumniList;
-    }
-
     public synchronized List<String> getAlumniNames() {
-        List<String> alumniNames = new LinkedList<>();
-
-        for(int i = 0; i < this.alumni.length; i++) {
-            alumniNames.add(this.alumni[i].getFullName());
-        }
-        return alumniNames;
+        return alumni
+                .values()
+                .stream()
+                .map(UfcgAlumnusData::getFullName)
+                .collect(Collectors.toList());
     }
+
     public synchronized Page<String> getAlumniNamesPage(int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
 
@@ -156,9 +142,9 @@ public class AlumniHolder extends Thread {
     public List<CurrentJob> getAlumniCurrentJob() {
         List<CurrentJob> alumniCurrentJob = new LinkedList<>();
 
-        for(int i = 0; i < this.alumni.length; i++) {
-            String linkedinId = MatchesHolder.getInstance().getLinkedinId(this.alumni[i].getRegistration());
-            CurrentJob current = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(this.alumni[i].getFullName(),
+        for(UfcgAlumnusData alumnus : this.alumni.values()) {
+            String linkedinId = MatchesHolder.getInstance().getLinkedinId(alumnus.getRegistration());
+            CurrentJob current = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(alumnus.getFullName(),
                     linkedinId);
             if (!current.getCurrentJob().equals("bad match") && !current.getCurrentJob().equals("not available") &&
                                                                 !current.getCurrentJob().equals("not matched")) {
@@ -188,6 +174,10 @@ public class AlumniHolder extends Thread {
         } else {
             return false;
         }
+    }
+
+    public synchronized String getAlumnusName(String registration) {
+        return this.alumni.get(registration).getFullName();
     }
 
     /**
