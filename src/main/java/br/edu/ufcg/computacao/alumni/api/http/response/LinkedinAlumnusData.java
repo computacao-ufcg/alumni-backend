@@ -93,6 +93,11 @@ public class LinkedinAlumnusData {
         return linkedinProfile;
     }
 
+    public String getLinkedinId() {
+        String[] splitedUrl = linkedinProfile.split("/");
+        return splitedUrl[splitedUrl.length - 1];
+    }
+
     public void setLinkedinProfile(String linkedinProfile) {
         this.linkedinProfile = linkedinProfile;
     }

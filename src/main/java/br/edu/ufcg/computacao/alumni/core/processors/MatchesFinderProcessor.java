@@ -12,6 +12,7 @@ import br.edu.ufcg.computacao.alumni.core.models.DateRange;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.models.PossibleMatch;
 import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniPerStudentSummary;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;
@@ -75,13 +76,13 @@ public class MatchesFinderProcessor extends Thread {
 
 		while (isActive) {
 			try {
-				Map<String, String> consolidatedMatches = MatchesHolder.getInstance().getMatches();
+				Set<String> consolidatedMatches = MatchesHolder.getInstance().getMatches().keySet();
 				Collection<UfcgAlumnusData> alumni = AlumniHolder.getInstance().getAlumniData();
 				Collection<PendingMatch> newPendingMatches = new LinkedList<>();
 			
 				for (UfcgAlumnusData alumnus : alumni) {
 					String registration = alumnus.getRegistration();
-					if (!consolidatedMatches.containsKey(registration)) {
+					if (!consolidatedMatches.contains(registration)) {
 						LOGGER.debug(String.format(Messages.FINDING_MATCHES_FOR_S, alumnus.getFullName()));
 						Collection<PossibleMatch> possibleMatches =
 								MatchesFinder.getInstance().findMatches(alumnus, schoolName);

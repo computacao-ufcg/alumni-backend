@@ -135,8 +135,8 @@ public class MatchTest {
         String alumnusMatchesEndpoint = MATCH_ENDPOINT + "/?registration=";
 
         List<MatchResponse> list = new ArrayList();
-        list.add(new MatchResponse("1","1"));
-        list.add(new MatchResponse("2", "2"));
+        list.add(new MatchResponse("1","1", "a"));
+        list.add(new MatchResponse("2", "2", "b"));
 
         Mockito.doReturn(list).when(this.facade)
                 .getAlumnusMatches(Mockito.anyString(), Mockito.anyString());

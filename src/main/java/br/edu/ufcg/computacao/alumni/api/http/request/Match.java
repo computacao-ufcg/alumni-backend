@@ -129,8 +129,8 @@ public class Match {
             throws EurecaException {
 
         try {
-            List<MatchResponse> response = ApplicationFacade.getInstance().getAlumnusMatches( token ,registration);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            MatchResponse response = ApplicationFacade.getInstance().getAlumnusMatches(token, registration);
+            return new ResponseEntity(response, HttpStatus.OK);
         } catch (EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;

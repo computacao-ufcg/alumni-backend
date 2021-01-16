@@ -32,14 +32,14 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class AlumniHolder extends Thread {
     private Logger LOGGER = Logger.getLogger(AlumniHolder.class);
 
     private static AlumniHolder instance;
     private long lastModificationDate;
-    private UfcgAlumnusData[] alumni;
-
+    private Map<String, UfcgAlumnusData> alumni;
     private AlumniHolder() {
         this.lastModificationDate = 0;
     }
@@ -76,12 +76,13 @@ public class AlumniHolder extends Thread {
             Throwable e = new HttpResponseException(response.getHttpCode(), response.getContent());
             throw new UnavailableProviderException(e.getMessage());
         } else {
-            int i = 0;
             Gson gson = new Gson();
             alumniBasicData = gson.fromJson(response.getContent(), AlumniPerStudentSummary[].class);
-            this.alumni = new UfcgAlumnusData[alumniBasicData.length];
-            for (AlumniPerStudentSummary alumnus : alumniBasicData) {
-                this.alumni[i++] = new UfcgAlumnusData(alumnus);
+            this.alumni = new HashMap<>();
+            for(int i = 0; i < alumniBasicData.length; i++) {
+                UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniBasicData[i]);
+                this.alumni.put(alumnus.getRegistration(), alumnus);
+                LOGGER.info(String.format(Messages.LOADING_ALUMNI_D_S, i, alumnus.getFullName()));
             }
         }
     }
@@ -121,18 +122,13 @@ public class AlumniHolder extends Thread {
     }
 
     public synchronized Collection<UfcgAlumnusData> getAlumniData() {
-        Collection<UfcgAlumnusData> alumniCollection = new LinkedList<>();
-
-        for(int i = 0; i < this.alumni.length; i++) {
-            alumniCollection.add(this.alumni[i]);
-        }
-        return alumniCollection;
+        return this.alumni.values();
     }
 
     public synchronized Page<UfcgAlumnusData> getAlumniDataPage(int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
 
-        List<UfcgAlumnusData> list = this.getAlumniDataList();
+        List<UfcgAlumnusData> list = new ArrayList<>(this.getAlumniData());
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
                 list.size() : (start + pageable.getPageSize()));
@@ -141,22 +137,14 @@ public class AlumniHolder extends Thread {
         return page;
     }
 
-    private synchronized List<UfcgAlumnusData> getAlumniDataList() {
-        List<UfcgAlumnusData> alumniList = new ArrayList<>();
-        for (UfcgAlumnusData alumnus : this.getAlumniData()) {
-            alumniList.add(alumnus);
-        }
-        return alumniList;
-    }
-
     public synchronized List<String> getAlumniNames() {
-        List<String> alumniNames = new LinkedList<>();
-
-        for(int i = 0; i < this.alumni.length; i++) {
-            alumniNames.add(this.alumni[i].getFullName());
-        }
-        return alumniNames;
+        return alumni
+                .values()
+                .stream()
+                .map(UfcgAlumnusData::getFullName)
+                .collect(Collectors.toList());
     }
+
     public synchronized Page<String> getAlumniNamesPage(int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
 
@@ -172,9 +160,9 @@ public class AlumniHolder extends Thread {
     public List<CurrentJob> getAlumniCurrentJob() {
         List<CurrentJob> alumniCurrentJob = new LinkedList<>();
 
-        for(int i = 0; i < this.alumni.length; i++) {
-            String linkedinId = MatchesHolder.getInstance().getLinkedinId(this.alumni[i].getRegistration());
-            CurrentJob current = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(this.alumni[i].getFullName(),
+        for(UfcgAlumnusData alumnus : this.alumni.values()) {
+            String linkedinId = MatchesHolder.getInstance().getLinkedinId(alumnus.getRegistration());
+            CurrentJob current = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(alumnus.getFullName(),
                     linkedinId);
             if (!current.getCurrentJob().equals("bad match") && !current.getCurrentJob().equals("not available") &&
                                                                 !current.getCurrentJob().equals("not matched")) {
@@ -204,6 +192,10 @@ public class AlumniHolder extends Thread {
         } else {
             return false;
         }
+    }
+
+    public synchronized String getAlumnusName(String registration) {
+        return this.alumni.get(registration).getFullName();
     }
 
     /**

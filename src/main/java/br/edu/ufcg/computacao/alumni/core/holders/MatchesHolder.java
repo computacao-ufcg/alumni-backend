@@ -5,6 +5,7 @@ import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
+import br.edu.ufcg.computacao.alumni.core.util.PendingMatchNumberComparator;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
@@ -20,7 +21,7 @@ import java.util.*;
 public class MatchesHolder {
     private Logger LOGGER = Logger.getLogger(MatchesHolder.class);
     private static final String FIELD_SEPARATOR = ",";
-    
+
     private Map<String, String> matches;
     private Collection<PendingMatch> pendingMatches;
     private String matchesFilePath;
@@ -63,11 +64,14 @@ public class MatchesHolder {
     }
     
     public synchronized void addMatch(String registration, String linkedinId) {
+        String formatedUrl = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.LINKEDIN_USER_BASE_URL_KEY) + linkedinId;
+
     	if (this.matches.containsKey(registration)) {
-    		this.matches.replace(registration, linkedinId);
+    		this.matches.replace(registration, formatedUrl);
     	} else {
-    		this.matches.put(registration, linkedinId);
+    		this.matches.put(registration, formatedUrl);
     	}
+
         try {
             this.saveMatches();
         } catch (IOException e) {
@@ -92,9 +96,9 @@ public class MatchesHolder {
     public synchronized void saveMatches() throws IOException {
         BufferedWriter csvWriter = new BufferedWriter(new FileWriter(this.matchesFilePath, false));
         for (Map.Entry<String, String> entry : this.matches.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            csvWriter.write(key + FIELD_SEPARATOR + value + System.lineSeparator());
+            String registration = entry.getKey();
+            String linkedinId = entry.getValue();
+            csvWriter.write(registration + FIELD_SEPARATOR + linkedinId + System.lineSeparator());
         }
         csvWriter.close();
     }
@@ -112,19 +116,18 @@ public class MatchesHolder {
     private synchronized List<MatchResponse> getMatchesList() {
         List<MatchResponse> matchesList = new ArrayList<MatchResponse>();
         for (String key : this.matches.keySet()) {
-            matchesList.add(new MatchResponse(key, this.matches.get(key)));
+            String fullName = AlumniHolder.getInstance().getAlumnusName(key);
+            matchesList.add(new MatchResponse(key, fullName, this.matches.get(key)));
         }
         return matchesList;
     }
 
-    public synchronized  List<MatchResponse> getAlumnusMatches(String registration) {
-        List<MatchResponse> matchesList = new ArrayList<MatchResponse>();
-        for (String key : this.matches.keySet()) {
-            if(key.equals(registration)) {
-                matchesList.add(new MatchResponse(key, this.matches.get(key)));
-            }
-        }
-        return matchesList;
+    public synchronized MatchResponse getAlumnusMatches(String registration) {
+        String linkedinId = this.matches.get(registration);
+        if (linkedinId == null) return null;
+
+        String fullName = AlumniHolder.getInstance().getAlumnusName(registration);
+        return new MatchResponse(registration, fullName, linkedinId);
     }
 
     public synchronized Map<String, String> getMatches() {
@@ -148,7 +151,9 @@ public class MatchesHolder {
     }
 
     private synchronized List<PendingMatch> getPendingMatches() {
-        return new LinkedList<>(this.pendingMatches);
+        List<PendingMatch> list = new LinkedList<>(this.pendingMatches);
+        list.sort(new PendingMatchNumberComparator());
+        return list;
     }
 
     public synchronized void setPendingMatches(Collection<PendingMatch> newPendingMatches) {

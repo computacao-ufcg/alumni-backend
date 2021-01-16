@@ -84,7 +84,7 @@ public class ApplicationFacade {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
-    public List<MatchResponse> getAlumnusMatches(String token, String registration) throws EurecaException {
+    public MatchResponse getAlumnusMatches(String token, String registration) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
         return MatchesHolder.getInstance().getAlumnusMatches(registration);
     }
