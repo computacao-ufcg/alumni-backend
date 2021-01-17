@@ -44,8 +44,7 @@ import static org.junit.Assert.assertEquals;
 public class EmployerTest {
 
     private static final String EMPLOYERS_ENDPOINT = Employer.ENDPOINT;
-    private static final String EXPECTED_RESPONSE = "{\"content\":[],\"totalElements\":0,\"totalPages\":0,\"last\":true," +
-        "\"size\":10,\"number\":0,\"sort\":null,\"first\":true,\"numberOfElements\":0}";
+    private static final String EXPECTED_RESPONSE = "{\"content\":[],\"first\":true,\"last\":true,\"number\":0,\"numberOfElements\":0,\"size\":10,\"sort\":null,\"totalElements\":0,\"totalPages\":0}";
 
     @Autowired
     private MockMvc mockMvc;
@@ -102,7 +101,7 @@ public class EmployerTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Page parameter must be an integer.\",\"details\":\"uri=/employer/classified/k\"}",
+        assertEquals("{\"details\":\"uri=/employer/classified/k\",\"message\":\"Page parameter must be an integer.\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
@@ -131,9 +130,6 @@ public class EmployerTest {
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Assert.assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
-//        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"last\":true,\"totalElements\":0,\"size\":10," +
-//                "\"number\":0,\"sort\":null,\"numberOfElements\":0,\"first\":true}",
-//                result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getClassifiedEmployersByType(Mockito.anyString(),Mockito.anyInt(), Mockito.any(EmployerType.class));
@@ -156,7 +152,7 @@ public class EmployerTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Type must be one of employer types\",\"details\":\"uri=/employer/classifiedByType/0\"}",
+        assertEquals("{\"details\":\"uri=/employer/classifiedByType/0\",\"message\":\"Type must be one of employer types\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
@@ -179,7 +175,7 @@ public class EmployerTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Type must be one of employer types\",\"details\":\"uri=/employer\"}",
+        assertEquals("{\"details\":\"uri=/employer\",\"message\":\"Type must be one of employer types\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
@@ -256,7 +252,7 @@ public class EmployerTest {
         int expectedStatus = HttpStatus.BAD_REQUEST.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        Assert.assertEquals("{\"message\":\"Unexpected error.\",\"details\":\"uri=/employer\"}", result.getResponse().getContentAsString());
+        Assert.assertEquals("{\"details\":\"uri=/employer\",\"message\":\"Unexpected error.\"}", result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
@@ -305,7 +301,7 @@ public class EmployerTest {
         int expectedStatus = HttpStatus.BAD_REQUEST.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        Assert.assertEquals("{\"message\":\"Unexpected error.\",\"details\":\"uri=/employer\"}", result.getResponse().getContentAsString());
+        Assert.assertEquals("{\"details\":\"uri=/employer\",\"message\":\"Unexpected error.\"}", result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .setEmployerType(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyString());

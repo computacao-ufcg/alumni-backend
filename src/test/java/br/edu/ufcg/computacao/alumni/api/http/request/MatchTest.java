@@ -43,6 +43,7 @@ import static org.junit.Assert.assertEquals;
 public class MatchTest {
 
     private static final String MATCH_ENDPOINT = Match.ENDPOINT;
+    private static final String matchBody = "{\"registration\":\"1\",\"linkedinId\":\"id\"}";
 
     @Autowired
     private MockMvc mockMvc;
@@ -96,7 +97,7 @@ public class MatchTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Page parameter must be an integer.\",\"details\":\"uri=/match/list/k\"}",
+        assertEquals("{\"details\":\"uri=/match/list/k\",\"message\":\"Page parameter must be an integer.\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
@@ -127,21 +128,20 @@ public class MatchTest {
                 .getAlumniPendingMatches(Mockito.anyString(),Mockito.anyInt());
     }
 
-    // Test case: Requests a list of alumnus matches and test a successfully return. Also call
+    // Test case: Requests an alumnus match and tests a successfully return. Also call
     // the facade to get the alumnus matches.
     @Test
     public void getAlumnusMatchesTest() throws Exception {
         // set up
         String alumnusMatchesEndpoint = MATCH_ENDPOINT + "/?registration=";
 
-        List<MatchResponse> list = new ArrayList();
-        list.add(new MatchResponse("1","1", "a"));
-        list.add(new MatchResponse("2", "2", "b"));
+        MatchResponse match = new MatchResponse("1","name", "id");
 
-        Mockito.doReturn(list).when(this.facade)
+        Mockito.doReturn(match).when(this.facade)
                 .getAlumnusMatches(Mockito.anyString(), Mockito.anyString());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumnusMatchesEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumnusMatchesEndpoint,
+                getHttpHeaders(), "");
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -150,8 +150,8 @@ public class MatchTest {
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        Assert.assertEquals("[{\"registration\":\"1\",\"linkedinId\":\"1\"},{\"registration\":\"2\",\"linkedinId\":\"2\"}]"
-                , result.getResponse().getContentAsString());
+        Assert.assertEquals("{\"fullName\":\"name\",\"linkedinId\":\"id\",\"registration\":\"1\"}",
+                result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumnusMatches(Mockito.anyString(),Mockito.anyString());
@@ -162,11 +162,11 @@ public class MatchTest {
     @Test
     public void setMatchTest() throws Exception {
         // set up
-        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=&linkedinId=";
+        String setMatchEndpoint = MATCH_ENDPOINT;
 
         Mockito.doNothing().when(this.facade).setMatch(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setMatchEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setMatchEndpoint, getHttpHeaders(), matchBody);
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -275,12 +275,12 @@ public class MatchTest {
     @Test
     public void setMatchUnauthorizedExceptionTest() throws Exception {
         // set up
-        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=&linkedinId=";
+        String setMatchEndpoint = MATCH_ENDPOINT;
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
                 .setMatch(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setMatchEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setMatchEndpoint, getHttpHeaders(), matchBody);
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();
@@ -390,12 +390,12 @@ public class MatchTest {
     @Test
     public void setMatchUnauthenticatedExceptionTest() throws Exception {
         // set up
-        String setMatchEndpoint = MATCH_ENDPOINT + "/?registration=&linkedinId=";
+        String setMatchEndpoint = MATCH_ENDPOINT;
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
                 .setMatch(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 
-        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setMatchEndpoint, getHttpHeaders(), "");
+        RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setMatchEndpoint, getHttpHeaders(), matchBody);
 
         // exercise
         MvcResult result = this.mockMvc.perform(requestBuilder).andReturn();

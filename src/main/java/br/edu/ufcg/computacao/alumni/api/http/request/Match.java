@@ -34,16 +34,14 @@ public class Match {
     @ApiOperation(value = ApiDocumentation.Match.SET_MATCH_OPERATION)
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<Void> setMatch(
-            @ApiParam(value = ApiDocumentation.Alumni.REGISTRATION_PARAMETER)
-            @RequestParam String registration,
-            @ApiParam(value = ApiDocumentation.Linkedin.LINKEDIN_ID_PARAMETER)
-            @RequestParam String linkedinId,
+            @ApiParam(value = ApiDocumentation.Alumni.MATCH_BODY)
+            @RequestBody br.edu.ufcg.computacao.alumni.api.parameters.Match match,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
-            ApplicationFacade.getInstance().setMatch(token, registration, linkedinId);
+            ApplicationFacade.getInstance().setMatch(token, match.getRegistration(), match.getLinkedinId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

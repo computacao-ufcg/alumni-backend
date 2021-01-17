@@ -42,6 +42,7 @@ import static org.junit.Assert.assertEquals;
 public class LinkedinTest {
 
     private static final String LINKEDIN_ENDPOINT = Linkedin.ENDPOINT;
+    private static final String EXPECTED_RESPONSE = "{\"content\":[],\"first\":true,\"last\":true,\"number\":0,\"numberOfElements\":0,\"size\":10,\"sort\":null,\"totalElements\":0,\"totalPages\":0}";
 
     @Autowired
     private MockMvc mockMvc;
@@ -74,9 +75,7 @@ public class LinkedinTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
-                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
-                result.getResponse().getContentAsString());
+        Assert.assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getLinkedinAlumniData(Mockito.anyString(),Mockito.anyInt());
@@ -98,7 +97,7 @@ public class LinkedinTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Page parameter must be an integer.\",\"details\":\"uri=/linkedin/k\"}",
+        assertEquals("{\"details\":\"uri=/linkedin/k\",\"message\":\"Page parameter must be an integer.\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
@@ -125,9 +124,7 @@ public class LinkedinTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        Assert.assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
-                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
-                result.getResponse().getContentAsString());
+        Assert.assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1)).
                 getLinkedinNameProfilePairs(Mockito.anyString(),Mockito.anyInt());

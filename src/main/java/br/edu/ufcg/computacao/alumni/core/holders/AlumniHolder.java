@@ -82,7 +82,7 @@ public class AlumniHolder extends Thread {
             for(int i = 0; i < alumniBasicData.length; i++) {
                 UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniBasicData[i]);
                 this.alumni.put(alumnus.getRegistration(), alumnus);
-                LOGGER.info(String.format(Messages.LOADING_ALUMNI_D_S, i, alumnus.getFullName()));
+                LOGGER.debug(String.format(Messages.LOADING_ALUMNI_D_S, i, alumnus.getFullName()));
             }
         }
     }

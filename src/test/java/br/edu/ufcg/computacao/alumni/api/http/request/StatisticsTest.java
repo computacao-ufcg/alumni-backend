@@ -72,10 +72,10 @@ public class StatisticsTest {
         int expectedStatus = HttpStatus.OK.value();
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-        Assert.assertEquals("{\"numberAlumniCourse\":0,\"numberMappedAlumniCourse\":0,\"numberAcademyEmployedCourse\":0," +
-                        "\"numberIndustryEmployedCourse\":0,\"numberGovernmentEmployedCourse\":0,\"numberOngEmployedCourse\":0," +
-                        "\"numberOthersEmployedCourse\":0,\"numberAlumniLevel\":0,\"numberMappedAlumniLevel\":0,\"numberAcademyEmployedLevel\":0," +
-                        "\"numberIndustryEmployedLevel\":0,\"numberGovernmentEmployedLevel\":0,\"numberOngEmployedLevel\":0,\"numberOthersEmployedLevel\":0}",
+        Assert.assertEquals("{\"numberAcademyEmployedCourse\":0,\"numberAcademyEmployedLevel\":0,\"numberAlumniCourse\":0,\"numberAlumniLevel\":0," +
+                        "\"numberGovernmentEmployedCourse\":0,\"numberGovernmentEmployedLevel\":0,\"numberIndustryEmployedCourse\":0,\"numberIndustryEmployedLevel\":0," +
+                        "\"numberMappedAlumniCourse\":0,\"numberMappedAlumniLevel\":0," +
+                        "\"numberOngEmployedCourse\":0,\"numberOngEmployedLevel\":0,\"numberOthersEmployedCourse\":0,\"numberOthersEmployedLevel\":0}",
                 result.getResponse().getContentAsString());
         Mockito.verify(this.facade, Mockito.times(1))
                 .getStatistics(Mockito.anyString(), Mockito.any(Level.class), Mockito.any(CourseName.class));
@@ -143,7 +143,7 @@ public class StatisticsTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Level must be one of Level options\",\"details\":\"uri=/statistics/\"}",
+        assertEquals("{\"details\":\"uri=/statistics/\",\"message\":\"Level must be one of Level options\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
@@ -166,7 +166,7 @@ public class StatisticsTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Course name must be one of CourseName options\",\"details\":\"uri=/statistics/\"}",
+        assertEquals("{\"details\":\"uri=/statistics/\",\"message\":\"Course name must be one of CourseName options\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))

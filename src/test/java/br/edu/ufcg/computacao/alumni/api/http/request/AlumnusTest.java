@@ -44,6 +44,7 @@ import static org.mockito.Mockito.*;
 public class AlumnusTest {
 
     private static final String ALUMNUS_ENDPOINT = Alumnus.ENDPOINT;
+    private static final String EXPECTED_RESPONSE = "{\"content\":[],\"first\":true,\"last\":true,\"number\":0,\"numberOfElements\":0,\"size\":10,\"sort\":null,\"totalElements\":0,\"totalPages\":0}";
 
     @Autowired
     private MockMvc mockMvc;
@@ -76,9 +77,7 @@ public class AlumnusTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
-                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
-                result.getResponse().getContentAsString());
+        assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniData(Mockito.anyString(),Mockito.anyInt());
@@ -100,7 +99,7 @@ public class AlumnusTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"message\":\"Page parameter must be an integer.\",\"details\":\"uri=/alumnus/k\"}",
+        assertEquals("{\"details\":\"uri=/alumnus/k\",\"message\":\"Page parameter must be an integer.\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
@@ -126,9 +125,7 @@ public class AlumnusTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
-                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
-                result.getResponse().getContentAsString());
+        assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniNames(Mockito.anyString(),Mockito.anyInt());
@@ -153,9 +150,7 @@ public class AlumnusTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"content\":[],\"totalPages\":0,\"totalElements\":0,\"last\":true,\"sort\":null," +
-                        "\"numberOfElements\":0,\"first\":true,\"size\":10,\"number\":0}",
-                result.getResponse().getContentAsString());
+        assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
                 .getAlumniCurrentJob(Mockito.anyString(),Mockito.anyInt());
