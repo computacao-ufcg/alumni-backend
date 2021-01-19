@@ -107,8 +107,10 @@ public class AlumniHolder extends Thread {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         Map<String, String> body = new HashMap<>();
-        body.put("credentials", "{ \"" + ConfigurationPropertyKeys.USERNAME + "\" : \"" + username + "\", " +
-                "\"" + ConfigurationPropertyKeys.PASSWORD + "\" : \"" + password + "\" }");
+        body.put(ConfigurationPropertyKeys.USERNAME, username);
+        body.put(ConfigurationPropertyKeys.PASSWORD, password);
+//        body.put("credentials", "{ \"" + ConfigurationPropertyKeys.USERNAME + "\" : \"" + username + "\", " +
+//                "\"" + ConfigurationPropertyKeys.PASSWORD + "\" : \"" + password + "\" }");
         body.put("publicKey", ServiceAsymmetricKeysHolder.getInstance().getPublicKeyString());
         HttpResponse response = HttpRequestClient.doGenericRequest(HttpMethod.POST, endpoint, headers, body);
         if (response.getHttpCode() >= HttpStatus.SC_BAD_REQUEST) {
