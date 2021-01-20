@@ -17,17 +17,17 @@ public class UfcgAlumnusData {
     private String registration;
     @ApiModelProperty(position = 1, example = ApiDocumentation.Model.FULL_NAME)
     private String fullName;
-    private Degree[] degrees;
+    private Degree degree;
 
-    public UfcgAlumnusData(String registration, String fullName, Degree[] degrees) {
+    public UfcgAlumnusData(String registration, String fullName, Degree degree) {
         this.fullName = fullName;
-        this.degrees = degrees;
+        this.degree = degree;
         this.registration = registration;
     }
 
-    public UfcgAlumnusData(String fullName, Degree[] degrees) {
+    public UfcgAlumnusData(String fullName, Degree degree) {
         this.fullName = fullName;
-        this.degrees = degrees;
+        this.degree = degree;
     }
 
     public UfcgAlumnusData(AlumniPerStudentSummary alumnus) {
@@ -67,8 +67,7 @@ public class UfcgAlumnusData {
         String admission = alumnus.getAdmissionTerm();
         String graduation = alumnus.getGraduationTerm();
 
-        this.degrees = new Degree[1];
-        this.degrees[0] = new Degree(courseName, level, admission, graduation);
+        this.degree = new Degree(courseName, level, admission, graduation);
     }
 
     public String getFullName() {
@@ -79,12 +78,20 @@ public class UfcgAlumnusData {
         this.fullName = fullName;
     }
 
-    public Degree[] getDegrees() {
-        return degrees;
+    public Degree getDegree() {
+        return degree;
     }
 
-    public void setDegrees(Degree[] degrees) {
-        this.degrees = degrees;
+    public void setDegrees(Degree degree) {
+        this.degree = degree;
+    }
+
+    public String getAdmission() {
+        return this.degree.getAdmission();
+    }
+
+    public String getGraduation() {
+        return this.degree.getGraduation();
     }
 
     public String getRegistration() {
@@ -102,13 +109,13 @@ public class UfcgAlumnusData {
         UfcgAlumnusData that = (UfcgAlumnusData) o;
         return getRegistration().equals(that.getRegistration()) &&
                 getFullName().equals(that.getFullName()) &&
-                Arrays.equals(getDegrees(), that.getDegrees());
+                getDegree().equals(that.getDegree());
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(getRegistration(), getFullName());
-        result = 31 * result + Arrays.hashCode(getDegrees());
+        result = 31 * result + getDegree().hashCode();
         return result;
     }
 
@@ -117,7 +124,7 @@ public class UfcgAlumnusData {
         return "UfcgAlumnusData{" +
                 "registration='" + registration + '\'' +
                 ", fullName='" + fullName + '\'' +
-                ", degrees=" + Arrays.toString(degrees) +
+                ", degree=" + degree +
                 '}';
     }
 }

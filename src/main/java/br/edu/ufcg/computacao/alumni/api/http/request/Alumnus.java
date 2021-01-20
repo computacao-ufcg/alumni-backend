@@ -33,6 +33,10 @@ public class Alumnus {
     public ResponseEntity<Page<UfcgAlumnusData>> getAlumni(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Alumni.ADMISSION)
+            @RequestParam(required = false) String admission,
+            @ApiParam(value = ApiDocumentation.Alumni.GRADUATION)
+            @RequestParam(required = false) String graduation,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
@@ -44,7 +48,7 @@ public class Alumnus {
             } catch(NumberFormatException e) {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
             }
-            Page<UfcgAlumnusData> ufcgAlumniData = ApplicationFacade.getInstance().getAlumniData(token, p);
+            Page<UfcgAlumnusData> ufcgAlumniData = ApplicationFacade.getInstance().getAlumniData(token, p, admission, graduation);
             return new ResponseEntity<>(ufcgAlumniData, HttpStatus.OK);
         } catch (EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

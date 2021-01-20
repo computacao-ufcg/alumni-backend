@@ -33,28 +33,14 @@ public class StatisticsProcessor extends Thread {
 	
 	private Set<UfcgAlumnusData> filterAlumniByCourseName(Collection<UfcgAlumnusData> alumni, CourseName courseName) {
 		return alumni.stream()
-				.filter(alumnus -> {
-					Degree[] alumnusDegrees = alumnus.getDegrees();
-					for (Degree degree : alumnusDegrees) {
-						if (degree.getCourseName().equals(courseName)) {
-							return true;
-						}
-					}
-					return false;
-				}).collect(Collectors.toSet());
+				.filter(alumnus -> alumnus.getDegree().getCourseName().equals(courseName))
+				.collect(Collectors.toSet());
 	}
 	
 	private Set<UfcgAlumnusData> filterAlumniByLevel(Collection<UfcgAlumnusData> alumni, Level level) {
 		return alumni.stream()
-				.filter(alumnus -> {
-					Degree[] alumnusDegrees = alumnus.getDegrees();
-					for (Degree degree : alumnusDegrees) {
-						if (degree.getLevel().equals(level)) {
-							return true;
-						}
-					}
-					return false;
-				}).collect(Collectors.toSet());
+				.filter(alumnus -> alumnus.getDegree().getLevel().equals(level))
+				.collect(Collectors.toSet());
 	}
 	
 	private int getNumberMappedAlumni(Collection<UfcgAlumnusData> alumni) {
