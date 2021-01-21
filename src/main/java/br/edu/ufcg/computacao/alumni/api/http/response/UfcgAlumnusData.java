@@ -98,6 +98,14 @@ public class UfcgAlumnusData {
         return registration;
     }
 
+    public CourseName getCourse() {
+        return degree.getCourseName();
+    }
+
+    public Level getLevel() {
+        return degree.getLevel();
+    }
+
     public void setRegistration(String registration) {
         this.registration = registration;
     }

@@ -33,9 +33,9 @@ public class Alumnus {
     public ResponseEntity<Page<UfcgAlumnusData>> getAlumni(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
-            @ApiParam(value = ApiDocumentation.Alumni.ADMISSION)
+            @ApiParam(value = ApiDocumentation.Alumni.ADMISSION_TERM)
             @RequestParam(required = false) String admission,
-            @ApiParam(value = ApiDocumentation.Alumni.GRADUATION)
+            @ApiParam(value = ApiDocumentation.Alumni.GRADUATION_TERM)
             @RequestParam(required = false) String graduation,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
