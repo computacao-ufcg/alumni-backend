@@ -87,7 +87,7 @@ public class AlumniHolder extends Thread {
         }
     }
 
-    private String getToken() throws EurecaException {
+    private synchronized String getToken() throws EurecaException {
         String username = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.USERNAME);
         String password = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.PASSWORD);
         String asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
@@ -125,16 +125,50 @@ public class AlumniHolder extends Thread {
         return this.alumni.values();
     }
 
-    public synchronized Page<UfcgAlumnusData> getAlumniDataPage(int requiredPage) {
+    public synchronized Page<UfcgAlumnusData> getAlumniDataPage(int requiredPage, String admission, String graduation) {
         Pageable pageable= new PageRequest(requiredPage, 10);
 
-        List<UfcgAlumnusData> list = new ArrayList<>(this.getAlumniData());
+        List<UfcgAlumnusData> list;
+        if (admission == null && graduation == null) {
+            list = new ArrayList<>(this.getAlumniData());
+        } else {
+            list = new ArrayList<>(this.getAlumniFilteredData(admission, graduation));
+        }
+
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
                 list.size() : (start + pageable.getPageSize()));
 
         Page<UfcgAlumnusData> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
         return page;
+    }
+
+    private synchronized Collection<UfcgAlumnusData> getAlumniFilteredData(String admission, String graduation) {
+        Set<UfcgAlumnusData> alumni = new HashSet<>();
+        alumni.addAll(filterAlumniBy("admission", admission));
+        alumni.addAll(filterAlumniBy("graduation", graduation));
+        return alumni;
+    }
+
+    private synchronized Collection<UfcgAlumnusData> filterAlumniBy(String key, String value) {
+        List<UfcgAlumnusData> alumni = new ArrayList<>();
+        for (UfcgAlumnusData alumnus : this.alumni.values()) {
+            switch (key.toLowerCase()) {
+                case "admission":
+                    if (alumnus.getAdmission().equals(value)) {
+                        alumni.add(alumnus);
+                    }
+                    break;
+                case "graduation":
+                    if (alumnus.getGraduation().equals(value)) {
+                        alumni.add(alumnus);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return alumni;
     }
 
     public synchronized List<String> getAlumniNames() {
@@ -210,6 +244,7 @@ public class AlumniHolder extends Thread {
                 this.loadAlumni();
             } catch (EurecaException e) {
                 LOGGER.error(Messages.COULD_NOT_LOAD_ALUMNI_DATA, e);
+                this.alumni = new HashMap<>();
             } finally {
                 try {
                     Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));

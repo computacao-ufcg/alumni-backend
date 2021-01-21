@@ -151,9 +151,7 @@ public class MatchesHolder {
     }
 
     private synchronized List<PendingMatch> getPendingMatches() {
-        List<PendingMatch> list = new LinkedList<>(this.pendingMatches);
-        list.sort(new PendingMatchNumberComparator());
-        return list;
+        return new LinkedList<>(this.pendingMatches);
     }
 
     public synchronized void setPendingMatches(Collection<PendingMatch> newPendingMatches) {

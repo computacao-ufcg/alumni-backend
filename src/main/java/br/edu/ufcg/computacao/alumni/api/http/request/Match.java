@@ -32,7 +32,7 @@ public class Match {
     private static final Logger LOGGER = Logger.getLogger(Match.class);
 
     @ApiOperation(value = ApiDocumentation.Match.SET_MATCH_OPERATION)
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Void> setMatch(
             @ApiParam(value = ApiDocumentation.Alumni.MATCH_BODY)
             @RequestBody br.edu.ufcg.computacao.alumni.api.parameters.Match match,

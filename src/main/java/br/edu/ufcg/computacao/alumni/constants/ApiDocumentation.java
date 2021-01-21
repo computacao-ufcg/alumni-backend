@@ -39,6 +39,8 @@ public class ApiDocumentation {
         public static final String GET_NAMES_OPERATION = "Lists the names of the alumni.";
         public static final String GET_CURRENT_JOB_OPERATION = "Lists names and current position of alumni.";
         public static final String REGISTRATION_PARAMETER = "Alumnus registration.";
+        public static final String ADMISSION_TERM = "Alumnus admission term.";
+        public static final String GRADUATION_TERM = "Alumnus graduation term.";
         public static final String MATCH_BODY = "The body of this request must specify the registration of the " +
                                                 "alumnus and his/her LinkedIn identification.";
     }

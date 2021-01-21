@@ -65,7 +65,7 @@ public class AlumnusTest {
         // set up
         String alumniEndpoint = ALUMNUS_ENDPOINT + "/0";
 
-        Mockito.doReturn(createFakePage()).when(this.facade).getAlumniData(Mockito.anyString(),Mockito.anyInt());
+        Mockito.doReturn(createFakePage()).when(this.facade).getAlumniData(Mockito.anyString(),Mockito.anyInt(), null, null);
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniEndpoint, getHttpHeaders(), "");
 
@@ -80,7 +80,7 @@ public class AlumnusTest {
         assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .getAlumniData(Mockito.anyString(),Mockito.anyInt());
+                .getAlumniData(Mockito.anyString(),Mockito.anyInt(), null, null);
     }
 
     // Test case: Requests a page of alumni data with page value that is not a number and Checks the response.
@@ -103,7 +103,7 @@ public class AlumnusTest {
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
-                .getAlumniData(Mockito.anyString(),Mockito.anyInt());
+                .getAlumniData(Mockito.anyString(),Mockito.anyInt(), null, null);
     }
 
     // Test case: Requests a page of alumni names and tests  a successfully return. Checks the response and also call
@@ -165,7 +165,7 @@ public class AlumnusTest {
         String alumniEndpoint = ALUMNUS_ENDPOINT + "/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
-                .getAlumniData(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniData(Mockito.anyString(), Mockito.anyInt(), null, null);
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniEndpoint, getHttpHeaders(), "");
 
@@ -177,7 +177,7 @@ public class AlumnusTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
-                .getAlumniData(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniData(Mockito.anyString(), Mockito.anyInt(), null, null);
     }
 
     // Test case: Requests a page of alumni names with an unauthorized user. Also call
@@ -233,7 +233,7 @@ public class AlumnusTest {
         String alumniEndpoint = ALUMNUS_ENDPOINT + "/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
-                .getAlumniData(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniData(Mockito.anyString(), Mockito.anyInt(), null, null);
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, alumniEndpoint, getHttpHeaders(), "");
 
@@ -245,7 +245,7 @@ public class AlumnusTest {
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .getAlumniData(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniData(Mockito.anyString(), Mockito.anyInt(), null, null);
     }
 
     // Test case: Requests a page os alumni names with an unauthenticated user. Also call

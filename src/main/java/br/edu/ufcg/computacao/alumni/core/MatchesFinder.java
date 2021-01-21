@@ -237,13 +237,13 @@ public class MatchesFinder {
 
 		for (LinkedinSchoolData linkedinSchool : linkedinSchoolData) {
 			score += getMatchesBasedOnSchoolData(linkedinSchool, school);
-			score += getScoreFromDegreeData(alumni.getDegrees(), linkedinSchool);
+			score += getScoreFromDegreeData(alumni.getDegree(), linkedinSchool);
 		}
 
 		return score;
 	}
 
-	private int getScoreFromDegreeData(Degree[] alumniDegrees, LinkedinSchoolData linkedinSchool) {
+	private int getScoreFromDegreeData(Degree alumniDegree, LinkedinSchoolData linkedinSchool) {
 		Level linkedinLevel = linkedinSchool.getDegreeLevel();
 		CourseName linkedinCourseName = linkedinSchool.getCourseName();
 
@@ -253,16 +253,14 @@ public class MatchesFinder {
 
 		int score = 0;
 
-		for (Degree degree : alumniDegrees) {
-			Level alumniLevel = degree.getLevel();
-			CourseName alumniCourseName = degree.getCourseName();
+		Level alumniLevel = alumniDegree.getLevel();
+		CourseName alumniCourseName = alumniDegree.getCourseName();
 
-			if (alumniLevel.equals(linkedinLevel)) {
+		if (alumniLevel.equals(linkedinLevel)) {
 				score += 10;
-			}
-			if (alumniCourseName.equals(linkedinCourseName)) {
-				score += 10;
-			}
+		}
+		if (alumniCourseName.equals(linkedinCourseName)) {
+			score += 10;
 		}
 		return score;
 	}
