@@ -26,4 +26,12 @@ public enum AlumniOperation {
     public String getValue() {
         return this.value;
     }
+
+    public AlumniOperation getOperation(String value) {
+        for (AlumniOperation alumniOperation : AlumniOperation.values()) {
+            if (alumniOperation.getValue().equals(value))
+                return alumniOperation;
+        }
+        return null;
+    }
 }

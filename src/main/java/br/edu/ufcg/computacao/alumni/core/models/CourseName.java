@@ -17,14 +17,11 @@ public enum CourseName {
     }
 
     public static CourseName getCourseName(String value) {
-        if (value.equals(DATA_PROCESSING.value)) {
-            return DATA_PROCESSING;
-        } else if (value.equals(COMPUTING_SCIENCE.value)) {
-            return COMPUTING_SCIENCE;
-        } else if(value.equals(INFORMATICS.value)){
-            return INFORMATICS;
-        } else {
-            return UNDEFINED;
+        for (CourseName courseName : CourseName.values()) {
+            if (courseName.getValue().equals(value))
+                return courseName;
         }
+
+        return UNDEFINED;
     }
 }

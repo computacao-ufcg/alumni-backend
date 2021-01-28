@@ -17,14 +17,10 @@ public enum Level {
     }
 
     public static Level getLevel(String value) {
-        if (value.equals(UNDERGRADUATE.value)) {
-            return UNDERGRADUATE;
-        } else if (value.equals(MASTER.value)) {
-            return MASTER;
-        } else if(value.equals(DOCTORATE.value)){
-            return DOCTORATE;
-        } else {
-            return UNDEFINED;
+        for (Level level : Level.values()) {
+            if (level.getValue().equals(value))
+                return level;
         }
+        return UNDEFINED;
     }
 }
