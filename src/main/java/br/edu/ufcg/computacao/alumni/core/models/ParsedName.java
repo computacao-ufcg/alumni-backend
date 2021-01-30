@@ -47,11 +47,12 @@ public class ParsedName {
 			return;
 		}
 		this.names = new String[] { this.names[0], this.surnames[0] };
-		
+
+		String[] oldSurnamesCopy = new String[this.surnames.length - 1];
+		System.arraycopy(this.surnames, 1, oldSurnamesCopy, 0, this.surnames.length - 1);
+
 		this.surnames = new String[this.surnames.length - 1];
-		for (int i = 1; i < this.surnames.length; i++) {
-			this.surnames[i - 1] = this.surnames[i];
-		}
+		System.arraycopy(oldSurnamesCopy, 0, this.surnames, 0, oldSurnamesCopy.length);
 	}
 
 	@Override
