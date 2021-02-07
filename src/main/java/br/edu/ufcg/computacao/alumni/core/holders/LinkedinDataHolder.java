@@ -6,13 +6,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,25 +97,32 @@ public class LinkedinDataHolder extends Thread {
         }
     }
 
-    public synchronized CurrentJob getAlumnusCurrentJob(String fullName, String linkedinId) {
+    public synchronized LinkedinAlumnusData getLinkedinData(String linkedinId) {
+        return this.linkedinAlumniData.get(linkedinId);
+    }
+
+    public synchronized Collection<CurrentJob> getAlumnusCurrentJob(String linkedinId) {
         if (linkedinId == null) {
-            return new CurrentJob(fullName, "not matched", "not matched");
+            return new HashSet<>();
         }
-        LinkedinAlumnusData alumnus = this.linkedinAlumniData.get(linkedinId);
+
+        LinkedinAlumnusData alumnus = this.getLinkedinData(linkedinId);
         if (alumnus == null) {
-            return new CurrentJob(fullName, "bad match", "bad match");
+            return new HashSet<>();
         }
-        String job = "not available";
-        String startYear = "not available";
-        LinkedinJobData[] jobs = alumnus.getJobs();
-        for (int i =0; i < jobs.length; i++) {
-            DateRange dateRange = jobs[i].getDateRange();
+
+        Collection<CurrentJob> currentJobs = new ArrayList<>();
+
+        for (LinkedinJobData jobData : alumnus.getJobs()) {
+            DateRange dateRange = jobData.getDateRange();
             if (dateRange.isCurrent()) {
-                job = jobs[i].getCompanyName();
-                startYear = dateRange.getStartYear();
+                String job = jobData.getCompanyName();
+                String startYear = dateRange.getStartYear();
+                currentJobs.add(new CurrentJob(alumnus.getFullName(), job, startYear));
             }
         }
-        return new CurrentJob(fullName, job, startYear);
+
+        return currentJobs;
     }
 
     public synchronized Collection<LinkedinAlumnusData> getLinkedinAlumniData() {

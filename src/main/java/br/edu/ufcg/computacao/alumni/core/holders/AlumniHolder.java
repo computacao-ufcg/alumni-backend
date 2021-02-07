@@ -191,29 +191,29 @@ public class AlumniHolder extends Thread {
         return page;
     }
 
-    public List<CurrentJob> getAlumniCurrentJob() {
-        List<CurrentJob> alumniCurrentJob = new LinkedList<>();
+    public Collection<CurrentJob> getAlumniCurrentJobs() {
+        Set<CurrentJob> alumniCurrentJobs = new HashSet<>();
 
         for(UfcgAlumnusData alumnus : this.alumni.values()) {
             String linkedinId = MatchesHolder.getInstance().getLinkedinId(alumnus.getRegistration());
-            CurrentJob current = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(alumnus.getFullName(),
-                    linkedinId);
-            if (!current.getCurrentJob().equals("bad match") && !current.getCurrentJob().equals("not available") &&
-                                                                !current.getCurrentJob().equals("not matched")) {
-                alumniCurrentJob.add(current);
+            Collection<CurrentJob> currentJobs = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(linkedinId);
+
+            if (!currentJobs.isEmpty()) {
+                alumniCurrentJobs.addAll(currentJobs);
             }
         }
-        return alumniCurrentJob;
+        return alumniCurrentJobs;
     }
+
     public Page<CurrentJob> getAlumniCurrentJobPage(int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
 
-        List<CurrentJob> list = this.getAlumniCurrentJob();
+        List<CurrentJob> list = new ArrayList<>(this.getAlumniCurrentJobs());
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
                 list.size() : (start + pageable.getPageSize()));
 
-        Page<CurrentJob> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        Page<CurrentJob> page = new PageImpl(list.subList(start, end), pageable, list.size());
         return page;
     }
     
@@ -244,7 +244,7 @@ public class AlumniHolder extends Thread {
                 this.loadAlumni();
             } catch (EurecaException e) {
                 LOGGER.error(Messages.COULD_NOT_LOAD_ALUMNI_DATA, e);
-                this.alumni = new HashMap<>();
+                this.alumni = new HashMap<>(); // caso o carregamento dos alumni dê errado, inicializa-os como um mapa vazio
             } finally {
                 try {
                     Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));

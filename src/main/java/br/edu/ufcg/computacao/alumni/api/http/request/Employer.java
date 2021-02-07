@@ -130,13 +130,13 @@ public class Employer {
         }
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
     public ResponseEntity<Void> setEmployerType(
             @ApiParam(value = ApiDocumentation.Employers.TYPE)
-            @RequestParam String type,
+            @RequestBody String type,
             @ApiParam(value = ApiDocumentation.Linkedin.LINKEDIN_ID_PARAMETER)
-            @RequestParam String linkedinId,
+            @RequestBody String linkedinId,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {

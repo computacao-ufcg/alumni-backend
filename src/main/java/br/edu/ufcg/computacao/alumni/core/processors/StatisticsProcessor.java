@@ -31,19 +31,19 @@ public class StatisticsProcessor extends Thread {
 	public StatisticsProcessor() {
 	}
 	
-	private Set<UfcgAlumnusData> filterAlumniByCourseName(Collection<UfcgAlumnusData> alumni, CourseName courseName) {
+	public Set<UfcgAlumnusData> filterAlumniByCourseName(Collection<UfcgAlumnusData> alumni, CourseName courseName) {
 		return alumni.stream()
 				.filter(alumnus -> alumnus.getDegree().getCourseName().equals(courseName))
 				.collect(Collectors.toSet());
 	}
 	
-	private Set<UfcgAlumnusData> filterAlumniByLevel(Collection<UfcgAlumnusData> alumni, Level level) {
+	public Set<UfcgAlumnusData> filterAlumniByLevel(Collection<UfcgAlumnusData> alumni, Level level) {
 		return alumni.stream()
 				.filter(alumnus -> alumnus.getDegree().getLevel().equals(level))
 				.collect(Collectors.toSet());
 	}
 	
-	private int getNumberMappedAlumni(Collection<UfcgAlumnusData> alumni) {
+	public int getNumberMappedAlumni(Collection<UfcgAlumnusData> alumni) {
 		Set<String> alumniRegistrations = alumni.stream().map(UfcgAlumnusData::getRegistration).collect(Collectors.toSet());
 		Set<String> matchesRegistrations = MatchesHolder.getInstance().getMatches().keySet();
 		
@@ -53,7 +53,7 @@ public class StatisticsProcessor extends Thread {
 		return mappedAlumni.size();
 	}
 	
-	private int getNumberTypeEmployed(Collection<UfcgAlumnusData> alumni, EmployerType type) {
+	public int getNumberTypeEmployed(Collection<UfcgAlumnusData> alumni, EmployerType type) {
 		Collection<EmployerResponse> employers = EmployersHolder.getInstance().getClassifiedEmployers(type);
 
 		Collection<String> employersCompanyNames = employers.stream()
@@ -65,9 +65,12 @@ public class StatisticsProcessor extends Thread {
 			String alumnusFullName = alumnus.getFullName();
 			String linkedinUrl = MatchesHolder.getInstance().getLinkedinId(alumnus.getRegistration());
 			
-			CurrentJob currentJob = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(alumnusFullName, linkedinUrl);
-			if (employersCompanyNames.contains(currentJob.getCurrentJob())) {
-				num++;
+			Collection<CurrentJob> currentJobs = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(linkedinUrl);
+
+			for (CurrentJob currentJob : currentJobs) {
+				if (employersCompanyNames.contains(currentJob.getCurrentJob())) {
+					num++;
+				}
 			}
 		}
 		
@@ -125,6 +128,7 @@ public class StatisticsProcessor extends Thread {
 				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(1))));
 				
 			} catch (InterruptedException e) {
+				isActive = false;
 				LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);
 			}
 		}
