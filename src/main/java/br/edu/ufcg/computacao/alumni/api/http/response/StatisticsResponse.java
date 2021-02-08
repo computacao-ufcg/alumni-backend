@@ -25,14 +25,14 @@ public class StatisticsResponse {
         this.numberIndustryEmployedCourse = statisticsCourse.getNumberIndustryEmployed();
         this.numberGovernmentEmployedCourse = statisticsCourse.getNumberGovernmentEmployed();
         this.numberOngEmployedCourse = statisticsCourse.getNumberOngEmployed();
-        this.numberOthersEmployedCourse = statisticsCourse.getNumberOthersEmployed();
+        this.numberOthersEmployedCourse = statisticsCourse.getNumberPublicCompanyEmployed();
         this.numberAlumniLevel = statisticsLevel.getNumberAlumni();
         this.numberMappedAlumniLevel = statisticsLevel.getNumberMappedAlumni();
         this.numberAcademyEmployedLevel = statisticsLevel.getNumberAcademyEmployed();
         this.numberIndustryEmployedLevel = statisticsLevel.getNumberIndustryEmployed();
         this.numberGovernmentEmployedLevel = statisticsLevel.getNumberGovernmentEmployed();
         this.numberOngEmployedLevel = statisticsLevel.getNumberOngEmployed();
-        this.numberOthersEmployedLevel = statisticsLevel.getNumberOthersEmployed();
+        this.numberOthersEmployedLevel = statisticsLevel.getNumberPublicCompanyEmployed();
     }
 
     public int getNumberAlumniCourse() {

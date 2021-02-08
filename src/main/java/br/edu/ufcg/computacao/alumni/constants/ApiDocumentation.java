@@ -81,6 +81,7 @@ public class ApiDocumentation {
         public static final String GET_EMPLOYER_BY_TYPE_OPERATION = "Lists information from organizations of a type where alumni of a course work or have worked.";
         public static final String SET_EMPLOYER_TYPE = "Assign type to the organization whose identification is 'linkedinId'.";
         public static final String GET_EMPLOYERS_UNDEFINED = "Lists information about organizations where alumni of a course work or have worked, whose type is undefined.";
+        public static final String GET_EMPLOYER_TYPES = "Lists all employer types and respective descriptions.";
         public static final String DELETE_EMPLOYER_TYPE = "Sets employer type to undefined.";
         public static final String TYPE = "The type of the employer.";
     }

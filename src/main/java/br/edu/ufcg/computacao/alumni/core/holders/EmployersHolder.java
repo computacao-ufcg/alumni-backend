@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import br.edu.ufcg.computacao.alumni.api.http.response.EmployerTypeResponse;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
@@ -53,11 +54,15 @@ public class EmployersHolder {
 			return instance;
 		}
 	}
+
+	public Collection<EmployerTypeResponse> getEmployerTypes() {
+		return Arrays.stream(EmployerType.values()).map(EmployerTypeResponse::new).collect(Collectors.toList());
+	}
 	
-	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
+	public synchronized void setEmployerType(String employerName, String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
 		if (!this.unclassifiedEmployers.containsKey(employerId)) {
 			throw new InvalidParameterException(Messages.NO_SUCH_LINKEDIN_ID);
-		} 
+		}
 
 		Employer employer = this.unclassifiedEmployers.get(employerId);
 		this.unclassifiedEmployers.remove(employerId, employer);

@@ -111,7 +111,11 @@ public class ApplicationFacade {
     public Page<EmployerResponse> getUnclassifiedEmployers(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
         return EmployersHolder.getInstance().getUnclassifiedEmployersPage(page);
+    }
 
+    public Collection<EmployerTypeResponse> getEmployerTypes(String token) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYER_TYPES);
+        return EmployersHolder.getInstance().getEmployerTypes();
     }
 
     public void setEmployerTypeToUndefined(String token, String linkedinId) throws EurecaException{
@@ -119,9 +123,9 @@ public class ApplicationFacade {
         EmployersHolder.getInstance().resetEmployerType(linkedinId);
     }
 
-    public void setEmployerType(String token, EmployerType type, String linkedinId) throws EurecaException {
+    public void setEmployerType(String token, String employerName, EmployerType type, String linkedinId) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.SET_EMPLOYER_TYPE);
-        EmployersHolder.getInstance().setEmployerType(linkedinId, type);
+        EmployersHolder.getInstance().setEmployerType(employerName, linkedinId, type);
     }
 
     public StatisticsResponse getStatistics(String token, Level level, CourseName courseName) throws EurecaException {

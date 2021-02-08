@@ -7,17 +7,22 @@ public class StatisticsModel {
     private int numberIndustryEmployed;
     private int numberGovernmentEmployed;
     private int numberOngEmployed;
-    private int numberOthersEmployed;
+    private int numberPublicCompanyEmployed;
+    private int numberPrivateCompanyEmployed;
+    private int numberMixedCompanyEmployed;
 
     public StatisticsModel(int numberAlumni, int numberMappedAlumni, int numberAcademyEmployed, int numberIndustryEmployed,
-                           int numberGovernmentEmployed, int numberOngEmployed, int numberOthersEmployed) {
+                           int numberGovernmentEmployed, int numberOngEmployed, int numberPublicCompanyEmployed,
+                           int numberPrivateCompanyEmployed, int numberMixedCompanyEmployed) {
         this.numberAlumni = numberAlumni;
         this.numberMappedAlumni = numberMappedAlumni;
         this.numberAcademyEmployed = numberAcademyEmployed;
         this.numberIndustryEmployed = numberIndustryEmployed;
         this.numberGovernmentEmployed = numberGovernmentEmployed;
         this.numberOngEmployed = numberOngEmployed;
-        this.numberOthersEmployed = numberOthersEmployed;
+        this.numberPublicCompanyEmployed = numberPublicCompanyEmployed;
+        this.numberPrivateCompanyEmployed = numberPrivateCompanyEmployed;
+        this.numberMixedCompanyEmployed = numberMixedCompanyEmployed;
     }
 
     public int getNumberAlumni() {
@@ -44,8 +49,16 @@ public class StatisticsModel {
         return numberOngEmployed;
     }
 
-    public int getNumberOthersEmployed() {
-        return numberOthersEmployed;
+    public int getNumberPublicCompanyEmployed() {
+        return numberPublicCompanyEmployed;
+    }
+
+    public int getNumberPrivateCompanyEmployed() {
+        return numberPrivateCompanyEmployed;
+    }
+
+    public int getNumberMixedCompanyEmployed() {
+        return numberMixedCompanyEmployed;
     }
 
     public void setNumberAlumni(int numberAlumni) {
@@ -72,20 +85,30 @@ public class StatisticsModel {
         this.numberOngEmployed = numberOngEmployed;
     }
 
-    public void setNumberOthersEmployed(int numberOthersEmployed) {
-        this.numberOthersEmployed = numberOthersEmployed;
+    public void setNumberPublicCompanyEmployed(int numberPublicCompanyEmployed) {
+        this.numberPublicCompanyEmployed = numberPublicCompanyEmployed;
+    }
+
+    public void setNumberPrivateCompanyEmployed(int numberPrivateCompanyEmployed) {
+        this.numberPrivateCompanyEmployed = numberPrivateCompanyEmployed;
+    }
+
+    public void setNumberMixedCompanyEmployed(int numberMixedCompanyEmployed) {
+        this.numberMixedCompanyEmployed = numberMixedCompanyEmployed;
     }
 
     @Override
     public String toString() {
-        return "StatisticsResponse{" +
+        return "StatisticsModel{" +
                 "numberAlumni=" + numberAlumni +
                 ", numberMappedAlumni=" + numberMappedAlumni +
                 ", numberAcademyEmployed=" + numberAcademyEmployed +
                 ", numberIndustryEmployed=" + numberIndustryEmployed +
                 ", numberGovernmentEmployed=" + numberGovernmentEmployed +
                 ", numberOngEmployed=" + numberOngEmployed +
-                ", numberOthersEmployed=" + numberOthersEmployed +
+                ", numberPublicCompanyEmployed=" + numberPublicCompanyEmployed +
+                ", numberPrivateCompanyEmployed=" + numberPrivateCompanyEmployed +
+                ", numberMixedCompanyEmployed=" + numberMixedCompanyEmployed +
                 '}';
     }
 }

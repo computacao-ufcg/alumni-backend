@@ -51,6 +51,7 @@ public class EmployerFinderProcessor extends Thread {
 				
 				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(1))));
 			} catch (InterruptedException e) {
+				isActive = false;
 				LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);
 			}
 		}

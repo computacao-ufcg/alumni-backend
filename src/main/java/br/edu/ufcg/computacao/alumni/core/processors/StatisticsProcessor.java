@@ -62,7 +62,6 @@ public class StatisticsProcessor extends Thread {
 
 		int num = 0;
 		for (UfcgAlumnusData alumnus : alumni) {
-			String alumnusFullName = alumnus.getFullName();
 			String linkedinUrl = MatchesHolder.getInstance().getLinkedinId(alumnus.getRegistration());
 			
 			Collection<CurrentJob> currentJobs = LinkedinDataHolder.getInstance().getAlumnusCurrentJob(linkedinUrl);
@@ -99,9 +98,13 @@ public class StatisticsProcessor extends Thread {
 					int numberIndustryEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.INDUSTRY);
 					int numberGovernmentEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.GOVERNMENT);
 					int numberOngEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.ONG);
-					int numberOthersEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.OTHERS);
-					
-					StatisticsModel courseStatistic = new StatisticsModel(numberAlumniCourse, numberMappedAlumniCourse, numberAcademyEmployedCourse, numberIndustryEmployedCourse, numberGovernmentEmployedCourse, numberOngEmployedCourse, numberOthersEmployedCourse);
+					int numberPublicCompanyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.PUBLIC_COMPANY);
+					int numberPrivateCompanyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.PRIVATE_COMPANY);
+					int numberMixedCompanyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.MIXED_COMPANY);
+
+					StatisticsModel courseStatistic = new StatisticsModel(numberAlumniCourse, numberMappedAlumniCourse, numberAcademyEmployedCourse,
+							numberIndustryEmployedCourse, numberGovernmentEmployedCourse, numberOngEmployedCourse
+							, numberPublicCompanyEmployedCourse, numberPrivateCompanyEmployedCourse, numberMixedCompanyEmployedCourse);
 					
 					courseStatistics.put(courseName, courseStatistic);
 					
@@ -114,9 +117,13 @@ public class StatisticsProcessor extends Thread {
 						int numberIndustryEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.INDUSTRY);
 						int numberGovernmentEmployedLevel= getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.GOVERNMENT);
 						int numberOngEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.ONG);
-						int numberOthersEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.OTHERS);
-						
-						StatisticsModel levelStatistic = new StatisticsModel(numberAlumniLevel, numberMappedAlumniLevel, numberAcademyEmployedLevel, numberIndustryEmployedLevel, numberGovernmentEmployedLevel, numberOngEmployedLevel, numberOthersEmployedLevel);
+						int numberPublicCompanyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.PUBLIC_COMPANY);
+						int numberPrivateCompanyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.PRIVATE_COMPANY);
+						int numberMixedCompanyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.MIXED_COMPANY);
+
+						StatisticsModel levelStatistic = new StatisticsModel(numberAlumniLevel, numberMappedAlumniLevel, numberAcademyEmployedLevel,
+								numberIndustryEmployedLevel, numberGovernmentEmployedLevel, numberOngEmployedLevel,
+								numberPublicCompanyEmployedLevel, numberPrivateCompanyEmployedLevel, numberMixedCompanyEmployedLevel);
 						
 						levelStatistics.put(level, levelStatistic);
 					}

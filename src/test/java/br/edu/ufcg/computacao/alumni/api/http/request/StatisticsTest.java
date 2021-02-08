@@ -6,7 +6,6 @@ import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
-import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthenticatedUserException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.UnauthorizedRequestException;
 import org.junit.Assert;
@@ -182,9 +181,11 @@ public class StatisticsTest {
 
     private StatisticsResponse createFakeStatistics() {
         StatisticsModel modelCourse =  new StatisticsModel(0,0,0
-                ,0, 0, 0, 0);
+                ,0, 0, 0, 0,
+                0, 0);
         StatisticsModel modelLevel = new StatisticsModel(0, 0
-                , 0, 0, 0, 0, 0);
+                , 0, 0, 0, 0, 0,
+                0, 0);
         StatisticsResponse statistics = new StatisticsResponse(modelCourse, modelLevel);
         return statistics;
     }
