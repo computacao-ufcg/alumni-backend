@@ -2,6 +2,8 @@ package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
+import br.edu.ufcg.computacao.alumni.api.http.response.EmployerTypeResponse;
+import br.edu.ufcg.computacao.alumni.api.parameters.EmployerClassification;
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
@@ -17,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 @CrossOrigin
 @RestController
@@ -130,26 +134,41 @@ public class Employer {
         }
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(value = "/types", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYER_TYPES)
+    public ResponseEntity<Collection<EmployerTypeResponse>> getEmployerTypes(
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @RequestHeader(value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws EurecaException {
+
+        try {
+            Collection<EmployerTypeResponse> types = ApplicationFacade.getInstance().getEmployerTypes(token);
+            return new ResponseEntity<>(types, HttpStatus.OK);
+        } catch (EurecaException e){
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()));
+            throw e;
+        }
+    }
+
+
+    @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
     public ResponseEntity<Void> setEmployerType(
-            @ApiParam(value = ApiDocumentation.Employers.TYPE)
-            @RequestParam String type,
             @ApiParam(value = ApiDocumentation.Linkedin.LINKEDIN_ID_PARAMETER)
-            @RequestParam String linkedinId,
+            @RequestBody EmployerClassification employer,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
 
-            EmployerType t = EmployerType.getType(type.toLowerCase());
+            EmployerType type = EmployerType.getType(employer.getType().toLowerCase());
 
-            if(t.getValue().equals("undefined")) {
+            if(type.equals(EmployerType.UNDEFINED)) {
                 throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
             }
 
-            ApplicationFacade.getInstance().setEmployerType(token, t, linkedinId);
+            ApplicationFacade.getInstance().setEmployerType(token, employer);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (EurecaException e) {

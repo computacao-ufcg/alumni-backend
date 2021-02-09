@@ -6,33 +6,40 @@ public class StatisticsResponse {
     private int numberAlumniCourse;
     private int numberMappedAlumniCourse;
     private int numberAcademyEmployedCourse;
-    private int numberIndustryEmployedCourse;
     private int numberGovernmentEmployedCourse;
     private int numberOngEmployedCourse;
-    private int numberOthersEmployedCourse;
+    private int numberPublicCompanyEmployedCourse;
+    private int numberPrivateCompanyEmployedCourse;
+    private int numberMixedCompanyEmployedCourse;
+
     private int numberAlumniLevel;
     private int numberMappedAlumniLevel;
     private int numberAcademyEmployedLevel;
     private int numberIndustryEmployedLevel;
     private int numberGovernmentEmployedLevel;
     private int numberOngEmployedLevel;
-    private int numberOthersEmployedLevel;
+    private int numberPublicCompanyEmployedLevel;
+    private int numberPrivateCompanyEmployedLevel;
+    private int numberMixedCompanyEmployedLevel;
 
     public StatisticsResponse(StatisticsModel statisticsCourse, StatisticsModel statisticsLevel) {
         this.numberAlumniCourse = statisticsCourse.getNumberAlumni();
         this.numberMappedAlumniCourse = statisticsCourse.getNumberMappedAlumni();
         this.numberAcademyEmployedCourse = statisticsCourse.getNumberAcademyEmployed();
-        this.numberIndustryEmployedCourse = statisticsCourse.getNumberIndustryEmployed();
         this.numberGovernmentEmployedCourse = statisticsCourse.getNumberGovernmentEmployed();
         this.numberOngEmployedCourse = statisticsCourse.getNumberOngEmployed();
-        this.numberOthersEmployedCourse = statisticsCourse.getNumberOthersEmployed();
+        this.numberPublicCompanyEmployedCourse = statisticsCourse.getNumberPublicCompanyEmployed();
+        this.numberPrivateCompanyEmployedCourse = statisticsCourse.getNumberPrivateCompanyEmployed();
+        this.numberMixedCompanyEmployedCourse = statisticsCourse.getNumberMixedCompanyEmployed();
+
         this.numberAlumniLevel = statisticsLevel.getNumberAlumni();
         this.numberMappedAlumniLevel = statisticsLevel.getNumberMappedAlumni();
         this.numberAcademyEmployedLevel = statisticsLevel.getNumberAcademyEmployed();
-        this.numberIndustryEmployedLevel = statisticsLevel.getNumberIndustryEmployed();
         this.numberGovernmentEmployedLevel = statisticsLevel.getNumberGovernmentEmployed();
         this.numberOngEmployedLevel = statisticsLevel.getNumberOngEmployed();
-        this.numberOthersEmployedLevel = statisticsLevel.getNumberOthersEmployed();
+        this.numberPublicCompanyEmployedLevel = statisticsLevel.getNumberPublicCompanyEmployed();
+        this.numberPrivateCompanyEmployedLevel = statisticsLevel.getNumberPrivateCompanyEmployed();
+        this.numberMixedCompanyEmployedLevel = statisticsLevel.getNumberMixedCompanyEmployed();
     }
 
     public int getNumberAlumniCourse() {
@@ -59,14 +66,6 @@ public class StatisticsResponse {
         this.numberAcademyEmployedCourse = numberAcademyEmployedCourse;
     }
 
-    public int getNumberIndustryEmployedCourse() {
-        return numberIndustryEmployedCourse;
-    }
-
-    public void setNumberIndustryEmployedCourse(int numberIndustryEmployedCourse) {
-        this.numberIndustryEmployedCourse = numberIndustryEmployedCourse;
-    }
-
     public int getNumberGovernmentEmployedCourse() {
         return numberGovernmentEmployedCourse;
     }
@@ -81,14 +80,6 @@ public class StatisticsResponse {
 
     public void setNumberOngEmployedCourse(int numberOngEmployedCourse) {
         this.numberOngEmployedCourse = numberOngEmployedCourse;
-    }
-
-    public int getNumberOthersEmployedCourse() {
-        return numberOthersEmployedCourse;
-    }
-
-    public void setNumberOthersEmployedCourse(int numberOthersEmployedCourse) {
-        this.numberOthersEmployedCourse = numberOthersEmployedCourse;
     }
 
     public int getNumberAlumniLevel() {
@@ -139,31 +130,74 @@ public class StatisticsResponse {
         this.numberOngEmployedLevel = numberOngEmployedLevel;
     }
 
-    public int getNumberOthersEmployedLevel() {
-        return numberOthersEmployedLevel;
+    public int getNumberPublicCompanyEmployedCourse() {
+        return numberPublicCompanyEmployedCourse;
     }
 
-    public void setNumberOthersEmployedLevel(int numberOthersEmployedLevel) {
-        this.numberOthersEmployedLevel = numberOthersEmployedLevel;
+    public void setNumberPublicCompanyEmployedCourse(int numberPublicCompanyEmployedCourse) {
+        this.numberPublicCompanyEmployedCourse = numberPublicCompanyEmployedCourse;
+    }
+
+    public int getNumberPrivateCompanyEmployedCourse() {
+        return numberPrivateCompanyEmployedCourse;
+    }
+
+    public void setNumberPrivateCompanyEmployedCourse(int numberPrivateCompanyEmployedCourse) {
+        this.numberPrivateCompanyEmployedCourse = numberPrivateCompanyEmployedCourse;
+    }
+
+    public int getNumberMixedCompanyEmployedCourse() {
+        return numberMixedCompanyEmployedCourse;
+    }
+
+    public void setNumberMixedCompanyEmployedCourse(int numberMixedCompanyEmployedCourse) {
+        this.numberMixedCompanyEmployedCourse = numberMixedCompanyEmployedCourse;
+    }
+
+    public int getNumberPublicCompanyEmployedLevel() {
+        return numberPublicCompanyEmployedLevel;
+    }
+
+    public void setNumberPublicCompanyEmployedLevel(int numberPublicCompanyEmployedLevel) {
+        this.numberPublicCompanyEmployedLevel = numberPublicCompanyEmployedLevel;
+    }
+
+    public int getNumberPrivateCompanyEmployedLevel() {
+        return numberPrivateCompanyEmployedLevel;
+    }
+
+    public void setNumberPrivateCompanyEmployedLevel(int numberPrivateCompanyEmployedLevel) {
+        this.numberPrivateCompanyEmployedLevel = numberPrivateCompanyEmployedLevel;
+    }
+
+    public int getNumberMixedCompanyEmployedLevel() {
+        return numberMixedCompanyEmployedLevel;
+    }
+
+    public void setNumberMixedCompanyEmployedLevel(int numberMixedCompanyEmployedLevel) {
+        this.numberMixedCompanyEmployedLevel = numberMixedCompanyEmployedLevel;
     }
 
     @Override
     public String toString() {
-        return "StatisticsResponse2{" +
+        return "StatisticsResponse{" +
                 "numberAlumniCourse=" + numberAlumniCourse +
                 ", numberMappedAlumniCourse=" + numberMappedAlumniCourse +
                 ", numberAcademyEmployedCourse=" + numberAcademyEmployedCourse +
-                ", numberIndustryEmployedCourse=" + numberIndustryEmployedCourse +
                 ", numberGovernmentEmployedCourse=" + numberGovernmentEmployedCourse +
                 ", numberOngEmployedCourse=" + numberOngEmployedCourse +
-                ", numberOthersEmployedCourse=" + numberOthersEmployedCourse +
+                ", numberPublicCompanyEmployedCourse=" + numberPublicCompanyEmployedCourse +
+                ", numberPrivateCompanyEmployedCourse=" + numberPrivateCompanyEmployedCourse +
+                ", numberMixedCompanyEmployedCourse=" + numberMixedCompanyEmployedCourse +
                 ", numberAlumniLevel=" + numberAlumniLevel +
                 ", numberMappedAlumniLevel=" + numberMappedAlumniLevel +
                 ", numberAcademyEmployedLevel=" + numberAcademyEmployedLevel +
                 ", numberIndustryEmployedLevel=" + numberIndustryEmployedLevel +
                 ", numberGovernmentEmployedLevel=" + numberGovernmentEmployedLevel +
                 ", numberOngEmployedLevel=" + numberOngEmployedLevel +
-                ", numberOthersEmployedLevel=" + numberOthersEmployedLevel +
+                ", numberPublicCompanyEmployedLevel=" + numberPublicCompanyEmployedLevel +
+                ", numberPrivateCompanyEmployedLevel=" + numberPrivateCompanyEmployedLevel +
+                ", numberMixedCompanyEmployedLevel=" + numberMixedCompanyEmployedLevel +
                 '}';
     }
 }
