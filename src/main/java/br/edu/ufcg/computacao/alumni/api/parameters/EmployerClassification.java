@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class EmployerClassification {
 
-    @ApiModelProperty(value = ApiDocumentation.Model.FULL_NAME)
+    @ApiModelProperty(value = ApiDocumentation.Model.EMPLOYER_NAME)
     private String name;
     @ApiModelProperty(value = ApiDocumentation.Model.LINKEDIN_ID)
     private String linkedinId;

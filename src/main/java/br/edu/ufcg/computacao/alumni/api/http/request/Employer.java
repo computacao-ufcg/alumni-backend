@@ -164,7 +164,7 @@ public class Employer {
 
             EmployerType type = EmployerType.getType(employer.getType().toLowerCase());
 
-            if(type.getValue().equals("undefined")) {
+            if(type.equals(EmployerType.UNDEFINED)) {
                 throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
             }
 
