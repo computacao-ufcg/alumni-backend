@@ -4,7 +4,6 @@ import br.edu.ufcg.computacao.alumni.constants.EmployerTypeDescription;
 
 public enum EmployerType {
     ACADEMY("academy", EmployerTypeDescription.ACADEMY),
-    INDUSTRY("industry", EmployerTypeDescription.INDUSTRY),
     GOVERNMENT("government", EmployerTypeDescription.GOVERNMENT),
     ONG("ong", EmployerTypeDescription.ONG),
     PUBLIC_COMPANY("public-company", EmployerTypeDescription.PUBLIC_COMPANY),

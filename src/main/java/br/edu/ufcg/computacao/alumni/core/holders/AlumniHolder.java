@@ -244,7 +244,7 @@ public class AlumniHolder extends Thread {
                 this.loadAlumni();
             } catch (EurecaException e) {
                 LOGGER.error(Messages.COULD_NOT_LOAD_ALUMNI_DATA, e);
-                this.alumni = new HashMap<>(); // caso o carregamento dos alumni dê errado, inicializa-os como um mapa vazio
+                this.alumni = new HashMap<>(); // If the alumni data loading goes wrong, it starts with an empty map
             } finally {
                 try {
                     Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));

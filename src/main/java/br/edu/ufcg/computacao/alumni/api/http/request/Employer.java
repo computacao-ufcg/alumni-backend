@@ -3,6 +3,7 @@ package br.edu.ufcg.computacao.alumni.api.http.request;
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerTypeResponse;
+import br.edu.ufcg.computacao.alumni.api.parameters.EmployerClassification;
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
@@ -153,24 +154,21 @@ public class Employer {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
     public ResponseEntity<Void> setEmployerType(
-            @RequestBody String employerName,
-            @ApiParam(value = ApiDocumentation.Employers.TYPE)
-            @RequestBody String type,
             @ApiParam(value = ApiDocumentation.Linkedin.LINKEDIN_ID_PARAMETER)
-            @RequestBody String linkedinId,
+            @RequestBody EmployerClassification employer,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
 
-            EmployerType t = EmployerType.getType(type.toLowerCase());
+            EmployerType type = EmployerType.getType(employer.getType().toLowerCase());
 
-            if(t.getValue().equals("undefined")) {
+            if(type.getValue().equals("undefined")) {
                 throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
             }
 
-            ApplicationFacade.getInstance().setEmployerType(token, employerName, t, linkedinId);
+            ApplicationFacade.getInstance().setEmployerType(token, employer);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (EurecaException e) {

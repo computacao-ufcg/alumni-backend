@@ -1,6 +1,7 @@
 package br.edu.ufcg.computacao.alumni.core;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.*;
+import br.edu.ufcg.computacao.alumni.api.parameters.EmployerClassification;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
@@ -123,9 +124,9 @@ public class ApplicationFacade {
         EmployersHolder.getInstance().resetEmployerType(linkedinId);
     }
 
-    public void setEmployerType(String token, String employerName, EmployerType type, String linkedinId) throws EurecaException {
+    public void setEmployerType(String token, EmployerClassification employer) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.SET_EMPLOYER_TYPE);
-        EmployersHolder.getInstance().setEmployerType(employerName, linkedinId, type);
+        EmployersHolder.getInstance().setEmployerType(employer.getLinkedinId(), EmployerType.getType(employer.getType()));
     }
 
     public StatisticsResponse getStatistics(String token, Level level, CourseName courseName) throws EurecaException {

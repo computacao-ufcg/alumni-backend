@@ -1,29 +1,19 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.apache.log4j.Logger;
-
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
-import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
-import br.edu.ufcg.computacao.alumni.core.holders.EmployersHolder;
-import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
-import br.edu.ufcg.computacao.alumni.core.holders.MatchesHolder;
-import br.edu.ufcg.computacao.alumni.core.holders.StatisticsHolder;
+import br.edu.ufcg.computacao.alumni.core.holders.*;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
-import br.edu.ufcg.computacao.alumni.core.models.Degree;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
+import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
+import org.apache.log4j.Logger;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class StatisticsProcessor extends Thread {
 	private Logger LOGGER = Logger.getLogger(StatisticsProcessor.class);
@@ -31,19 +21,19 @@ public class StatisticsProcessor extends Thread {
 	public StatisticsProcessor() {
 	}
 	
-	public Set<UfcgAlumnusData> filterAlumniByCourseName(Collection<UfcgAlumnusData> alumni, CourseName courseName) {
+	private Set<UfcgAlumnusData> filterAlumniByCourseName(Collection<UfcgAlumnusData> alumni, CourseName courseName) {
 		return alumni.stream()
 				.filter(alumnus -> alumnus.getDegree().getCourseName().equals(courseName))
 				.collect(Collectors.toSet());
 	}
 	
-	public Set<UfcgAlumnusData> filterAlumniByLevel(Collection<UfcgAlumnusData> alumni, Level level) {
+	private Set<UfcgAlumnusData> filterAlumniByLevel(Collection<UfcgAlumnusData> alumni, Level level) {
 		return alumni.stream()
 				.filter(alumnus -> alumnus.getDegree().getLevel().equals(level))
 				.collect(Collectors.toSet());
 	}
 	
-	public int getNumberMappedAlumni(Collection<UfcgAlumnusData> alumni) {
+	private int getNumberMappedAlumni(Collection<UfcgAlumnusData> alumni) {
 		Set<String> alumniRegistrations = alumni.stream().map(UfcgAlumnusData::getRegistration).collect(Collectors.toSet());
 		Set<String> matchesRegistrations = MatchesHolder.getInstance().getMatches().keySet();
 		
@@ -53,7 +43,7 @@ public class StatisticsProcessor extends Thread {
 		return mappedAlumni.size();
 	}
 	
-	public int getNumberTypeEmployed(Collection<UfcgAlumnusData> alumni, EmployerType type) {
+	private int getNumberTypeEmployed(Collection<UfcgAlumnusData> alumni, EmployerType type) {
 		Collection<EmployerResponse> employers = EmployersHolder.getInstance().getClassifiedEmployers(type);
 
 		Collection<String> employersCompanyNames = employers.stream()
@@ -95,7 +85,6 @@ public class StatisticsProcessor extends Thread {
 					int numberAlumniCourse = filteredAlumniByCourse.size();
 					int numberMappedAlumniCourse = getNumberMappedAlumni(filteredAlumniByCourse);
 					int numberAcademyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.ACADEMY);
-					int numberIndustryEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.INDUSTRY);
 					int numberGovernmentEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.GOVERNMENT);
 					int numberOngEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.ONG);
 					int numberPublicCompanyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.PUBLIC_COMPANY);
@@ -103,7 +92,7 @@ public class StatisticsProcessor extends Thread {
 					int numberMixedCompanyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.MIXED_COMPANY);
 
 					StatisticsModel courseStatistic = new StatisticsModel(numberAlumniCourse, numberMappedAlumniCourse, numberAcademyEmployedCourse,
-							numberIndustryEmployedCourse, numberGovernmentEmployedCourse, numberOngEmployedCourse
+							numberGovernmentEmployedCourse, numberOngEmployedCourse
 							, numberPublicCompanyEmployedCourse, numberPrivateCompanyEmployedCourse, numberMixedCompanyEmployedCourse);
 					
 					courseStatistics.put(courseName, courseStatistic);
@@ -114,7 +103,6 @@ public class StatisticsProcessor extends Thread {
 						int numberAlumniLevel = filteredAlumniByLevel.size();
 						int numberMappedAlumniLevel = getNumberMappedAlumni(filteredAlumniByLevel);
 						int numberAcademyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.ACADEMY);
-						int numberIndustryEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.INDUSTRY);
 						int numberGovernmentEmployedLevel= getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.GOVERNMENT);
 						int numberOngEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.ONG);
 						int numberPublicCompanyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.PUBLIC_COMPANY);
@@ -122,7 +110,7 @@ public class StatisticsProcessor extends Thread {
 						int numberMixedCompanyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.MIXED_COMPANY);
 
 						StatisticsModel levelStatistic = new StatisticsModel(numberAlumniLevel, numberMappedAlumniLevel, numberAcademyEmployedLevel,
-								numberIndustryEmployedLevel, numberGovernmentEmployedLevel, numberOngEmployedLevel,
+								numberGovernmentEmployedLevel, numberOngEmployedLevel,
 								numberPublicCompanyEmployedLevel, numberPrivateCompanyEmployedLevel, numberMixedCompanyEmployedLevel);
 						
 						levelStatistics.put(level, levelStatistic);

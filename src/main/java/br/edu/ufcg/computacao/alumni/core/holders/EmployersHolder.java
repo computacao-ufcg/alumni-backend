@@ -59,7 +59,7 @@ public class EmployersHolder {
 		return Arrays.stream(EmployerType.values()).map(EmployerTypeResponse::new).collect(Collectors.toList());
 	}
 	
-	public synchronized void setEmployerType(String employerName, String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
+	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
 		if (!this.unclassifiedEmployers.containsKey(employerId)) {
 			throw new InvalidParameterException(Messages.NO_SUCH_LINKEDIN_ID);
 		}

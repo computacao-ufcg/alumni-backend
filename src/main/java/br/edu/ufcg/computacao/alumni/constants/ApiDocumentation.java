@@ -31,6 +31,8 @@ public class ApiDocumentation {
                 "3Rf7gmkApzPbOkeMoKOZJOS7DNkeOl150WbilLURQ7gHH6EiyDqskIlyRYiW6FDF" +
                 "+wIDAQAB";
         public static final String FULL_NAME = "Maria da Silva";
+        public static final String EMPLOYER_TYPE = "Academia";
+        public static final String EMPLOYER_NAME = "";
     }
 
     public static class Alumni {

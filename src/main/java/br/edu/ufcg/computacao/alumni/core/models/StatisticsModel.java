@@ -4,20 +4,18 @@ public class StatisticsModel {
     private int numberAlumni;
     private int numberMappedAlumni;
     private int numberAcademyEmployed;
-    private int numberIndustryEmployed;
     private int numberGovernmentEmployed;
     private int numberOngEmployed;
     private int numberPublicCompanyEmployed;
     private int numberPrivateCompanyEmployed;
     private int numberMixedCompanyEmployed;
 
-    public StatisticsModel(int numberAlumni, int numberMappedAlumni, int numberAcademyEmployed, int numberIndustryEmployed,
+    public StatisticsModel(int numberAlumni, int numberMappedAlumni, int numberAcademyEmployed,
                            int numberGovernmentEmployed, int numberOngEmployed, int numberPublicCompanyEmployed,
                            int numberPrivateCompanyEmployed, int numberMixedCompanyEmployed) {
         this.numberAlumni = numberAlumni;
         this.numberMappedAlumni = numberMappedAlumni;
         this.numberAcademyEmployed = numberAcademyEmployed;
-        this.numberIndustryEmployed = numberIndustryEmployed;
         this.numberGovernmentEmployed = numberGovernmentEmployed;
         this.numberOngEmployed = numberOngEmployed;
         this.numberPublicCompanyEmployed = numberPublicCompanyEmployed;
@@ -35,10 +33,6 @@ public class StatisticsModel {
 
     public int getNumberAcademyEmployed() {
         return numberAcademyEmployed;
-    }
-
-    public int getNumberIndustryEmployed() {
-        return numberIndustryEmployed;
     }
 
     public int getNumberGovernmentEmployed() {
@@ -73,10 +67,6 @@ public class StatisticsModel {
         this.numberAcademyEmployed = numberAcademyEmployed;
     }
 
-    public void setNumberIndustryEmployed(int numberIndustryEmployed) {
-        this.numberIndustryEmployed = numberIndustryEmployed;
-    }
-
     public void setNumberGovernmentEmployed(int numberGovernmentEmployed) {
         this.numberGovernmentEmployed = numberGovernmentEmployed;
     }
@@ -103,7 +93,6 @@ public class StatisticsModel {
                 "numberAlumni=" + numberAlumni +
                 ", numberMappedAlumni=" + numberMappedAlumni +
                 ", numberAcademyEmployed=" + numberAcademyEmployed +
-                ", numberIndustryEmployed=" + numberIndustryEmployed +
                 ", numberGovernmentEmployed=" + numberGovernmentEmployed +
                 ", numberOngEmployed=" + numberOngEmployed +
                 ", numberPublicCompanyEmployed=" + numberPublicCompanyEmployed +
