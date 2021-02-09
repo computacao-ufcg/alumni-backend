@@ -32,7 +32,6 @@ public class ApiDocumentation {
                 "+wIDAQAB";
         public static final String FULL_NAME = "Maria da Silva";
         public static final String EMPLOYER_TYPE = "Academia";
-        public static final String EMPLOYER_NAME = "Silva Companhia LTDA";
     }
 
     public static class Alumni {
