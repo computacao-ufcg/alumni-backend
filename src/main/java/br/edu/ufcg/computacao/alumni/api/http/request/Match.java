@@ -134,4 +134,35 @@ public class Match {
             throw e;
         }
     }
+
+    @RequestMapping(value = "/search/{page}", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Match.GET_MATCHES_SEARCH_OPERATION)
+    public ResponseEntity<Page<MatchResponse>> getMatchesSearch(
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
+            @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Match.NAME_PARAMETER)
+            @RequestParam String name,
+            @ApiParam(value = ApiDocumentation.Alumni.ADMISSION_TERM)
+            @RequestParam String admission,
+            @ApiParam(value = ApiDocumentation.Alumni.GRADUATION_TERM)
+            @RequestParam String graduation,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws EurecaException {
+
+        try {
+            int p;
+            try{
+                p = Integer.parseInt(page);
+            } catch(NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+            }
+            Page<MatchResponse> response = ApplicationFacade.getInstance().getMatchSearchPage(p, name, token);
+            return new ResponseEntity(response, HttpStatus.OK);
+
+        } catch (EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+    }
 }

@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import java.io.*;
 import java.util.*;
@@ -156,5 +158,33 @@ public class MatchesHolder {
 
     public synchronized void setPendingMatches(Collection<PendingMatch> newPendingMatches) {
         this.pendingMatches = newPendingMatches;
+    }
+
+    public synchronized Page<MatchResponse> getMatchesSearchPage(int requiredPage, String name) {
+        Pageable pageable= new PageRequest(requiredPage, 10);
+        List<MatchResponse> list = getMatchesSearch(name);
+
+        int start = (int) pageable.getOffset();
+        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
+                list.size() : (start + pageable.getPageSize()));
+
+        Page<MatchResponse> page = new PageImpl<MatchResponse>(list.subList(start, end), pageable, list.size());
+        return page;
+    }
+
+    private synchronized List<MatchResponse> getMatchesSearch(String name) {
+        List<MatchResponse> matches = getMatchesList();
+        List<MatchResponse> search =  new ArrayList<>();
+        String str = name.replaceAll("[-+^*#%?&!/@()<>]*","");
+        Pattern pattern = Pattern.compile(str, Pattern.CASE_INSENSITIVE);
+
+        for( MatchResponse match: matches) {
+            Matcher matcher = pattern.matcher(match.getFullName());
+            if(matcher.find()) {
+                search.add(match);
+            }
+        }
+        return search;
+
     }
 }

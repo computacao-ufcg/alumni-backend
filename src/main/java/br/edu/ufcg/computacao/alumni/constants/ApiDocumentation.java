@@ -59,6 +59,9 @@ public class ApiDocumentation {
         public static final String SET_MATCH_OPERATION = "Sets an alumnus match.";
         public static final String RESET_MATCH_OPERATION = "Resets an alumnus match.";
         public static final String GET_ALUMNUS_MATCHES_OPERATION = "lists matches of one alumnus";
+        public static final String GET_MATCHES_SEARCH_OPERATION = "lists matches which contains terms searched by the user";
+        public static final String NAME_PARAMETER = "name that will be searched among matches";
+
     }
 
     public static class Version {

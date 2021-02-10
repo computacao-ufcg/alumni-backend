@@ -8,6 +8,7 @@ public enum AlumniOperation {
     SET_MATCH("setMatch"),
     RESET_MATCH("resetMatch"),
     GET_ALUMNI_MATCHES("getAlumniMatches"),
+    GET_MATCHES_SEARCH("getMatchesSearch"),
     GET_LINKEDIN_ALUMNI_DATA("getLinkedinAlumniData"),
     GET_LINKEDIN_NAME_PROFILE_PAIRS("getLinkedinNameProfilePairs"),
     GET_EMPLOYERS("getEmployers"),
