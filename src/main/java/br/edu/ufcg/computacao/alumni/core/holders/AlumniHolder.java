@@ -121,6 +121,10 @@ public class AlumniHolder extends Thread {
         return token.getToken();
     }
 
+    public synchronized  Map<String, UfcgAlumnusData> getAlumniMap() {
+        return this.alumni;
+    }
+
     public synchronized Collection<UfcgAlumnusData> getAlumniData() {
         return this.alumni.values();
     }
