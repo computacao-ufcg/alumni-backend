@@ -168,9 +168,9 @@ public class MatchesHolder {
         this.pendingMatches = newPendingMatches;
     }
 
-    public synchronized Page<MatchData> getMatchesSearchPage(int requiredPage, String name) {
+    public synchronized Page<MatchData> getMatchesSearchPage(int requiredPage, String name, String admission, String graduation) {
         Pageable pageable= new PageRequest(requiredPage, 10);
-        List<MatchData> list = getMatchesSearch(name);
+        List<MatchData> list = getMatchesSearch(name, admission, graduation);
 
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
@@ -180,15 +180,19 @@ public class MatchesHolder {
         return page;
     }
 
-    private synchronized List<MatchData> getMatchesSearch(String name) {
+    private synchronized List<MatchData> getMatchesSearch(String name, String admission, String graduation) {
         List<MatchData> matches = getMatchesList();
         List<MatchData> search =  new ArrayList<>();
-        String str = name.replaceAll("[-+^*#%?&!/@()<>]*","");
-        Pattern pattern = Pattern.compile(str, Pattern.CASE_INSENSITIVE);
+
+        Pattern namePattern = Pattern.compile(name, Pattern.CASE_INSENSITIVE);
+        Pattern admissionPattern = Pattern.compile(admission, Pattern.CASE_INSENSITIVE);
+        Pattern graduationPattern = Pattern.compile(graduation, Pattern.CASE_INSENSITIVE);
 
         for( MatchData match: matches) {
-            Matcher matcher = pattern.matcher(match.getName());
-            if(matcher.find()) {
+            Matcher nameMatcher = namePattern.matcher(match.getName());
+            Matcher admissionMatcher = admissionPattern.matcher(match.getAdmission());
+            Matcher graduationMatcher = graduationPattern.matcher(match.getGraduation());
+            if(nameMatcher.find() || admissionMatcher.find() || graduationMatcher.find()) {
                 search.add(match);
             }
         }

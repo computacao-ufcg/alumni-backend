@@ -143,9 +143,9 @@ public class Match {
             @PathVariable String page,
             @ApiParam(value = ApiDocumentation.Match.NAME_PARAMETER)
             @RequestParam String name,
-            @ApiParam(value = ApiDocumentation.Alumni.ADMISSION_TERM)
+            @ApiParam(value = ApiDocumentation.Match.ADMISSION_PARAMETER)
             @RequestParam String admission,
-            @ApiParam(value = ApiDocumentation.Alumni.GRADUATION_TERM)
+            @ApiParam(value = ApiDocumentation.Match.GRADUATION_PARAMETER)
             @RequestParam String graduation,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
@@ -158,7 +158,7 @@ public class Match {
             } catch(NumberFormatException e) {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
             }
-            Page<MatchData> response = ApplicationFacade.getInstance().getMatchSearchPage(p, name, token);
+            Page<MatchData> response = ApplicationFacade.getInstance().getMatchesSearchPage(p, token, name, admission, graduation);
             return new ResponseEntity(response, HttpStatus.OK);
 
         } catch (EurecaException e) {
