@@ -5,6 +5,7 @@ import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
+import br.edu.ufcg.computacao.alumni.core.models.PossibleMatch;
 import br.edu.ufcg.computacao.alumni.core.util.PendingMatchNumberComparator;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MatchesHolder {
     private Logger LOGGER = Logger.getLogger(MatchesHolder.class);
@@ -138,9 +140,9 @@ public class MatchesHolder {
         return this.matches.get(registration);
     }
 
-    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage) {
+    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage, String minScore) {
         Pageable pageable= new PageRequest(requiredPage, 10);
-        List<PendingMatch> list = getPendingMatches();
+        List<PendingMatch> list = getPendingMatches(minScore);
 
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
@@ -148,6 +150,22 @@ public class MatchesHolder {
 
         Page<PendingMatch> page = new PageImpl<PendingMatch>(list.subList(start, end), pageable, list.size());
         return page;
+    }
+
+    private synchronized List<PendingMatch> getPendingMatches(String minScore) {
+        if (minScore == null) return this.getPendingMatches();
+
+        List<PendingMatch> pendingMatches = this.getPendingMatches();
+        pendingMatches.forEach(pendingMatch -> {
+            Collection<PossibleMatch> possibleMatches = pendingMatch.getPossibleMatches();
+            List<PossibleMatch> filteredPossibleMatches = possibleMatches.stream()
+                    .filter(possibleMatch -> possibleMatch.getScore() >= Integer.parseInt(minScore))
+                    .collect(Collectors.toList());
+
+            pendingMatch.setPossibleMatches(filteredPossibleMatches);
+        });
+
+        return pendingMatches;
     }
 
     private synchronized List<PendingMatch> getPendingMatches() {
