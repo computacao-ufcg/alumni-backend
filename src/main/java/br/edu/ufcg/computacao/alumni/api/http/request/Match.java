@@ -79,6 +79,7 @@ public class Match {
     public ResponseEntity<Collection<PendingMatch>> getPendingMatches(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Match.MIN_SCORE)
             @RequestParam(required = false) String minScore,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)

@@ -60,6 +60,7 @@ public class ApiDocumentation {
         public static final String SET_MATCH_OPERATION = "Sets an alumnus match.";
         public static final String RESET_MATCH_OPERATION = "Resets an alumnus match.";
         public static final String GET_ALUMNUS_MATCHES_OPERATION = "lists matches of one alumnus";
+        public static final String MIN_SCORE = "The minimum score for a linkedin profile to be considered a match.";
     }
 
     public static class Version {
