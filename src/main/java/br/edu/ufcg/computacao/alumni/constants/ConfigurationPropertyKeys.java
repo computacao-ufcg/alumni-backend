@@ -2,9 +2,7 @@ package br.edu.ufcg.computacao.alumni.constants;
 
 public class ConfigurationPropertyKeys {
     public static final String LINKEDIN_SOURCE_URL_KEY = "linkedin_source_url";
-    public static final String LINKEDIN_USER_BASE_URL_KEY = "linkedin_user_url";
     public static final String LINKEDIN_INPUT_FILE_KEY = "linkedin_input";
-    public static final String ALUMNI_INPUT_FILE_KEY = "alumni_input";
     public static final String ALUMNI_PUBLICKEY_FILE_KEY = "alumni_publickey";
     public static final String ALUMNI_PRIVATEKEY_FILE_KEY = "alumni_privatekey";
 

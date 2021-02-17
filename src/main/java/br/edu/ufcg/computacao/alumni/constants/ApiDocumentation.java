@@ -61,6 +61,10 @@ public class ApiDocumentation {
         public static final String RESET_MATCH_OPERATION = "Resets an alumnus match.";
         public static final String GET_ALUMNUS_MATCHES_OPERATION = "lists matches of one alumnus";
         public static final String MIN_SCORE = "The minimum score for a linkedin profile to be considered a match.";
+        public static final String GET_MATCHES_SEARCH_OPERATION = "lists matches which contains terms searched by the user";
+        public static final String NAME_PARAMETER = "name that will be searched among matches";
+        public static final String ADMISSION_PARAMETER = "admission term that will be searched among matches";
+        public static final String GRADUATION_PARAMETER = "graduation term that will be searched among matches";
     }
 
     public static class Version {
