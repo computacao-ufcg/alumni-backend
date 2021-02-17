@@ -77,7 +77,7 @@ public class ApplicationFacade {
         return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPage(page);
     }
 
-    public Page<MatchResponse> getAlumniMatches(String token, int page) throws EurecaException {
+    public Page<MatchData> getAlumniMatches(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
         try {
             return MatchesHolder.getInstance().getMatchesPage(page);
@@ -85,9 +85,14 @@ public class ApplicationFacade {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
-    public MatchResponse getAlumnusMatches(String token, String registration) throws EurecaException {
+    public MatchData getAlumnusMatches(String token, String registration) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
         return MatchesHolder.getInstance().getAlumnusMatches(registration);
+    }
+
+    public Page<MatchData> getMatchesSearchPage(int page, String token, String name, String admission, String graduation) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_MATCHES_SEARCH);
+        return MatchesHolder.getInstance().getMatchesSearchPage(page, name, admission, graduation);
     }
 
     public Page<LinkedinNameProfilePair> getLinkedinNameProfilePairs(String token, int page) throws EurecaException {

@@ -7,6 +7,7 @@ import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
+import br.edu.ufcg.computacao.alumni.core.models.MatchData;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
@@ -51,7 +52,7 @@ public class Match {
 
     @RequestMapping(value = "/list/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Match.GET_MATCHES_OPERATION)
-    public ResponseEntity<Page<LinkedinNameProfilePair>> getAlumniMatches(
+    public ResponseEntity<Page<MatchData>> getAlumniMatches(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
@@ -66,7 +67,7 @@ public class Match {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
             }
 
-            Page<MatchResponse> matches = ApplicationFacade.getInstance().getAlumniMatches(token, p);
+            Page<MatchData> matches = ApplicationFacade.getInstance().getAlumniMatches(token, p);
             return new ResponseEntity(matches, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
@@ -119,7 +120,7 @@ public class Match {
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Match.GET_ALUMNUS_MATCHES_OPERATION)
-    public ResponseEntity<List<MatchResponse>> getAlumnusMatches(
+    public ResponseEntity<List<MatchData>> getAlumnusMatches(
             @ApiParam(value = ApiDocumentation.Alumni.REGISTRATION_PARAMETER)
             @RequestParam String registration,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
@@ -127,8 +128,39 @@ public class Match {
             throws EurecaException {
 
         try {
-            MatchResponse response = ApplicationFacade.getInstance().getAlumnusMatches(token, registration);
+            MatchData response = ApplicationFacade.getInstance().getAlumnusMatches(token, registration);
             return new ResponseEntity(response, HttpStatus.OK);
+        } catch (EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
+    }
+
+    @RequestMapping(value = "/search/{page}", method = RequestMethod.GET)
+    @ApiOperation(value = ApiDocumentation.Match.GET_MATCHES_SEARCH_OPERATION)
+    public ResponseEntity<Page<MatchData>> getMatchesSearch(
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
+            @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Match.NAME_PARAMETER)
+            @RequestParam String name,
+            @ApiParam(value = ApiDocumentation.Match.ADMISSION_PARAMETER)
+            @RequestParam String admission,
+            @ApiParam(value = ApiDocumentation.Match.GRADUATION_PARAMETER)
+            @RequestParam String graduation,
+            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
+            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
+            throws EurecaException {
+
+        try {
+            int p;
+            try{
+                p = Integer.parseInt(page);
+            } catch(NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+            }
+            Page<MatchData> response = ApplicationFacade.getInstance().getMatchesSearchPage(p, token, name, admission, graduation);
+            return new ResponseEntity(response, HttpStatus.OK);
+
         } catch (EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
