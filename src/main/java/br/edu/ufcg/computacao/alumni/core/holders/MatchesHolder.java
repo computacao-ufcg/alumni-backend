@@ -61,7 +61,7 @@ public class MatchesHolder {
                 String name = alumnusData.getFullName();
                 String admission = alumnusData.getAdmission();
                 String graduation = alumnusData.getGraduation();
-                MatchData matchData = new MatchData(name, linkedinId, admission, graduation);
+                MatchData matchData = new MatchData(registration, name, linkedinId, admission, graduation);
 
                 this.matches.put(registration, matchData);
                 LOGGER.info(String.format(Messages.LOADING_MATCH_D_S_S, this.matches.size(), registration, linkedinId));
@@ -73,13 +73,11 @@ public class MatchesHolder {
     }
     
     public synchronized void addMatch(String registration, String linkedinId) {
-        String formatedUrl = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.LINKEDIN_USER_BASE_URL_KEY) + linkedinId;
-
         UfcgAlumnusData alumnusData = AlumniHolder.getInstance().getAlumniMap().get(registration);
         String name = alumnusData.getFullName();
         String admission = alumnusData.getAdmission();
         String graduation = alumnusData.getGraduation();
-        MatchData matchData = new MatchData(name, formatedUrl, admission, graduation);
+        MatchData matchData = new MatchData(registration, name, linkedinId, admission, graduation);
 
     	if (this.matches.containsKey(registration)) {
     		this.matches.replace(registration, matchData);
