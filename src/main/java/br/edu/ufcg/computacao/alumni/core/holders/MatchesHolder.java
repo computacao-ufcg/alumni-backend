@@ -140,7 +140,7 @@ public class MatchesHolder {
         return this.matches.get(registration);
     }
 
-    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage, String minScore) {
+    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage, int minScore) {
         Pageable pageable= new PageRequest(requiredPage, 10);
         List<PendingMatch> list = getPendingMatches(minScore);
 
@@ -152,14 +152,15 @@ public class MatchesHolder {
         return page;
     }
 
-    private synchronized List<PendingMatch> getPendingMatches(String minScore) {
-        if (minScore == null) return this.getPendingMatches();
+    private synchronized List<PendingMatch> getPendingMatches(int minScore) {
+        if (minScore == 0) return this.getPendingMatches();
 
         List<PendingMatch> pendingMatches = this.getPendingMatches();
         pendingMatches.forEach(pendingMatch -> {
             Collection<PossibleMatch> possibleMatches = pendingMatch.getPossibleMatches();
-            List<PossibleMatch> filteredPossibleMatches = possibleMatches.stream()
-                    .filter(possibleMatch -> possibleMatch.getScore() >= Integer.parseInt(minScore))
+            List<PossibleMatch> filteredPossibleMatches = possibleMatches
+                    .stream()
+                    .filter(possibleMatch -> possibleMatch.getScore() >= minScore)
                     .collect(Collectors.toList());
 
             pendingMatch.setPossibleMatches(filteredPossibleMatches);

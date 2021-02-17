@@ -93,13 +93,14 @@ public class Match {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
             }
 
+            int score;
             try {
-                if (minScore != null) Integer.parseInt(minScore);
+                score = (minScore != null) ? Integer.parseInt(minScore) : 0;
             } catch (NumberFormatException e) {
                 throw new InvalidParameterException(Messages.MIN_SCORE_MUST_BE_AN_INTEGER);
             }
 
-            Page<PendingMatch> pendingMatches = ApplicationFacade.getInstance().getAlumniPendingMatches(token, p, minScore);
+            Page<PendingMatch> pendingMatches = ApplicationFacade.getInstance().getAlumniPendingMatches(token, p, score);
             return new ResponseEntity(pendingMatches, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
