@@ -138,7 +138,7 @@ public class MatchesHolder {
     }
 
     public synchronized MatchData getAlumnusMatches(String registration) {
-        String linkedinId = this.matches.get(registration).getLinkedinId();
+        String linkedinId = this.getLinkedinId(registration);
         if (linkedinId == null) {
             return null;
         } else {
@@ -151,6 +151,8 @@ public class MatchesHolder {
     }
 
     public synchronized String getLinkedinId(String registration) {
+        if (!this.matches.containsKey(registration)) return null;
+
         return this.matches.get(registration).getLinkedinId();
     }
 
