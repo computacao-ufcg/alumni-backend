@@ -6,6 +6,8 @@ import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.models.MatchData;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
+import br.edu.ufcg.computacao.alumni.core.models.PossibleMatch;
+import br.edu.ufcg.computacao.alumni.core.util.PendingMatchNumberComparator;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MatchesHolder {
     private Logger LOGGER = Logger.getLogger(MatchesHolder.class);
@@ -135,7 +138,7 @@ public class MatchesHolder {
     }
 
     public synchronized MatchData getAlumnusMatches(String registration) {
-        String linkedinId = this.matches.get(registration).getLinkedinId();
+        String linkedinId = this.getLinkedinId(registration);
         if (linkedinId == null) {
             return null;
         } else {
@@ -148,12 +151,14 @@ public class MatchesHolder {
     }
 
     public synchronized String getLinkedinId(String registration) {
+        if (!this.matches.containsKey(registration)) return null;
+
         return this.matches.get(registration).getLinkedinId();
     }
 
-    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage) {
+    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage, int minScore) {
         Pageable pageable= new PageRequest(requiredPage, 10);
-        List<PendingMatch> list = getPendingMatches();
+        List<PendingMatch> list = getPendingMatches(minScore);
 
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
@@ -161,6 +166,23 @@ public class MatchesHolder {
 
         Page<PendingMatch> page = new PageImpl<PendingMatch>(list.subList(start, end), pageable, list.size());
         return page;
+    }
+
+    private synchronized List<PendingMatch> getPendingMatches(int minScore) {
+        if (minScore == 0) return this.getPendingMatches();
+
+        List<PendingMatch> pendingMatches = this.getPendingMatches();
+        pendingMatches.forEach(pendingMatch -> {
+            Collection<PossibleMatch> possibleMatches = pendingMatch.getPossibleMatches();
+            List<PossibleMatch> filteredPossibleMatches = possibleMatches
+                    .stream()
+                    .filter(possibleMatch -> possibleMatch.getScore() >= minScore)
+                    .collect(Collectors.toList());
+
+            pendingMatch.setPossibleMatches(filteredPossibleMatches);
+        });
+
+        return pendingMatches;
     }
 
     private synchronized List<PendingMatch> getPendingMatches() {

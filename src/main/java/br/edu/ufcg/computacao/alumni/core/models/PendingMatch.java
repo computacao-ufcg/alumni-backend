@@ -25,6 +25,10 @@ public class PendingMatch implements Comparable<PendingMatch> {
 		return this.alumnus;
 	}
 
+	public void setPossibleMatches(List<PossibleMatch> possibleMatches) {
+		this.possibleMatches = possibleMatches;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

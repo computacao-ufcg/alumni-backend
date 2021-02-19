@@ -112,7 +112,7 @@ public class MatchTest {
         String pendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
 
         Mockito.doReturn(createFakePage()).when(this.facade)
-                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, pendingMatchesEndpoint, getHttpHeaders(), "");
 
@@ -125,7 +125,7 @@ public class MatchTest {
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .getAlumniPendingMatches(Mockito.anyString(),Mockito.anyInt());
+                .getAlumniPendingMatches(Mockito.anyString(),Mockito.anyInt(), Mockito.anyInt());
     }
 
     // Test case: Requests an alumnus match and tests a successfully return. Also call
@@ -232,7 +232,7 @@ public class MatchTest {
         String pendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
-                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, pendingMatchesEndpoint, getHttpHeaders(), "");
 
@@ -244,7 +244,7 @@ public class MatchTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
-                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
     }
 
     // Test case: Requests alumnus matches with unauthorized user. Also call
@@ -347,7 +347,7 @@ public class MatchTest {
         String pendingMatchesEndpoint =  MATCH_ENDPOINT + "/pending/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
-                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, pendingMatchesEndpoint, getHttpHeaders(), "");
 
@@ -359,7 +359,7 @@ public class MatchTest {
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt());
+                .getAlumniPendingMatches(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
     }
 
     // Test case: Request alumnus matches with unauthenticated user. Also call
