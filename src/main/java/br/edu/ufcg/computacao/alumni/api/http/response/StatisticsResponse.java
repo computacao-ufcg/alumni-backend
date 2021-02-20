@@ -4,7 +4,7 @@ import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
 
 public class StatisticsResponse {
     private int numberAlumniCourse;
-    private int numberMappedAlumniCourse;
+    private int numberMatchedAlumniCourse;
     private int numberAcademyEmployedCourse;
     private int numberGovernmentEmployedCourse;
     private int numberOngEmployedCourse;
@@ -13,7 +13,7 @@ public class StatisticsResponse {
     private int numberMixedCompanyEmployedCourse;
 
     private int numberAlumniLevel;
-    private int numberMappedAlumniLevel;
+    private int numberMatchedAlumniLevel;
     private int numberAcademyEmployedLevel;
     private int numberIndustryEmployedLevel;
     private int numberGovernmentEmployedLevel;
@@ -24,7 +24,7 @@ public class StatisticsResponse {
 
     public StatisticsResponse(StatisticsModel statisticsCourse, StatisticsModel statisticsLevel) {
         this.numberAlumniCourse = statisticsCourse.getNumberAlumni();
-        this.numberMappedAlumniCourse = statisticsCourse.getNumberMappedAlumni();
+        this.numberMatchedAlumniCourse = statisticsCourse.getNumberMatchedAlumni();
         this.numberAcademyEmployedCourse = statisticsCourse.getNumberAcademyEmployed();
         this.numberGovernmentEmployedCourse = statisticsCourse.getNumberGovernmentEmployed();
         this.numberOngEmployedCourse = statisticsCourse.getNumberOngEmployed();
@@ -33,7 +33,7 @@ public class StatisticsResponse {
         this.numberMixedCompanyEmployedCourse = statisticsCourse.getNumberMixedCompanyEmployed();
 
         this.numberAlumniLevel = statisticsLevel.getNumberAlumni();
-        this.numberMappedAlumniLevel = statisticsLevel.getNumberMappedAlumni();
+        this.numberMatchedAlumniLevel = statisticsLevel.getNumberMatchedAlumni();
         this.numberAcademyEmployedLevel = statisticsLevel.getNumberAcademyEmployed();
         this.numberGovernmentEmployedLevel = statisticsLevel.getNumberGovernmentEmployed();
         this.numberOngEmployedLevel = statisticsLevel.getNumberOngEmployed();
@@ -50,12 +50,12 @@ public class StatisticsResponse {
         this.numberAlumniCourse = numberAlumniCourse;
     }
 
-    public int getNumberMappedAlumniCourse() {
-        return numberMappedAlumniCourse;
+    public int getNumberMatchedAlumniCourse() {
+        return numberMatchedAlumniCourse;
     }
 
-    public void setNumberMappedAlumniCourse(int numberMappedAlumniCourse) {
-        this.numberMappedAlumniCourse = numberMappedAlumniCourse;
+    public void setNumberMatchedAlumniCourse(int numberMatchedAlumniCourse) {
+        this.numberMatchedAlumniCourse = numberMatchedAlumniCourse;
     }
 
     public int getNumberAcademyEmployedCourse() {
@@ -90,12 +90,12 @@ public class StatisticsResponse {
         this.numberAlumniLevel = numberAlumniLevel;
     }
 
-    public int getNumberMappedAlumniLevel() {
-        return numberMappedAlumniLevel;
+    public int getNumberMatchedAlumniLevel() {
+        return numberMatchedAlumniLevel;
     }
 
-    public void setNumberMappedAlumniLevel(int numberMappedAlumniLevel) {
-        this.numberMappedAlumniLevel = numberMappedAlumniLevel;
+    public void setNumberMatchedAlumniLevel(int numberMatchedAlumniLevel) {
+        this.numberMatchedAlumniLevel = numberMatchedAlumniLevel;
     }
 
     public int getNumberAcademyEmployedLevel() {
@@ -182,7 +182,7 @@ public class StatisticsResponse {
     public String toString() {
         return "StatisticsResponse{" +
                 "numberAlumniCourse=" + numberAlumniCourse +
-                ", numberMappedAlumniCourse=" + numberMappedAlumniCourse +
+                ", numberMatchedAlumniCourse=" + numberMatchedAlumniCourse +
                 ", numberAcademyEmployedCourse=" + numberAcademyEmployedCourse +
                 ", numberGovernmentEmployedCourse=" + numberGovernmentEmployedCourse +
                 ", numberOngEmployedCourse=" + numberOngEmployedCourse +
@@ -190,7 +190,7 @@ public class StatisticsResponse {
                 ", numberPrivateCompanyEmployedCourse=" + numberPrivateCompanyEmployedCourse +
                 ", numberMixedCompanyEmployedCourse=" + numberMixedCompanyEmployedCourse +
                 ", numberAlumniLevel=" + numberAlumniLevel +
-                ", numberMappedAlumniLevel=" + numberMappedAlumniLevel +
+                ", numberMatchedAlumniLevel=" + numberMatchedAlumniLevel +
                 ", numberAcademyEmployedLevel=" + numberAcademyEmployedLevel +
                 ", numberIndustryEmployedLevel=" + numberIndustryEmployedLevel +
                 ", numberGovernmentEmployedLevel=" + numberGovernmentEmployedLevel +

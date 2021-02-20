@@ -141,6 +141,13 @@ public class ApplicationFacade {
         return new StatisticsResponse(statisticsCourse, statisticsLevel);
     }
 
+    public AlumniSiteStatisticsResponse getAlumniSiteStatistics(String token, CourseName courseName) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_SITE_STATISTICS);
+        StatisticsModel statisticsCourse = StatisticsHolder.getInstance().getStatistics(courseName);
+        return new AlumniSiteStatisticsResponse(statisticsCourse);
+
+    }
+
     private RSAPublicKey getAsPublicKey() throws EurecaException {
         if (this.asPublicKey == null) {
             this.asPublicKey = EurecaAsPublicKeyHolder.getInstance().getAsPublicKey();

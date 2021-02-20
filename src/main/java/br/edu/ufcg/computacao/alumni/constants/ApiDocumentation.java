@@ -100,6 +100,7 @@ public class ApiDocumentation {
     }
 
     public static class AlumniSiteStatistics {
-        public static final String API = "Provides statistics that will be used in alumni site";
+        public static final String API = "Provides statistics to alumni site";
+        public static final String GET_ALUMNI_SITE_STATISTICS_OPERATION = "Returns statistics about an alumni course";
     }
 }

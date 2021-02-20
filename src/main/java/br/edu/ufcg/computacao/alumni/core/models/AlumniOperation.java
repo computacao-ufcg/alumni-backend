@@ -17,7 +17,8 @@ public enum AlumniOperation {
     GET_EMPLOYER_TYPES("getEmployerTypes"),
     SET_EMPLOYER_TYPE_TO_UNDEFINED("setEmployerTypeToUndefined"),
     SET_EMPLOYER_TYPE("setEmployerType"),
-    GET_STATISTICS("getStatistics");
+    GET_STATISTICS("getStatistics"),
+    GET_ALUMNI_SITE_STATISTICS("getAlumniSiteStatistics");
 
     private String value;
 
