@@ -1,5 +1,6 @@
 package br.edu.ufcg.computacao.alumni.api.http.response;
 
+import br.edu.ufcg.computacao.alumni.core.holders.AlumniHolder;
 import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ public class AlumniSiteStatisticsResponse {
     private int numberPublicCompanyEmployedCourse;
     private int numberMixedCompanyEmployedCourse;
     private int historyYears;
+    private int numberAlumniGraduatedInTheLastYear;
 
     public AlumniSiteStatisticsResponse(StatisticsModel courseStatistics) {
         this.numberAcademyEmployedCourse = courseStatistics.getNumberAcademyEmployed();
@@ -24,6 +26,7 @@ public class AlumniSiteStatisticsResponse {
         this.numberPublicCompanyEmployedCourse = courseStatistics.getNumberPublicCompanyEmployed();
         this.numberMixedCompanyEmployedCourse = courseStatistics.getNumberMixedCompanyEmployed();
         this.historyYears = LocalDate.now().getYear() - 1973;
+        this.numberAlumniGraduatedInTheLastYear = AlumniHolder.getInstance().getNumberAlumniGraduatedInTheLastYear();
 
     }
 
@@ -49,6 +52,14 @@ public class AlumniSiteStatisticsResponse {
 
     public void setNumberGovernmentEmployedCourse(int numberGovernmentEmployedCourse) {
         this.numberGovernmentEmployedCourse = numberGovernmentEmployedCourse;
+    }
+
+    public int getNumberAlumniGraduatedInTheLastYear() {
+        return numberAlumniGraduatedInTheLastYear;
+    }
+
+    public void setNumberAlumniGraduatedInTheLastYear(int numberAlumniGraduatedInTheLastYear) {
+        this.numberAlumniGraduatedInTheLastYear = numberAlumniGraduatedInTheLastYear;
     }
 
     public int getNumberMatchedAlumniCourse() {
