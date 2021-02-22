@@ -15,7 +15,6 @@ public class StatisticsResponse {
     private int numberAlumniLevel;
     private int numberMatchedAlumniLevel;
     private int numberAcademyEmployedLevel;
-    private int numberIndustryEmployedLevel;
     private int numberGovernmentEmployedLevel;
     private int numberOngEmployedLevel;
     private int numberPublicCompanyEmployedLevel;
@@ -106,14 +105,6 @@ public class StatisticsResponse {
         this.numberAcademyEmployedLevel = numberAcademyEmployedLevel;
     }
 
-    public int getNumberIndustryEmployedLevel() {
-        return numberIndustryEmployedLevel;
-    }
-
-    public void setNumberIndustryEmployedLevel(int numberIndustryEmployedLevel) {
-        this.numberIndustryEmployedLevel = numberIndustryEmployedLevel;
-    }
-
     public int getNumberGovernmentEmployedLevel() {
         return numberGovernmentEmployedLevel;
     }
@@ -192,7 +183,6 @@ public class StatisticsResponse {
                 ", numberAlumniLevel=" + numberAlumniLevel +
                 ", numberMatchedAlumniLevel=" + numberMatchedAlumniLevel +
                 ", numberAcademyEmployedLevel=" + numberAcademyEmployedLevel +
-                ", numberIndustryEmployedLevel=" + numberIndustryEmployedLevel +
                 ", numberGovernmentEmployedLevel=" + numberGovernmentEmployedLevel +
                 ", numberOngEmployedLevel=" + numberOngEmployedLevel +
                 ", numberPublicCompanyEmployedLevel=" + numberPublicCompanyEmployedLevel +

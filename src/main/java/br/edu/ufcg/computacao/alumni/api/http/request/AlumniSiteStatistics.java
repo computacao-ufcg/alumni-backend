@@ -30,6 +30,7 @@ public class AlumniSiteStatistics {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.AlumniSiteStatistics.GET_ALUMNI_SITE_STATISTICS_OPERATION)
     public ResponseEntity<AlumniSiteStatisticsResponse> getAlumniSiteStatistics(
+            @ApiParam(value = ApiDocumentation.AlumniSiteStatistics.COURSE_NAME)
             @RequestParam String courseName,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
