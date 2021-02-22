@@ -154,21 +154,20 @@ public class Employer {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
     public ResponseEntity<Void> setEmployerType(
-            @ApiParam(value = ApiDocumentation.Linkedin.LINKEDIN_ID_PARAMETER)
-            @RequestBody EmployerClassification employer,
+            @ApiParam(value = ApiDocumentation.Employers.EMPLOYER_BODY)
+            @RequestBody(required = false) EmployerClassification employer,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
 
         try {
 
-            EmployerType type = EmployerType.getType(employer.getType().toLowerCase());
+            EmployerType type = EmployerType.getType(employer.getType().trim().toLowerCase());
 
-            if(type.equals(EmployerType.UNDEFINED)) {
+            if (type.equals(EmployerType.UNDEFINED)) {
                 throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
             }
-
-            ApplicationFacade.getInstance().setEmployerType(token, employer);
+            ApplicationFacade.getInstance().setEmployerType(token, employer.getLinkedinId(), type);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (EurecaException e) {
