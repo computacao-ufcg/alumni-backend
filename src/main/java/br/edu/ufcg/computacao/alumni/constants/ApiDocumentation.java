@@ -32,6 +32,16 @@ public class ApiDocumentation {
                 "+wIDAQAB";
         public static final String FULL_NAME = "Maria da Silva";
         public static final String EMPLOYER_TYPE = "Academia";
+        public static final String LEVEL = "The possible values are: [" +
+                "\"undergraduate\", " +
+                "\"doctorate\", " +
+                "\"master\", " +
+                "\"undefined\" ]";
+        public static final String COURSE_NAME = "The possible values are: [" +
+                "\"data-processing\", " +
+                "\"computing-science\", " +
+                "\"informatics\", " +
+                "\"undefined\" ]";
     }
 
     public static class Alumni {
