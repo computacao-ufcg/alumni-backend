@@ -129,9 +129,9 @@ public class ApplicationFacade {
         EmployersHolder.getInstance().resetEmployerType(linkedinId);
     }
 
-    public void setEmployerType(String token, EmployerClassification employer) throws EurecaException {
+    public void setEmployerType(String token, String linkedinId, EmployerType employerType) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.SET_EMPLOYER_TYPE);
-        EmployersHolder.getInstance().setEmployerType(employer.getLinkedinId(), EmployerType.getType(employer.getType()));
+        EmployersHolder.getInstance().setEmployerType(linkedinId, employerType);
     }
 
     public StatisticsResponse getStatistics(String token, Level level, CourseName courseName) throws EurecaException {

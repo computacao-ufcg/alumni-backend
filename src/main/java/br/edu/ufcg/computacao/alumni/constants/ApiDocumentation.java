@@ -32,6 +32,16 @@ public class ApiDocumentation {
                 "+wIDAQAB";
         public static final String FULL_NAME = "Maria da Silva";
         public static final String EMPLOYER_TYPE = "Academia";
+        public static final String LEVEL = "The possible values are: [" +
+                "\"undergraduate\", " +
+                "\"doctorate\", " +
+                "\"master\", " +
+                "\"undefined\" ]";
+        public static final String COURSE_NAME = "The possible values are: [" +
+                "\"data-processing\", " +
+                "\"computing-science\", " +
+                "\"informatics\", " +
+                "\"undefined\" ]";
     }
 
     public static class Alumni {
@@ -90,6 +100,7 @@ public class ApiDocumentation {
         public static final String GET_EMPLOYER_TYPES = "Lists all employer types and respective descriptions.";
         public static final String DELETE_EMPLOYER_TYPE = "Sets employer type to undefined.";
         public static final String TYPE = "The type of the employer.";
+        public static final String EMPLOYER_BODY = "The body of this request must be the linkedin id of the company and its type";
     }
 
     public static class Statistics {
