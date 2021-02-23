@@ -155,7 +155,7 @@ public class Employer {
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
     public ResponseEntity<Void> setEmployerType(
             @ApiParam(value = ApiDocumentation.Employers.EMPLOYER_BODY)
-            @RequestBody(required = false) EmployerClassification employer,
+            @RequestBody EmployerClassification employer,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
