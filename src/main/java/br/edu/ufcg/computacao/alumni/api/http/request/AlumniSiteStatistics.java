@@ -7,6 +7,7 @@ import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
+import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import io.swagger.annotations.Api;
@@ -30,6 +31,8 @@ public class AlumniSiteStatistics {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.AlumniSiteStatistics.GET_ALUMNI_SITE_STATISTICS_OPERATION)
     public ResponseEntity<AlumniSiteStatisticsResponse> getAlumniSiteStatistics(
+            @ApiParam(value = ApiDocumentation.AlumniSiteStatistics.LEVEL)
+            @RequestParam String level,
             @ApiParam(value = ApiDocumentation.AlumniSiteStatistics.COURSE_NAME)
             @RequestParam String courseName,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
@@ -38,10 +41,15 @@ public class AlumniSiteStatistics {
 
         try {
             CourseName c = CourseName.getCourseName(courseName.toLowerCase());
+            Level l = Level.getLevel(level.toLowerCase());
+
             if(c.getValue().equals("undefined")) {
                 throw new InvalidParameterException(Messages.COURSE_NAME_PARAM_MUST_BE_A_VALID_COURSE_NAME);
+
+            } else if (l.getValue().equals("undefined")) {
+                throw new InvalidParameterException(Messages.LEVEL_PARAM_MUST_BE_A_VALID_LEVEL);
             }
-            AlumniSiteStatisticsResponse alumniSiteStatisticsResponse = ApplicationFacade.getInstance().getAlumniSiteStatistics(token, c);
+            AlumniSiteStatisticsResponse alumniSiteStatisticsResponse = ApplicationFacade.getInstance().getAlumniSiteStatistics(token, c, l);
             return new ResponseEntity<>(alumniSiteStatisticsResponse, HttpStatus.OK);
 
         } catch(Exception e) {

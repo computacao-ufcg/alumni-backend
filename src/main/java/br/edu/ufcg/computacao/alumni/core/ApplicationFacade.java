@@ -141,10 +141,11 @@ public class ApplicationFacade {
         return new StatisticsResponse(statisticsCourse, statisticsLevel);
     }
 
-    public AlumniSiteStatisticsResponse getAlumniSiteStatistics(String token, CourseName courseName) throws EurecaException {
+    public AlumniSiteStatisticsResponse getAlumniSiteStatistics(String token, CourseName courseName, Level level) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_SITE_STATISTICS);
         StatisticsModel statisticsCourse = StatisticsHolder.getInstance().getStatistics(courseName);
-        return new AlumniSiteStatisticsResponse(statisticsCourse);
+        StatisticsModel statisticsLevel = StatisticsHolder.getInstance().getStatistics(level);
+        return new AlumniSiteStatisticsResponse(statisticsCourse, statisticsLevel);
 
     }
 
