@@ -2,7 +2,7 @@ package br.edu.ufcg.computacao.alumni.core.models;
 
 public class StatisticsModel {
     private int numberAlumni;
-    private int numberMappedAlumni;
+    private int numberMatchedAlumni;
     private int numberAcademyEmployed;
     private int numberGovernmentEmployed;
     private int numberOngEmployed;
@@ -10,11 +10,11 @@ public class StatisticsModel {
     private int numberPrivateCompanyEmployed;
     private int numberMixedCompanyEmployed;
 
-    public StatisticsModel(int numberAlumni, int numberMappedAlumni, int numberAcademyEmployed,
+    public StatisticsModel(int numberAlumni, int numberMatchedAlumni, int numberAcademyEmployed,
                            int numberGovernmentEmployed, int numberOngEmployed, int numberPublicCompanyEmployed,
                            int numberPrivateCompanyEmployed, int numberMixedCompanyEmployed) {
         this.numberAlumni = numberAlumni;
-        this.numberMappedAlumni = numberMappedAlumni;
+        this.numberMatchedAlumni = numberMatchedAlumni;
         this.numberAcademyEmployed = numberAcademyEmployed;
         this.numberGovernmentEmployed = numberGovernmentEmployed;
         this.numberOngEmployed = numberOngEmployed;
@@ -27,8 +27,8 @@ public class StatisticsModel {
         return numberAlumni;
     }
 
-    public int getNumberMappedAlumni() {
-        return numberMappedAlumni;
+    public int getNumberMatchedAlumni() {
+        return numberMatchedAlumni;
     }
 
     public int getNumberAcademyEmployed() {
@@ -59,8 +59,8 @@ public class StatisticsModel {
         this.numberAlumni = numberAlumni;
     }
 
-    public void setNumberMappedAlumni(int numberMappedAlumni) {
-        this.numberMappedAlumni = numberMappedAlumni;
+    public void setNumberMatchedAlumni(int numberMatchedAlumni) {
+        this.numberMatchedAlumni = numberMatchedAlumni;
     }
 
     public void setNumberAcademyEmployed(int numberAcademyEmployed) {
@@ -91,7 +91,7 @@ public class StatisticsModel {
     public String toString() {
         return "StatisticsModel{" +
                 "numberAlumni=" + numberAlumni +
-                ", numberMappedAlumni=" + numberMappedAlumni +
+                ", numberMatchedAlumni=" + numberMatchedAlumni +
                 ", numberAcademyEmployed=" + numberAcademyEmployed +
                 ", numberGovernmentEmployed=" + numberGovernmentEmployed +
                 ", numberOngEmployed=" + numberOngEmployed +

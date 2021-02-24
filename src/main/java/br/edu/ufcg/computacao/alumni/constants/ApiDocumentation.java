@@ -109,4 +109,11 @@ public class ApiDocumentation {
         public static final String COURSE_NAME = "The name of the course.";
         public static final String LEVEL = "The level of the course.";
     }
+
+    public static class AlumniSiteStatistics {
+        public static final String API = "Provides statistics to alumni site";
+        public static final String GET_ALUMNI_SITE_STATISTICS_OPERATION = "Returns statistics about an alumni course";
+        public static final String COURSE_NAME = "the name of the course";
+        public static final String LEVEL = "The level of the course.";
+    }
 }

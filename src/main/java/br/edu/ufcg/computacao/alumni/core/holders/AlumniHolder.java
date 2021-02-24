@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -145,6 +146,17 @@ public class AlumniHolder extends Thread {
 
         Page<UfcgAlumnusData> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
         return page;
+    }
+
+    public int getNumberAlumniGraduatedInTheLastYear() {
+        String year = Integer.toString(LocalDate.now().getYear() - 1);
+        int numberAlumniGraduatedLastYear = 0;
+        for(UfcgAlumnusData alumnus : this.alumni.values()) {
+            if(alumnus.getGraduation().contains(year)) {
+                numberAlumniGraduatedLastYear++;
+            }
+        }
+        return numberAlumniGraduatedLastYear;
     }
 
     private synchronized Collection<UfcgAlumnusData> getAlumniFilteredData(String admission, String graduation) {
