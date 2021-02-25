@@ -7,6 +7,7 @@ import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
+import br.edu.ufcg.computacao.alumni.core.models.MatchClassification;
 import br.edu.ufcg.computacao.alumni.core.models.MatchData;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
@@ -80,8 +81,8 @@ public class Match {
     public ResponseEntity<Collection<PendingMatch>> getPendingMatches(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
-            @ApiParam(value = ApiDocumentation.Match.MIN_SCORE)
-            @RequestParam(required = false) String minScore,
+            @ApiParam(value = ApiDocumentation.Model.MATCH_CLASSIFICATION)
+            @RequestParam(required = false) String matchClassification,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
@@ -94,14 +95,12 @@ public class Match {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
             }
 
-            int score;
-            try {
-                score = (minScore != null) ? Integer.parseInt(minScore) : 0;
-            } catch (NumberFormatException e) {
-                throw new InvalidParameterException(Messages.MIN_SCORE_MUST_BE_AN_INTEGER);
+            MatchClassification classification = MatchClassification.getClassification(matchClassification);
+            if (matchClassification != null && classification == null) {
+                throw new InvalidParameterException(String.format(Messages.INVALID_MATCH_CLASSIFICATION_S, matchClassification));
             }
 
-            Page<PendingMatch> pendingMatches = ApplicationFacade.getInstance().getAlumniPendingMatches(token, p, score);
+            Page<PendingMatch> pendingMatches = ApplicationFacade.getInstance().getAlumniPendingMatches(token, p, classification);
             return new ResponseEntity(pendingMatches, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
@@ -119,7 +118,7 @@ public class Match {
             throws EurecaException {
 
         try {
-            ApplicationFacade.getInstance().resetMatch(token, registration.toString());
+            ApplicationFacade.getInstance().resetMatch(token, registration);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);

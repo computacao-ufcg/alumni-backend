@@ -4,10 +4,8 @@ import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.alumni.core.models.MatchData;
-import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
-import br.edu.ufcg.computacao.alumni.core.models.PossibleMatch;
-import br.edu.ufcg.computacao.alumni.core.util.PendingMatchNumberComparator;
+import br.edu.ufcg.computacao.alumni.core.models.*;
+import br.edu.ufcg.computacao.alumni.core.util.ClassificationCalculator;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
@@ -156,9 +154,9 @@ public class MatchesHolder {
         return this.matches.get(registration).getLinkedinId();
     }
 
-    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage, int minScore) {
+    public synchronized Page<PendingMatch> getPendingMatchesPage(int requiredPage, MatchClassification matchClassification) {
         Pageable pageable= new PageRequest(requiredPage, 10);
-        List<PendingMatch> list = getPendingMatches(minScore);
+        List<PendingMatch> list = getPendingMatches(matchClassification);
 
         int start = (int) pageable.getOffset();
         int end = (int) ((start + pageable.getPageSize()) > list.size() ?
@@ -168,15 +166,25 @@ public class MatchesHolder {
         return page;
     }
 
-    private synchronized List<PendingMatch> getPendingMatches(int minScore) {
-        if (minScore == 0) return this.getPendingMatches();
+    private synchronized void setMatchClassification(Collection<PossibleMatch> possibleMatches) {
+        possibleMatches.forEach(possibleMatch -> {
+            MatchClassification matchClassification = ClassificationCalculator.getInstance().getClassification(possibleMatch, this.getPendingMatches());
+            possibleMatch.setMatchClassification(matchClassification);
+        });
+    }
+
+    private synchronized List<PendingMatch> getPendingMatches(MatchClassification classification) {
+        if (classification == null) {
+            classification = MatchClassification.VERY_UNLIKELY;
+        }
 
         List<PendingMatch> pendingMatches = this.getPendingMatches();
+        MatchClassification finalClassification = classification;
         pendingMatches.forEach(pendingMatch -> {
-            Collection<PossibleMatch> possibleMatches = pendingMatch.getPossibleMatches();
-            List<PossibleMatch> filteredPossibleMatches = possibleMatches
+            List<PossibleMatch> filteredPossibleMatches = pendingMatch
+                    .getPossibleMatches()
                     .stream()
-                    .filter(possibleMatch -> possibleMatch.getScore() >= minScore)
+                    .filter(possibleMatch -> possibleMatch.getMatchClassification().getPriority() <= finalClassification.getPriority())
                     .collect(Collectors.toList());
 
             pendingMatch.setPossibleMatches(filteredPossibleMatches);
@@ -189,8 +197,15 @@ public class MatchesHolder {
         return new LinkedList<>(this.pendingMatches);
     }
 
+    private synchronized void classificatePossibleMatches(Collection<PendingMatch> pendingMatches) {
+        for (PendingMatch pendingMatch : pendingMatches) {
+            this.setMatchClassification(pendingMatch.getPossibleMatches());
+        }
+    }
+
     public synchronized void setPendingMatches(Collection<PendingMatch> newPendingMatches) {
         this.pendingMatches = newPendingMatches;
+        this.classificatePossibleMatches(this.pendingMatches);
     }
 
     public synchronized Page<MatchData> getMatchesSearchPage(int requiredPage, String name, String admission, String graduation) {

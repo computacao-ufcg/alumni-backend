@@ -17,6 +17,7 @@ public class Messages {
     public static final String FINDING_MATCHES_FOR_S = "Finding matches for %s.";
     public static final String FOUND_D_POSSIBLE_MATCHES_FOR_S = "Found %d possible matches for %s.";
     public static final String INVALID_INPUT_S = "Invalid input: %s.";
+    public static final String INVALID_MATCH_CLASSIFICATION_S = "Invalid match classification: %s.";
     public static final String LOADING_ALUMNI_D_S = "Loading alumnus %d: %s.";
     public static final String LOADING_MATCH_D_S_S = "Loading match %d: %s -> %s.";
     public static final String NO_SUCH_MATCH_S = "There is no match for registration %s.";
