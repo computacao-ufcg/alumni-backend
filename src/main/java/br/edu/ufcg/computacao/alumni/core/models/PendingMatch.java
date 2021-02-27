@@ -1,7 +1,6 @@
 package br.edu.ufcg.computacao.alumni.core.models;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
-import br.edu.ufcg.computacao.alumni.core.util.ScoreComparator;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -14,7 +13,6 @@ public class PendingMatch implements Comparable<PendingMatch> {
 	public PendingMatch(UfcgAlumnusData alumnus, Collection<PossibleMatch> possibleMatches) {
 		this.alumnus = alumnus;
 		this.possibleMatches = new LinkedList<>(possibleMatches);
-		this.possibleMatches.sort(new ScoreComparator());
 	}
 	
 	public Collection<PossibleMatch> getPossibleMatches() {
