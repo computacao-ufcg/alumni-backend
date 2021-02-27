@@ -38,7 +38,7 @@ public class ClassificationCalculator {
             scoresList.addAll(pendingMatchScores);
         }
 
-        LOGGER.info(scoresList.size());
+        scoresList.sort(Integer::compareTo);
 
         int[] scores = new int[scoresList.size()];
         for (int i = 0; i < scoresList.size(); i++)
@@ -49,18 +49,13 @@ public class ClassificationCalculator {
 
     public MatchClassification getClassification(PossibleMatch possibleMatch, List<PendingMatch> pendingMatches) {
         int profileScore = possibleMatch.getScore();
-        int totalProfiles = pendingMatches.size();
         int[] scores = getScoresArray(pendingMatches);
+        int totalProfiles = scores.length;
 
         int veryUnlikelyMaxBorder = scores[(int) Math.floor(totalProfiles * 0.25) - 1];
         int unlikelyMaxBorder = scores[(int) Math.floor(totalProfiles * 0.5) - 1];
         int averageMaxBorder = scores[(int) Math.floor(totalProfiles * 0.75) - 1];
         int likelyMaxBorder = scores[(int) Math.floor(totalProfiles * 0.9) - 1];
-
-        LOGGER.info(String.format("%s: %d", "very unlikely border", veryUnlikelyMaxBorder));
-        LOGGER.info(String.format("%s: %d", "unlikely border", unlikelyMaxBorder));
-        LOGGER.info(String.format("%s: %d", "average border", averageMaxBorder));
-        LOGGER.info(String.format("%s: %d", "likely border", likelyMaxBorder));
 
         if (profileScore <= veryUnlikelyMaxBorder) {
             return MatchClassification.VERY_UNLIKELY;
