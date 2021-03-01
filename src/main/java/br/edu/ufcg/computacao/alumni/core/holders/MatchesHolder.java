@@ -184,13 +184,16 @@ public class MatchesHolder {
             List<PossibleMatch> filteredPossibleMatches = pendingMatch
                     .getPossibleMatches()
                     .stream()
-                    .filter(possibleMatch -> possibleMatch.getMatchClassification().getPriority() <= finalClassification.getPriority())
+                    .filter(possibleMatch -> possibleMatch.getMatchClassification().getPriority() >= finalClassification.getPriority())
                     .collect(Collectors.toList());
 
             pendingMatch.setPossibleMatches(filteredPossibleMatches);
         });
 
-        return pendingMatches;
+        return pendingMatches
+                .stream()
+                .filter(item -> !item.getPossibleMatches().isEmpty())
+                .collect(Collectors.toList());
     }
 
     private synchronized List<PendingMatch> getPendingMatches() {
