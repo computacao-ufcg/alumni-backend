@@ -30,9 +30,9 @@ public class Statistics {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Statistics.GET_STATISTICS_OPERATION)
     public ResponseEntity<StatisticsResponse> getStatistics(
-            @ApiParam(value = ApiDocumentation.Statistics.LEVEL)
+            @ApiParam(value = ApiDocumentation.Model.LEVEL)
             @RequestParam String level,
-            @ApiParam(value = ApiDocumentation.Statistics.COURSE_NAME)
+            @ApiParam(value = ApiDocumentation.Model.COURSE_NAME)
             @RequestParam String courseName,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)

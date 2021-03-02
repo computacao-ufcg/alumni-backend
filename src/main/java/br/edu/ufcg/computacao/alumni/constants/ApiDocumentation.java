@@ -32,6 +32,22 @@ public class ApiDocumentation {
                 "+wIDAQAB";
         public static final String FULL_NAME = "Maria da Silva";
         public static final String EMPLOYER_TYPE = "Academia";
+        public static final String LEVEL = "The possible values are: [" +
+                "\"undergraduate\", " +
+                "\"doctorate\", " +
+                "\"master\", " +
+                "\"undefined\" ]";
+        public static final String COURSE_NAME = "The possible values are: [" +
+                "\"data-processing\", " +
+                "\"computing-science\", " +
+                "\"informatics\", " +
+                "\"undefined\" ]";
+        public static final String MATCH_CLASSIFICATION = "The possible values are: [" +
+                "\"very-unlikely\", " +
+                "\"unlikely\", " +
+                "\"average\", " +
+                "\"likely\", " +
+                "\"very-likely\" ]";
     }
 
     public static class Alumni {
@@ -47,7 +63,7 @@ public class ApiDocumentation {
     }
 
     public static class Linkedin {
-        public static final String API = "Queries information about the Linkeid profiles.";
+        public static final String API = "Queries information about the Linkedin profiles.";
         public static final String LINKEDIN_ID_PARAMETER = "Linkedin identification.";
         public static final String GET_ENTRIES_OPERATION = "Lists Linkedin entries (name, LinkedinId).";
         public static final String GET_OPERATION = "Lists information about Linkedin profiles.";
@@ -60,7 +76,6 @@ public class ApiDocumentation {
         public static final String SET_MATCH_OPERATION = "Sets an alumnus match.";
         public static final String RESET_MATCH_OPERATION = "Resets an alumnus match.";
         public static final String GET_ALUMNUS_MATCHES_OPERATION = "lists matches of one alumnus";
-        public static final String MIN_SCORE = "The minimum score for a linkedin profile to be considered a match.";
         public static final String GET_MATCHES_SEARCH_OPERATION = "lists matches which contains terms searched by the user";
         public static final String NAME_PARAMETER = "name that will be searched among matches";
         public static final String ADMISSION_PARAMETER = "admission term that will be searched among matches";
@@ -90,6 +105,7 @@ public class ApiDocumentation {
         public static final String GET_EMPLOYER_TYPES = "Lists all employer types and respective descriptions.";
         public static final String DELETE_EMPLOYER_TYPE = "Sets employer type to undefined.";
         public static final String TYPE = "The type of the employer.";
+        public static final String EMPLOYER_BODY = "The body of this request must be the linkedin id of the company and its type";
     }
 
     public static class Statistics {

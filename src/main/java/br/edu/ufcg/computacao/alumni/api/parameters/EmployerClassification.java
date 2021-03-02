@@ -10,11 +10,6 @@ public class EmployerClassification {
     @ApiModelProperty(value = ApiDocumentation.Model.EMPLOYER_TYPE)
     private String type;
 
-    public EmployerClassification(String linkedinId, String type) {
-        this.linkedinId = linkedinId;
-        this.type = type;
-    }
-
     public String getLinkedinId() {
         return linkedinId;
     }

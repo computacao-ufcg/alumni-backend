@@ -180,7 +180,7 @@ public class EmployerTest {
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
     }
 
     // Test case: Requests a page of unclassified employers and tests a successfully return. Checks the response and also call
@@ -267,7 +267,7 @@ public class EmployerTest {
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
         Mockito.doNothing().when(this.facade)
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
 
@@ -279,7 +279,7 @@ public class EmployerTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
 
     }
 
@@ -291,7 +291,7 @@ public class EmployerTest {
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
         Mockito.doThrow(new InvalidParameterException()).when(this.facade)
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
 
@@ -305,7 +305,7 @@ public class EmployerTest {
         Assert.assertEquals("{\"details\":\"uri=/employer\",\"message\":\"Unexpected error.\"}", result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
     }
 
     // Test case: Requests a page of classified employers with unauthorized user. Also call
@@ -408,7 +408,7 @@ public class EmployerTest {
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
 
@@ -420,7 +420,7 @@ public class EmployerTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
     }
 
     // Test case: Requests a page of classified employers with unauthenticated user. Also call the
@@ -523,7 +523,7 @@ public class EmployerTest {
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
 
@@ -535,7 +535,7 @@ public class EmployerTest {
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .setEmployerType(Mockito.anyString(), Mockito.any(EmployerClassification.class));
+                .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
     }
 
     private HttpHeaders getHttpHeaders() {
