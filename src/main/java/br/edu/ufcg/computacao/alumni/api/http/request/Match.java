@@ -151,11 +151,11 @@ public class Match {
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
             @ApiParam(value = ApiDocumentation.Match.NAME_PARAMETER)
-            @RequestParam String name,
+            @RequestParam(required = false, defaultValue = "^$") String name,
             @ApiParam(value = ApiDocumentation.Match.ADMISSION_PARAMETER)
-            @RequestParam String admission,
+            @RequestParam(required = false, defaultValue = "^$") String admission,
             @ApiParam(value = ApiDocumentation.Match.GRADUATION_PARAMETER)
-            @RequestParam String graduation,
+            @RequestParam(required = false, defaultValue = "^$") String graduation,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
