@@ -65,7 +65,7 @@ public class EmployersHolder {
 		}
 
 		Employer employer = this.unclassifiedEmployers.get(employerId);
-		this.unclassifiedEmployers.remove(employerId, employer);
+		this.unclassifiedEmployers.remove(employerId);
 		employer.setType(type);		
 		this.classifiedEmployers.put(employerId, employer);
 		try {
@@ -89,6 +89,10 @@ public class EmployersHolder {
 		} catch (IOException e) {
 			LOGGER.error(String.format(Messages.COULD_NOT_SAVE_EMPLOYERS_S, this.classifiedEmployers));
 		}
+	}
+
+	public synchronized Map<String, Employer> getMapClassifiedEmployers() {
+		return this.classifiedEmployers;
 	}
 	
 	public synchronized void loadClassifiedEmployers(String filePath) throws FatalErrorException {

@@ -151,7 +151,7 @@ public class Employer {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.PUT)
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
     public ResponseEntity<Void> setEmployerType(
             @ApiParam(value = ApiDocumentation.Employers.EMPLOYER_BODY)
