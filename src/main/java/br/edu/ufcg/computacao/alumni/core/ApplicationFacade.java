@@ -38,6 +38,10 @@ public class ApplicationFacade {
         }
     }
 
+    public Set<String> getConsolidatedUrls() {
+        return EmployersHolder.getInstance().getConsolidatedUrls();
+    }
+
     public void setAuthorizationPlugin(AuthorizationPlugin authorizationPlugin) {
         this.authorizationPlugin = authorizationPlugin;
     }

@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Set;
 
 @CrossOrigin
 @RestController
@@ -56,6 +57,12 @@ public class Employer {
             throw e;
         }
 
+    }
+
+    @RequestMapping(value = "/consolidated", method = RequestMethod.GET)
+    public ResponseEntity<Set<String>> getConsolidatedUrls() {
+        Set<String> consolidatedUrls = ApplicationFacade.getInstance().getConsolidatedUrls();
+        return new ResponseEntity<>(consolidatedUrls, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/unclassified/{page}", method = RequestMethod.GET)
@@ -119,7 +126,7 @@ public class Employer {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.PUT)
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_TYPE)
     public ResponseEntity<Void> setEmployerType(
             @ApiParam(value = ApiDocumentation.Employers.EMPLOYER_BODY)

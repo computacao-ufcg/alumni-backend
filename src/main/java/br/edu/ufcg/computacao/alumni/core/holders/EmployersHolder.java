@@ -17,6 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -54,27 +56,33 @@ public class EmployersHolder {
 		return Arrays.stream(EmployerType.values()).map(EmployerTypeResponse::new).collect(Collectors.toList());
 	}
 
-	private boolean isConsolidated(EmployerModel employer) {
-		String[] splitedUrl = employer.getLinkedinId().split("/");
+	private boolean isConsolidated(String url) {
+		String[] splitedUrl = url.split("/");
 		String id = splitedUrl[splitedUrl.length - 1];
-		return id.contains("?keywords");
+		return !id.contains("?keywords");
+	}
+
+	private String decodeUrl(String url) {
+		return URLDecoder.decode(url, StandardCharsets.UTF_8);
 	}
 
 	public Set<String> getConsolidatedUrls() {
-		Set<String> consolidatedUrls = new HashSet<>();
-		this.unclassifiedEmployers.values().stream().;
-		return consolidatedUrls;
+		Collection<EmployerResponse> employers = this.getEmployers(this.unclassifiedEmployers);
+		return employers.stream()
+				.map(EmployerResponse::getLinkedinId)
+				.filter(this::isConsolidated)
+				.map(this::decodeUrl)
+				.collect(Collectors.toSet());
 	}
-	
+
 	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
 		if (!this.unclassifiedEmployers.containsKey(employerId)) {
 			throw new InvalidParameterException(Messages.NO_SUCH_LINKEDIN_ID);
 		}
 
 		EmployerModel employer = this.unclassifiedEmployers.get(employerId);
-		this.unclassifiedEmployers.remove(employerId, employer);
-		employer.setType(type);
-
+		this.unclassifiedEmployers.remove(employerId);
+		employer.setType(type);		
 		this.classifiedEmployers.put(employerId, employer);
 		try {
 			this.saveClassifiedEmployers();
@@ -97,6 +105,10 @@ public class EmployersHolder {
 		} catch (IOException e) {
 			LOGGER.error(String.format(Messages.COULD_NOT_SAVE_EMPLOYERS_S, this.classifiedEmployers));
 		}
+	}
+
+	public synchronized Map<String, EmployerModel> getMapClassifiedEmployers() {
+		return this.classifiedEmployers;
 	}
 	
 	public synchronized void loadClassifiedEmployers(String filePath) throws FatalErrorException {
