@@ -104,14 +104,9 @@ public class ApplicationFacade {
         return ServiceAsymmetricKeysHolder.getInstance().getPublicKeyString();
     }
 
-    public Page<EmployerResponse> getClassifiedEmployers(String token, int page) throws EurecaException {
+    public Page<EmployerResponse> getClassifiedEmployers(String token, EmployerType employerType, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS);
-        return EmployersHolder.getInstance().getClassifiedEmployersPage(page);
-    }
-
-    public Page<EmployerResponse> getClassifiedEmployersByType(String token, int page, EmployerType type) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_BY_TYPE);
-        return EmployersHolder.getInstance().getClassifiedEmployersPage(page, type);
+        return EmployersHolder.getInstance().getClassifiedEmployersPage(employerType, page);
     }
 
     public Page<EmployerResponse> getUnclassifiedEmployers(String token, int page) throws EurecaException {

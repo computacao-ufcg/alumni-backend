@@ -1,13 +1,23 @@
 package br.edu.ufcg.computacao.alumni.core.models;
 
-public class Employer {
+import java.util.HashSet;
+import java.util.Set;
+
+public class EmployerModel {
 
 	private String name;
 	private EmployerType type;
+//	private Set<String> ids;
 	
-	public Employer(String name, EmployerType type) {
+	public EmployerModel(String name, EmployerType type) {
 		this.name = name;
 		this.type = type;
+//		this.ids = new HashSet<>();
+	}
+
+	public EmployerModel(String name, EmployerType type, Set<String> ids) {
+		this(name, type);
+//		this.ids = ids;
 	}
 	
 	public String getName() {
@@ -17,7 +27,11 @@ public class Employer {
 	public EmployerType getType() {
 		return type;
 	}
-	
+
+//	public Set<String> getIds() {
+//		return ids;
+//	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -25,6 +39,18 @@ public class Employer {
 	public void setType(EmployerType type) {
 		this.type = type;
 	}
+
+//	public void setIds(Set<String> ids) {
+//		this.ids = ids;
+//	}
+
+//	public boolean addId(String id) {
+//		return this.ids.add(id);
+//	}
+
+//	public boolean addIds(Set<String> ids) {
+//		return this.ids.addAll(ids);
+//	}
 
 	@Override
 	public int hashCode() {
@@ -43,7 +69,7 @@ public class Employer {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Employer other = (Employer) obj;
+		EmployerModel other = (EmployerModel) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

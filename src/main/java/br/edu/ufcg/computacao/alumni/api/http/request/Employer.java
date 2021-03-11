@@ -36,6 +36,7 @@ public class Employer {
     public ResponseEntity<Page<EmployerResponse>> getClassifiedEmployers(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @RequestParam(required = false) String type,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
@@ -47,47 +48,14 @@ public class Employer {
                 throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
             }
 
-            Page<EmployerResponse> employers = ApplicationFacade.getInstance().getClassifiedEmployers(token, p);
+            EmployerType employerType = EmployerType.getType(type);
+            Page<EmployerResponse> employers = ApplicationFacade.getInstance().getClassifiedEmployers(token, employerType, p);
             return new ResponseEntity(employers, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
         }
 
-    }
-
-    @RequestMapping(value = "/classifiedByType/{page}", method = RequestMethod.GET)
-    @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYER_BY_TYPE_OPERATION)
-    public ResponseEntity<Page<EmployerResponse>> getClassifiedEmployersByType(
-            @ApiParam(value = ApiDocumentation.Common.PAGE)
-            @PathVariable String page,
-            @ApiParam(value = ApiDocumentation.Employers.TYPE)
-            @RequestParam String type,
-            @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
-            @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
-            throws EurecaException {
-
-        try {
-            int p;
-            EmployerType t;
-            try{
-                p = Integer.parseInt(page);
-                t =  EmployerType.getType(type.toLowerCase());
-
-                if(t.getValue().equals("undefined")) {
-                    throw new InvalidParameterException(Messages.TYPE_MUST_BE_AN_EMPLOYER_TYPE);
-                }
-
-            } catch(NumberFormatException e) {
-                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
-
-            }
-            Page<EmployerResponse> employers = ApplicationFacade.getInstance().getClassifiedEmployersByType(token, p, t);
-            return new ResponseEntity(employers, HttpStatus.OK);
-        } catch(EurecaException e) {
-            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
-            throw e;
-        }
     }
 
     @RequestMapping(value = "/unclassified/{page}", method = RequestMethod.GET)
