@@ -28,7 +28,7 @@ public class EmployerFinderProcessor extends Thread {
 		
 		while (isActive) {
 			try {
-				Collection<EmployerResponse> classifiedEmployers = EmployersHolder.getInstance().getClassifiedEmployers();
+				Map<String, Employer> classifiedEmployers = EmployersHolder.getInstance().getMapClassifiedEmployers();
 				Collection<LinkedinAlumnusData> linkedinProfiles = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
 				Map<String, Employer> newEmployers = new HashMap<>();
 				
@@ -38,11 +38,10 @@ public class EmployerFinderProcessor extends Thread {
 					for (LinkedinJobData job : jobData) {
 						String name = job.getCompanyName();
 						String linkedinId = job.getCompanyUrl();
+
 						
-						EmployerResponse employer = new EmployerResponse(name, linkedinId, EmployerType.UNDEFINED);
-						
-						if (!classifiedEmployers.contains(employer)) {
-							newEmployers.put(employer.getLinkedinId(), new Employer(name, EmployerType.UNDEFINED));
+						if (!classifiedEmployers.containsKey(linkedinId)) {
+							newEmployers.put(linkedinId, new Employer(name, EmployerType.UNDEFINED));
 							LOGGER.debug(String.format(Messages.ADD_EMPLOYER_S, name));
 						}
 					}
