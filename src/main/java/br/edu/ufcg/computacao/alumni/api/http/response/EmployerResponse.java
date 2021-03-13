@@ -31,6 +31,15 @@ public class EmployerResponse {
         this.linkedinId = linkedinId;
     }
 
+    public boolean isConsolidated() {
+        return !getId().contains("?keywords");
+    }
+
+    public String getId() {
+        String[] splitedId = this.linkedinId.split("/");
+        return splitedId[splitedId.length - 1];
+    }
+
     public EmployerType getType() {
         return this.type;
     }

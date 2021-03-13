@@ -7,17 +7,17 @@ public class EmployerModel {
 
 	private String name;
 	private EmployerType type;
-//	private Set<String> ids;
+	private Set<String> ids;
 	
 	public EmployerModel(String name, EmployerType type) {
 		this.name = name;
 		this.type = type;
-//		this.ids = new HashSet<>();
+		this.ids = new HashSet<>();
 	}
 
 	public EmployerModel(String name, EmployerType type, Set<String> ids) {
 		this(name, type);
-//		this.ids = ids;
+		this.ids = ids;
 	}
 	
 	public String getName() {
@@ -28,9 +28,9 @@ public class EmployerModel {
 		return type;
 	}
 
-//	public Set<String> getIds() {
-//		return ids;
-//	}
+	public Set<String> getIds() {
+		return ids;
+	}
 
 	public void setName(String name) {
 		this.name = name;
@@ -40,17 +40,17 @@ public class EmployerModel {
 		this.type = type;
 	}
 
-//	public void setIds(Set<String> ids) {
-//		this.ids = ids;
-//	}
+	public void setIds(Set<String> ids) {
+		this.ids = ids;
+	}
 
-//	public boolean addId(String id) {
-//		return this.ids.add(id);
-//	}
+	public boolean addId(String id) {
+		return this.ids.add(id);
+	}
 
-//	public boolean addIds(Set<String> ids) {
-//		return this.ids.addAll(ids);
-//	}
+	public boolean addIds(Set<String> ids) {
+		return this.ids.addAll(ids);
+	}
 
 	@Override
 	public int hashCode() {

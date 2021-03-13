@@ -1,21 +1,18 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import br.edu.ufcg.computacao.alumni.core.models.EmployerModel;
-import org.apache.log4j.Logger;
-
-import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.EmployersHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
+import br.edu.ufcg.computacao.alumni.core.models.EmployerModel;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
+import org.apache.log4j.Logger;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class EmployerFinderProcessor extends Thread {
 	private Logger LOGGER = Logger.getLogger(EmployerFinderProcessor.class);
@@ -29,7 +26,6 @@ public class EmployerFinderProcessor extends Thread {
 		
 		while (isActive) {
 			try {
-				Set<String> consolidatedUrls = EmployersHolder.getInstance().getConsolidatedUrls();
 				Map<String, EmployerModel> classifiedEmployers = EmployersHolder.getInstance().getMapClassifiedEmployers();
 				Collection<LinkedinAlumnusData> linkedinProfiles = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
 				Map<String, EmployerModel> newEmployers = new HashMap<>();
@@ -41,8 +37,6 @@ public class EmployerFinderProcessor extends Thread {
 						String name = job.getCompanyName();
 						String linkedinId = job.getCompanyUrl();
 
-						
-						EmployerResponse employer = new EmployerResponse(name, linkedinId, EmployerType.UNDEFINED);
 						if (!classifiedEmployers.containsKey(linkedinId)) {
 							newEmployers.put(linkedinId, new EmployerModel(name, EmployerType.UNDEFINED));
 							LOGGER.debug(String.format(Messages.ADD_EMPLOYER_S, name));

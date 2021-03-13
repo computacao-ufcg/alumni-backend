@@ -53,13 +53,9 @@ public class EmployersHolder {
 	}
 
 	public Collection<EmployerTypeResponse> getEmployerTypes() {
-		return Arrays.stream(EmployerType.values()).map(EmployerTypeResponse::new).collect(Collectors.toList());
-	}
-
-	private boolean isConsolidated(String url) {
-		String[] splitedUrl = url.split("/");
-		String id = splitedUrl[splitedUrl.length - 1];
-		return !id.contains("?keywords");
+		return Arrays.stream(EmployerType.values())
+				.map(EmployerTypeResponse::new)
+				.collect(Collectors.toList());
 	}
 
 	private String decodeUrl(String url) {
@@ -69,10 +65,15 @@ public class EmployersHolder {
 	public Set<String> getConsolidatedUrls() {
 		Collection<EmployerResponse> employers = this.getEmployers(this.unclassifiedEmployers);
 		return employers.stream()
-				.map(EmployerResponse::getLinkedinId)
-				.filter(this::isConsolidated)
+				.filter(EmployerResponse::isConsolidated)
+				.map(EmployerResponse::getId)
 				.map(this::decodeUrl)
-				.collect(Collectors.toSet());
+				.map(this::formatUrl)
+				.collect(Collectors.toCollection(TreeSet::new));
+	}
+
+	public String formatUrl(String url) {
+		return String.join(" ", url.split("-")).trim();
 	}
 
 	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
@@ -82,7 +83,7 @@ public class EmployersHolder {
 
 		EmployerModel employer = this.unclassifiedEmployers.get(employerId);
 		this.unclassifiedEmployers.remove(employerId);
-		employer.setType(type);		
+		employer.setType(type);
 		this.classifiedEmployers.put(employerId, employer);
 		try {
 			this.saveClassifiedEmployers();

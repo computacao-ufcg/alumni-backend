@@ -136,7 +136,6 @@ public class Employer {
             throws EurecaException {
 
         try {
-
             EmployerType type = EmployerType.getType(employer.getType().trim().toLowerCase());
 
             if (type.equals(EmployerType.UNDEFINED)) {
