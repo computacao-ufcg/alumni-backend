@@ -68,12 +68,13 @@ public class EmployersHolder {
 				.filter(EmployerResponse::isConsolidated)
 				.map(EmployerResponse::getId)
 				.map(this::decodeUrl)
-				.map(this::formatUrl)
+				.map(this::filterUrl)
 				.collect(Collectors.toCollection(TreeSet::new));
 	}
 
-	public String formatUrl(String url) {
-		return String.join(" ", url.split("-")).trim();
+	private String filterUrl(String url) {
+		List<String> splitedUrl = Arrays.stream(url.split("-")).filter(item -> !item.isEmpty()).collect(Collectors.toList());
+		return String.join(" ", splitedUrl);
 	}
 
 	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
