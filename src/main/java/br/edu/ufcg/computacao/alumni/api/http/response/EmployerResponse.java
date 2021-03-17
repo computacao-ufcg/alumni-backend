@@ -7,11 +7,13 @@ import java.util.Objects;
 public class EmployerResponse {
     private String name;
     private String linkedinId;
+    private String consolidatedUrl;
     private EmployerType type;
 
     public EmployerResponse(String name, String linkedinId, EmployerType type) {
         this.name = name;
         this.linkedinId = linkedinId;
+        this.consolidatedUrl = linkedinId;
         this.type = type;
     }
 
@@ -21,6 +23,14 @@ public class EmployerResponse {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getConsolidatedUrl() {
+        return consolidatedUrl;
+    }
+
+    public void setConsolidatedUrl(String consolidatedUrl) {
+        this.consolidatedUrl = consolidatedUrl;
     }
 
     public String getLinkedinId() {

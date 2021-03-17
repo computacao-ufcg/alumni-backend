@@ -42,6 +42,10 @@ public class ApplicationFacade {
         return EmployersHolder.getInstance().getConsolidatedUrls();
     }
 
+    public void getUrls() {
+        EmployersHolder.getInstance().consolidateUrls();
+    }
+
     public void setAuthorizationPlugin(AuthorizationPlugin authorizationPlugin) {
         this.authorizationPlugin = authorizationPlugin;
     }

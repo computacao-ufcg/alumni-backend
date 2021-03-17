@@ -21,8 +21,9 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EmployersHolder {
 	private Logger LOGGER = Logger.getLogger(EmployersHolder.class);
@@ -56,6 +57,29 @@ public class EmployersHolder {
 		return Arrays.stream(EmployerType.values())
 				.map(EmployerTypeResponse::new)
 				.collect(Collectors.toList());
+	}
+
+	public void consolidateUrls() {
+		ArrayList<EmployerResponse> consolidatedEmployers = new ArrayList<>();
+		ArrayList<EmployerResponse> notConsolidatedEmployers = new ArrayList<>();
+		for (EmployerResponse employer: getUnclassifiedEmployers()) {
+			if(employer.isConsolidated()) {
+				consolidatedEmployers.add(employer);
+			} else {
+				notConsolidatedEmployers.add(employer);
+			}
+		}
+
+		for (EmployerResponse notConsolidatedEmployer: notConsolidatedEmployers) {
+			Pattern urlPattern = Pattern.compile(notConsolidatedEmployer.getName(), Pattern.CASE_INSENSITIVE);
+			for (EmployerResponse consolidatedEmployer: consolidatedEmployers) {
+				Matcher nameMatcher = urlPattern.matcher(consolidatedEmployer.getName());
+				if(nameMatcher.find()) {
+					notConsolidatedEmployer.setConsolidatedUrl(consolidatedEmployer.getConsolidatedUrl());
+					System.out.println(notConsolidatedEmployer.getConsolidatedUrl());
+				}
+				}
+		}
 	}
 
 	private String decodeUrl(String url) {

@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Set;
 
@@ -63,6 +64,12 @@ public class Employer {
     public ResponseEntity<Set<String>> getConsolidatedUrls() {
         Set<String> consolidatedUrls = ApplicationFacade.getInstance().getConsolidatedUrls();
         return new ResponseEntity<>(consolidatedUrls, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/setUrls", method = RequestMethod.PUT)
+    public ResponseEntity<Void> getUrls() throws UnsupportedEncodingException {
+        ApplicationFacade.getInstance().getUrls();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/unclassified/{page}", method = RequestMethod.GET)
