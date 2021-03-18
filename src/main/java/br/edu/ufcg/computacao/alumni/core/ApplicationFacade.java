@@ -38,8 +38,12 @@ public class ApplicationFacade {
         }
     }
 
-    public Set<String> getConsolidatedUrls() {
-        return EmployersHolder.getInstance().getConsolidatedUrls();
+    public List<EmployerResponse> getConsolidatedEmployers() {
+        return EmployersHolder.getInstance().getConsolidatedEmployers();
+    }
+
+    public List<EmployerResponse> getNotConsolidatedEmployers() {
+        return EmployersHolder.getInstance().getNotConsolidatedEmployers();
     }
 
     public void getUrls() {

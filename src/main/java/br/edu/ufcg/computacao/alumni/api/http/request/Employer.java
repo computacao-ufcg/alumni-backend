@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -61,9 +61,15 @@ public class Employer {
     }
 
     @RequestMapping(value = "/consolidated", method = RequestMethod.GET)
-    public ResponseEntity<Set<String>> getConsolidatedUrls() {
-        Set<String> consolidatedUrls = ApplicationFacade.getInstance().getConsolidatedUrls();
-        return new ResponseEntity<>(consolidatedUrls, HttpStatus.OK);
+    public ResponseEntity<List<EmployerResponse>> getConsolidatedEmployers() {
+        List<EmployerResponse> consolidatedEmployers = ApplicationFacade.getInstance().getConsolidatedEmployers();
+        return new ResponseEntity<>(consolidatedEmployers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/notConsolidated", method = RequestMethod.GET)
+    public ResponseEntity<List<EmployerResponse>> getNotConsolidateEmployers() {
+        List<EmployerResponse> consolidatedEmployers = ApplicationFacade.getInstance().getNotConsolidatedEmployers();
+        return new ResponseEntity<>(consolidatedEmployers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/setUrls", method = RequestMethod.PUT)

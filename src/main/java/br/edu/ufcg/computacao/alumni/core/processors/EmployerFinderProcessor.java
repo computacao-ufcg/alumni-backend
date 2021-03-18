@@ -1,10 +1,10 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
+import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.EmployersHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
-import br.edu.ufcg.computacao.alumni.core.models.EmployerModel;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
 import org.apache.log4j.Logger;
@@ -26,9 +26,9 @@ public class EmployerFinderProcessor extends Thread {
 		
 		while (isActive) {
 			try {
-				Map<String, EmployerModel> classifiedEmployers = EmployersHolder.getInstance().getMapClassifiedEmployers();
+				Map<String, EmployerResponse> classifiedEmployers = EmployersHolder.getInstance().getMapClassifiedEmployers();
 				Collection<LinkedinAlumnusData> linkedinProfiles = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
-				Map<String, EmployerModel> newEmployers = new HashMap<>();
+				Map<String, EmployerResponse> newEmployers = new HashMap<>();
 				
 				for (LinkedinAlumnusData profile : linkedinProfiles) {
 					LinkedinJobData[] jobData = profile.getJobs();
@@ -38,7 +38,7 @@ public class EmployerFinderProcessor extends Thread {
 						String linkedinId = job.getCompanyUrl();
 
 						if (!classifiedEmployers.containsKey(linkedinId)) {
-							newEmployers.put(linkedinId, new EmployerModel(name, EmployerType.UNDEFINED));
+							newEmployers.put(linkedinId, new EmployerResponse(name, linkedinId, EmployerType.UNDEFINED));
 							LOGGER.debug(String.format(Messages.ADD_EMPLOYER_S, name));
 						}
 					}
