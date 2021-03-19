@@ -72,8 +72,21 @@ public class MatchesHolder {
             throw new FatalErrorException(e.getMessage());
         }
     }
+
+    private PendingMatch getPendingMatch(String registration) {
+        for (PendingMatch pendingMatch : this.pendingMatches) {
+            if (pendingMatch.getAlumnus().getRegistration().equals(registration))
+                return pendingMatch;
+        }
+        return null;
+    }
     
-    public synchronized void addMatch(String registration, String linkedinId) {
+    public synchronized void addMatch(String registration, String linkedinId) throws InvalidParameterException {
+        PendingMatch pendingMatch = this.getPendingMatch(registration);
+        if (pendingMatch == null) {
+            throw new InvalidParameterException(String.format(Messages.NO_SUCH_PENDING_MATCH_S, registration));
+        }
+
         UfcgAlumnusData alumnusData = AlumniHolder.getInstance().getAlumniMap().get(registration);
         String name = alumnusData.getFullName();
         String admission = alumnusData.getAdmission();
@@ -85,6 +98,8 @@ public class MatchesHolder {
     	} else {
     		this.matches.put(registration, matchData);
     	}
+
+    	this.pendingMatches.remove(pendingMatch);
 
         try {
             this.saveMatches();
@@ -120,19 +135,13 @@ public class MatchesHolder {
     public synchronized Page<MatchData> getMatchesPage(int requiredPage) {
         Pageable pageable= new PageRequest(requiredPage, 10);
         int start = (int) pageable.getOffset();
-        int end = (int) ((start + pageable.getPageSize()) > this.matches.size() ?
-                this.matches.size() : (start + pageable.getPageSize()));
+        int end = (int) (Math.min((start + pageable.getPageSize()), this.matches.size()));
         List<MatchData> list = getMatchesList();
-        Page<MatchData> page = new PageImpl<MatchData>(list.subList(start, end), pageable, list.size());
-        return page;
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
     private synchronized List<MatchData> getMatchesList() {
-        List<MatchData> matchesList = new ArrayList<>();
-        for (MatchData matchData : this.matches.values()) {
-            matchesList.add(matchData);
-        }
-        return matchesList;
+        return new ArrayList<>(this.matches.values());
     }
 
     public synchronized MatchData getAlumnusMatches(String registration) {
@@ -159,11 +168,9 @@ public class MatchesHolder {
         List<PendingMatch> list = getPendingMatches(matchClassification);
 
         int start = (int) pageable.getOffset();
-        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
-                list.size() : (start + pageable.getPageSize()));
+        int end = (int) (Math.min((start + pageable.getPageSize()), list.size()));
 
-        Page<PendingMatch> page = new PageImpl<PendingMatch>(list.subList(start, end), pageable, list.size());
-        return page;
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
     private synchronized void setMatchClassification(Collection<PossibleMatch> possibleMatches) {
@@ -216,11 +223,9 @@ public class MatchesHolder {
         List<MatchData> list = getMatchesSearch(name, admission, graduation);
 
         int start = (int) pageable.getOffset();
-        int end = (int) ((start + pageable.getPageSize()) > list.size() ?
-                list.size() : (start + pageable.getPageSize()));
+        int end = (int) (Math.min((start + pageable.getPageSize()), list.size()));
 
-        Page<MatchData> page = new PageImpl<>(list.subList(start, end), pageable, list.size());
-        return page;
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
     private synchronized List<MatchData> getMatchesSearch(String name, String admission, String graduation) {

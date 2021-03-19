@@ -38,12 +38,26 @@ public class ApplicationFacade {
         }
     }
 
-    public List<EmployerResponse> getConsolidatedEmployers() {
-        return EmployersHolder.getInstance().getConsolidatedEmployers();
+    public EmployerResponse getUnclassifiedByName(String name) {
+        Collection<EmployerResponse> unknown = EmployersHolder.getInstance().getUnclassifiedEmployers();
+        for (EmployerResponse employerResponse : unknown) {
+            if (employerResponse.getName().equals(name))
+                return employerResponse;
+        }
+        return null;
     }
 
-    public List<EmployerResponse> getNotConsolidatedEmployers() {
-        return EmployersHolder.getInstance().getNotConsolidatedEmployers();
+    public EmployerResponse getUnknownByName(String name) {
+        Collection<EmployerResponse> unknown = EmployersHolder.getInstance().getUnknownEmployers();
+        for (EmployerResponse employerResponse : unknown) {
+            if (employerResponse.getName().equals(name))
+                return employerResponse;
+        }
+        return null;
+    }
+
+    public Collection<EmployerResponse> getUnknownEmployers() {
+        return EmployersHolder.getInstance().getUnknownEmployers();
     }
 
     public void getUrls() {
@@ -85,7 +99,7 @@ public class ApplicationFacade {
     }
 
     public Page<LinkedinAlumnusData> getLinkedinAlumniData(String token, int page) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+//        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
         return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPage(page);
     }
 

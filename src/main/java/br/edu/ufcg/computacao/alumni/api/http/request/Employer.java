@@ -60,15 +60,9 @@ public class Employer {
 
     }
 
-    @RequestMapping(value = "/consolidated", method = RequestMethod.GET)
-    public ResponseEntity<List<EmployerResponse>> getConsolidatedEmployers() {
-        List<EmployerResponse> consolidatedEmployers = ApplicationFacade.getInstance().getConsolidatedEmployers();
-        return new ResponseEntity<>(consolidatedEmployers, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/notConsolidated", method = RequestMethod.GET)
-    public ResponseEntity<List<EmployerResponse>> getNotConsolidateEmployers() {
-        List<EmployerResponse> consolidatedEmployers = ApplicationFacade.getInstance().getNotConsolidatedEmployers();
+    @RequestMapping(value = "/unknown", method = RequestMethod.GET)
+    public ResponseEntity<Collection<EmployerResponse>> getUnknownEmployers() {
+        Collection<EmployerResponse> consolidatedEmployers = ApplicationFacade.getInstance().getUnknownEmployers();
         return new ResponseEntity<>(consolidatedEmployers, HttpStatus.OK);
     }
 
@@ -76,6 +70,22 @@ public class Employer {
     public ResponseEntity<Void> getUrls() throws UnsupportedEncodingException {
         ApplicationFacade.getInstance().getUrls();
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/unknown/name", method = RequestMethod.GET)
+    public ResponseEntity<EmployerResponse> getUnknownByName(
+            @RequestParam String name
+    ) {
+        EmployerResponse employer = ApplicationFacade.getInstance().getUnknownByName(name);
+        return new ResponseEntity<>(employer, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/unclassified/name", method = RequestMethod.GET)
+    public ResponseEntity<EmployerResponse> getUnclassifiedByName(
+            @RequestParam String name
+    ) {
+        EmployerResponse employer = ApplicationFacade.getInstance().getUnclassifiedByName(name);
+        return new ResponseEntity<>(employer, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/unclassified/{page}", method = RequestMethod.GET)
