@@ -1,7 +1,7 @@
 package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
-import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
+import br.edu.ufcg.computacao.alumni.api.http.response.ConsolidatedEmployer;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerTypeResponse;
 import br.edu.ufcg.computacao.alumni.api.parameters.EmployerClassification;
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
@@ -9,6 +9,7 @@ import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
+import br.edu.ufcg.computacao.alumni.core.models.UnknownEmployer;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import io.swagger.annotations.Api;
@@ -20,9 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -35,7 +34,7 @@ public class Employer {
 
     @RequestMapping(value = "/classified/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYER_OPERATION)
-    public ResponseEntity<Page<EmployerResponse>> getClassifiedEmployers(
+    public ResponseEntity<Page<ConsolidatedEmployer>> getClassifiedEmployers(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
             @RequestParam(required = false) String type,
@@ -51,7 +50,7 @@ public class Employer {
             }
 
             EmployerType employerType = EmployerType.getType(type);
-            Page<EmployerResponse> employers = ApplicationFacade.getInstance().getClassifiedEmployers(token, employerType, p);
+            Page<ConsolidatedEmployer> employers = ApplicationFacade.getInstance().getClassifiedEmployers(token, employerType, p);
             return new ResponseEntity(employers, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
@@ -61,36 +60,22 @@ public class Employer {
     }
 
     @RequestMapping(value = "/unknown", method = RequestMethod.GET)
-    public ResponseEntity<Collection<EmployerResponse>> getUnknownEmployers() {
-        Collection<EmployerResponse> consolidatedEmployers = ApplicationFacade.getInstance().getUnknownEmployers();
-        return new ResponseEntity<>(consolidatedEmployers, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/setUrls", method = RequestMethod.PUT)
-    public ResponseEntity<Void> getUrls() throws UnsupportedEncodingException {
-        ApplicationFacade.getInstance().getUrls();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/unknown/name", method = RequestMethod.GET)
-    public ResponseEntity<EmployerResponse> getUnknownByName(
-            @RequestParam String name
-    ) {
-        EmployerResponse employer = ApplicationFacade.getInstance().getUnknownByName(name);
-        return new ResponseEntity<>(employer, HttpStatus.OK);
+    public ResponseEntity<Collection<UnknownEmployer>> getUnknownEmployers() {
+        Collection<UnknownEmployer> unknownEmployers = ApplicationFacade.getInstance().getUnknownEmployers();
+        return new ResponseEntity<>(unknownEmployers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/unclassified/name", method = RequestMethod.GET)
-    public ResponseEntity<EmployerResponse> getUnclassifiedByName(
+    public ResponseEntity<ConsolidatedEmployer> getUnclassifiedByName(
             @RequestParam String name
     ) {
-        EmployerResponse employer = ApplicationFacade.getInstance().getUnclassifiedByName(name);
+        ConsolidatedEmployer employer = ApplicationFacade.getInstance().getUnclassifiedByName(name);
         return new ResponseEntity<>(employer, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/unclassified/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Employers.GET_EMPLOYERS_UNDEFINED)
-    public ResponseEntity<Page<EmployerResponse>> getUnclassifiedEmployers(
+    public ResponseEntity<Page<ConsolidatedEmployer>> getUnclassifiedEmployers(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
@@ -104,7 +89,7 @@ public class Employer {
                 }catch(NumberFormatException e) {
                     throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
                 }
-                Page<EmployerResponse> employers = ApplicationFacade.getInstance().getUnclassifiedEmployers(token, p);
+                Page<ConsolidatedEmployer> employers = ApplicationFacade.getInstance().getUnclassifiedEmployers(token, p);
                 return new ResponseEntity(employers, HttpStatus.OK);
 
             } catch (EurecaException e) {

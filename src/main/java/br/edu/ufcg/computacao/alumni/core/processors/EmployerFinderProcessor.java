@@ -1,12 +1,14 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
+import br.edu.ufcg.computacao.alumni.api.http.response.ConsolidatedEmployer;
 import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.EmployersHolder;
 import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
+import br.edu.ufcg.computacao.alumni.core.models.EmployerModel;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
+import br.edu.ufcg.computacao.alumni.core.models.UnknownEmployer;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -27,11 +29,11 @@ public class EmployerFinderProcessor extends Thread {
 		
 		while (isActive) {
 			try {
-				Collection<EmployerResponse> unknownEmployers = new ArrayList<>();
-				Map<String, EmployerResponse> classifiedEmployers = EmployersHolder.getInstance().getMapClassifiedEmployers();
+				Map<String, ConsolidatedEmployer> classifiedEmployers = EmployersHolder.getInstance().getMapClassifiedEmployers();
+				Map<String, ConsolidatedEmployer> newEmployers = new HashMap<>();
+				Map<String, EmployerModel> unknownEmployers = new HashMap<>();
 				Collection<LinkedinAlumnusData> linkedinProfiles = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
-				Map<String, EmployerResponse> newEmployers = new HashMap<>();
-				
+
 				for (LinkedinAlumnusData profile : linkedinProfiles) {
 					LinkedinJobData[] jobData = profile.getJobs();
 
@@ -41,9 +43,9 @@ public class EmployerFinderProcessor extends Thread {
 
 						if (!classifiedEmployers.containsKey(linkedinId)) {
 							if (!job.getEmployer().isConsolidated()) {
-								unknownEmployers.add(job.getEmployer());
+								unknownEmployers.put(job.getCompanyUrl(), job.getEmployer());
 							} else {
-								newEmployers.put(linkedinId, new EmployerResponse(name, linkedinId, EmployerType.UNDEFINED));
+								newEmployers.put(linkedinId, new ConsolidatedEmployer(name, linkedinId, EmployerType.UNDEFINED));
 								LOGGER.debug(String.format(Messages.ADD_EMPLOYER_S, name));
 							}
 

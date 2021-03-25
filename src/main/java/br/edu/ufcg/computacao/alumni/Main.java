@@ -16,8 +16,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
-
 @Component
 public class Main implements ApplicationRunner {
     private final Logger LOGGER = Logger.getLogger(Main.class);
@@ -47,6 +45,7 @@ public class Main implements ApplicationRunner {
             MatchesHolder.getInstance();
             new MatchesFinderProcessor().start();
             new EmployerFinderProcessor().start();
+//            new EmployerMatcherProcessor().start();
             new StatisticsProcessor().start();
             LOGGER.info(Messages.ALL_SET);
         } catch (Exception e) {

@@ -1,11 +1,11 @@
 package br.edu.ufcg.computacao.alumni.core.models;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
+import br.edu.ufcg.computacao.alumni.api.http.response.ConsolidatedEmployer;
 
 import java.util.Objects;
 
 public class LinkedinJobData {
-    private EmployerResponse employer;
+    private EmployerModel employer;
     private String jobTitle;
     private String location;
     private String description;
@@ -13,23 +13,23 @@ public class LinkedinJobData {
 
     public LinkedinJobData(String companyUrl, String companyName, String jobTitle, String location, String description,
                            DateRange dateRange) {
-        this.employer = new EmployerResponse(companyName, companyUrl, EmployerType.UNDEFINED);
+        this.employer = new ConsolidatedEmployer(companyName, companyUrl, EmployerType.UNDEFINED);
         this.jobTitle = jobTitle;
         this.location = location;
         this.description = description;
         this.dateRange = dateRange;
     }
 
-    public LinkedinJobData(EmployerResponse employer, String jobTitle, String location, String description,
+    public LinkedinJobData(ConsolidatedEmployer employer, String jobTitle, String location, String description,
                            DateRange dateRange) {
         this(employer.getLinkedinId(), employer.getName(), jobTitle, location, description, dateRange);
     }
 
-    public EmployerResponse getEmployer() {
+    public EmployerModel getEmployer() {
         return employer;
     }
 
-    public void setEmployer(EmployerResponse employer) {
+    public void setEmployer(ConsolidatedEmployer employer) {
         this.employer = employer;
     }
 

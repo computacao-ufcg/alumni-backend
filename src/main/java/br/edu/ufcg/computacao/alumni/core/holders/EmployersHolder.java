@@ -1,11 +1,14 @@
 package br.edu.ufcg.computacao.alumni.core.holders;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
+import br.edu.ufcg.computacao.alumni.api.http.response.ConsolidatedEmployer;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerTypeResponse;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
+import br.edu.ufcg.computacao.alumni.core.EmployerFinder;
+import br.edu.ufcg.computacao.alumni.core.models.EmployerModel;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
+import br.edu.ufcg.computacao.alumni.core.models.UnknownEmployer;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
@@ -16,32 +19,36 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EmployersHolder {
 	private final Logger LOGGER = Logger.getLogger(EmployersHolder.class);
     private static final String FIELD_SEPARATOR = ",";
 
 	private static EmployersHolder instance;
-	
+
 	// company url
-	private Collection<EmployerResponse> unknownEmployers;
-	private Map<String, EmployerResponse> classifiedEmployers;
-	private Map<String, EmployerResponse> unclassifiedEmployers;
+	private Map<String, UnknownEmployer> unknownEmployers;
+	private Map<String, ConsolidatedEmployer> classifiedEmployers;
+	private Map<String, ConsolidatedEmployer> unclassifiedEmployers;
 	private String employerFilePath;
-	
+
 	private EmployersHolder() {
 		this.employerFilePath = HomeDir.getPath() + PropertiesHolder.getInstance()
 			.getProperty(ConfigurationPropertyKeys.EMPLOYERS_FILE_KEY,
 					ConfigurationPropertyDefaults.DEFAULT_EMPLOYER_CLASSIFICATION_FILE_NAME);
 		this.loadClassifiedEmployers(this.employerFilePath);
 		this.unclassifiedEmployers = new HashMap<>();
+		this.unknownEmployers = new HashMap<>();
 	}
-	
+
 	public static EmployersHolder getInstance() {
 		synchronized (EmployersHolder.class) {
 			if (instance == null) {
@@ -51,8 +58,8 @@ public class EmployersHolder {
 		}
 	}
 
-	public Collection<EmployerResponse> getUnknownEmployers() {
-		return this.unknownEmployers;
+	public Collection<UnknownEmployer> getUnknownEmployers() {
+		return this.unknownEmployers.values();
 	}
 
 	public Collection<EmployerTypeResponse> getEmployerTypes() {
@@ -61,51 +68,12 @@ public class EmployersHolder {
 				.collect(Collectors.toList());
 	}
 
-	private EmployerResponse getUnknownEmployer(String linkedinId) {
-		for (EmployerResponse employer : this.unknownEmployers) {
-			if (employer.getLinkedinId().equals(linkedinId))
-				return employer;
-		}
-		return null;
-	}
-
-	public void consolidateUrls() {
-		List<EmployerResponse> consolidatedEmployers = new ArrayList<>(this.unclassifiedEmployers.values());
-		List<EmployerResponse> notConsolidatedEmployers = new ArrayList<>(this.unknownEmployers);
-
-		LOGGER.info(String.format("%d consolidados antes do metodo\n", consolidatedEmployers.size()));
-		LOGGER.info(String.format("%d nao consolidados antes do metodo\n", notConsolidatedEmployers.size()));
-
-		int c = 0;
-		for (EmployerResponse unknownEmployer: notConsolidatedEmployers) {
-			Pattern urlPattern = Pattern.compile(unknownEmployer.getName(), Pattern.CASE_INSENSITIVE);
-			for (EmployerResponse consolidatedEmployer: consolidatedEmployers) {
-				Matcher nameMatcher = urlPattern.matcher(consolidatedEmployer.getName());
-				if(nameMatcher.find()) {
-					String consolidatedId = consolidatedEmployer.getLinkedinId();
-					c++;
-
-					this.unknownEmployers.remove(getUnknownEmployer(unknownEmployer.getLinkedinId()));
-					this.unclassifiedEmployers.put(unknownEmployer.getLinkedinId(), unknownEmployer);
-
-					unknownEmployer.setLinkedinId(consolidatedId);
-					unknownEmployer.setIsConsolidated(true);
-//					break;
-				}
-			}
-		}
-
-		LOGGER.info(String.format("entrei %d vezes no if", c));
-		LOGGER.info(String.format("%d consolidados depois do metodo\n", this.unclassifiedEmployers.size()));
-		LOGGER.info(String.format("%d nao consolidados depois do metodo\n", this.unknownEmployers.size()));
-	}
-
 	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
 		if (!this.unclassifiedEmployers.containsKey(employerId)) {
 			throw new InvalidParameterException(Messages.NO_SUCH_LINKEDIN_ID);
 		}
 
-		EmployerResponse employer = this.unclassifiedEmployers.get(employerId);
+		ConsolidatedEmployer employer = this.unclassifiedEmployers.get(employerId);
 		this.unclassifiedEmployers.remove(employerId);
 		employer.setType(type);
 		this.classifiedEmployers.put(employerId, employer);
@@ -120,8 +88,8 @@ public class EmployersHolder {
 		if (!this.classifiedEmployers.containsKey(employerId)) {
 			throw new InvalidParameterException(Messages.NO_SUCH_LINKEDIN_ID);
 		}
-		
-		EmployerResponse employer = this.classifiedEmployers.get(employerId);
+
+		ConsolidatedEmployer employer = this.classifiedEmployers.get(employerId);
 		this.classifiedEmployers.remove(employerId, employer);
 		employer.setType(EmployerType.UNDEFINED);		
 		this.unclassifiedEmployers.put(employerId, employer);
@@ -132,7 +100,7 @@ public class EmployersHolder {
 		}
 	}
 
-	public synchronized Map<String, EmployerResponse> getMapClassifiedEmployers() {
+	public synchronized Map<String, ConsolidatedEmployer> getMapClassifiedEmployers() {
 		return this.classifiedEmployers;
 	}
 	
@@ -147,7 +115,7 @@ public class EmployersHolder {
 				String employerId = data[1];
 				EmployerType employerType = EmployerType.getType(data[2]);
 
-				EmployerResponse employer = new EmployerResponse(employerName, employerId, employerType);
+				ConsolidatedEmployer employer = new ConsolidatedEmployer(employerName, employerId, employerType);
 				this.classifiedEmployers.put(employerName, employer);
 			}
 			csvReader.close();
@@ -159,8 +127,8 @@ public class EmployersHolder {
 
 	public synchronized void saveClassifiedEmployers() throws IOException {
 		BufferedWriter csvWriter = new BufferedWriter(new FileWriter(this.employerFilePath, false));
-		for (Entry<String, EmployerResponse> entry : this.classifiedEmployers.entrySet()) {
-			EmployerResponse employer = entry.getValue();
+		for (Entry<String, ConsolidatedEmployer> entry : this.classifiedEmployers.entrySet()) {
+			ConsolidatedEmployer employer = entry.getValue();
 			String employerName = employer.getName();
 			String employerType = employer.getType().getValue();
 			String employerId = employer.getLinkedinId();
@@ -170,52 +138,52 @@ public class EmployersHolder {
 		csvWriter.close();
 	}
 
-	private synchronized Collection<EmployerResponse> getEmployers(Map<String, EmployerResponse> employers) {
-		Collection<EmployerResponse> employersResponse = new LinkedList<>();
+	private synchronized Collection<ConsolidatedEmployer> getEmployers(Map<String, ConsolidatedEmployer> employers) {
+		Collection<ConsolidatedEmployer> employersResponse = new LinkedList<>();
 		
-		for (Entry<String, EmployerResponse> entry : employers.entrySet()) {
+		for (Entry<String, ConsolidatedEmployer> entry : employers.entrySet()) {
 			String employerId = entry.getKey();
 			String employerName = entry.getValue().getName();
 			EmployerType type = entry.getValue().getType();
 			
-			EmployerResponse response = new EmployerResponse(employerName, employerId, type);
+			ConsolidatedEmployer response = new ConsolidatedEmployer(employerName, employerId, type);
 			employersResponse.add(response);
 		}
 		
 		return employersResponse;
 	}
 
-	private synchronized List<EmployerResponse> getEmployersList(Collection<EmployerResponse> employers) {
+	private synchronized List<ConsolidatedEmployer> getEmployersList(Collection<ConsolidatedEmployer> employers) {
 		return new ArrayList<>(employers);
 	}
 	
-	public synchronized Collection<EmployerResponse> getUnclassifiedEmployers() {
+	public synchronized Collection<ConsolidatedEmployer> getUnclassifiedEmployers() {
 		return this.getEmployers(this.unclassifiedEmployers);
 	}
 
-	public synchronized Page<EmployerResponse> getUnclassifiedEmployersPage(int requiredPage) {
+	public synchronized Page<ConsolidatedEmployer> getUnclassifiedEmployersPage(int requiredPage) {
 		Pageable pageable= new PageRequest(requiredPage, 10);
-		Collection<EmployerResponse> employers = this.getUnclassifiedEmployers();
+		Collection<ConsolidatedEmployer> employers = this.getUnclassifiedEmployers();
 
 		return getEmployerResponses(pageable, employers);
 	}
 
-	private Page<EmployerResponse> getEmployerResponses(Pageable pageable, Collection<EmployerResponse> employers) {
+	private Page<ConsolidatedEmployer> getEmployerResponses(Pageable pageable, Collection<ConsolidatedEmployer> employers) {
 		int start = pageable.getOffset();
 		int end = (Math.min((start + pageable.getPageSize()), employers.size()));
-		List<EmployerResponse> list = getEmployersList(employers);
+		List<ConsolidatedEmployer> list = getEmployersList(employers);
 		return new PageImpl<>(list.subList(start, end), pageable, list.size());
 	}
 
-	public synchronized Collection<EmployerResponse> getClassifiedEmployers() {
+	public synchronized Collection<ConsolidatedEmployer> getClassifiedEmployers() {
 		return this.classifiedEmployers.values();
 	}
 
-	public synchronized void setUnclassifiedEmployers(Map<String, EmployerResponse> employers) {
+	public synchronized void setUnclassifiedEmployers(Map<String, ConsolidatedEmployer> employers) {
 		this.unclassifiedEmployers = employers;
 	}
 	
-	public synchronized Collection<EmployerResponse> getClassifiedEmployers(EmployerType type) {
+	public synchronized Collection<ConsolidatedEmployer> getClassifiedEmployers(EmployerType type) {
 		if (type == null)
 			return this.getClassifiedEmployers();
 
@@ -225,13 +193,22 @@ public class EmployersHolder {
 				.collect(Collectors.toList());
 	}
 
-	public void setUnknownEmployers(Collection<EmployerResponse> employers) {
-		this.unknownEmployers = employers;
+	public void setUnknownEmployers(Map<String, EmployerModel> employers) {
+		for (Entry<String, EmployerModel> entry : employers.entrySet()) {
+			String linkedinId = entry.getKey();
+			EmployerModel employer = entry.getValue();
+
+			UnknownEmployer unknownEmployer = new UnknownEmployer(linkedinId, employer.getName());
+			Set<ConsolidatedEmployer> possibleEmployers = EmployerFinder.getInstance().getPossibleEmployers(unknownEmployer);
+			unknownEmployer.setPossibleEmployers(possibleEmployers);
+
+			this.unknownEmployers.put(unknownEmployer.getLinkedinId(), unknownEmployer);
+		}
 	}
 
-	public synchronized Page<EmployerResponse> getClassifiedEmployersPage(EmployerType employerType, int requiredPage) {
+	public synchronized Page<ConsolidatedEmployer> getClassifiedEmployersPage(EmployerType employerType, int requiredPage) {
 		Pageable pageable= new PageRequest(requiredPage, 10);
-		Collection<EmployerResponse> employers = this.getClassifiedEmployers(employerType);
+		Collection<ConsolidatedEmployer> employers = this.getClassifiedEmployers(employerType);
 
 		return getEmployerResponses(pageable, employers);
 	}

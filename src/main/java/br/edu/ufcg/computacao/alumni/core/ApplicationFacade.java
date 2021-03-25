@@ -1,7 +1,6 @@
 package br.edu.ufcg.computacao.alumni.core;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.*;
-import br.edu.ufcg.computacao.alumni.api.parameters.EmployerClassification;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
@@ -14,11 +13,10 @@ import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InternalServerErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
 import org.apache.log4j.Logger;
-
 import org.springframework.data.domain.Page;
 
 import java.security.interfaces.RSAPublicKey;
-import java.util.*;
+import java.util.Collection;
 
 public class ApplicationFacade {
     private static final Logger LOGGER = Logger.getLogger(ApplicationFacade.class);
@@ -38,30 +36,17 @@ public class ApplicationFacade {
         }
     }
 
-    public EmployerResponse getUnclassifiedByName(String name) {
-        Collection<EmployerResponse> unknown = EmployersHolder.getInstance().getUnclassifiedEmployers();
-        for (EmployerResponse employerResponse : unknown) {
+    public ConsolidatedEmployer getUnclassifiedByName(String name) {
+        Collection<ConsolidatedEmployer> unknown = EmployersHolder.getInstance().getUnclassifiedEmployers();
+        for (ConsolidatedEmployer employerResponse : unknown) {
             if (employerResponse.getName().equals(name))
                 return employerResponse;
         }
         return null;
     }
 
-    public EmployerResponse getUnknownByName(String name) {
-        Collection<EmployerResponse> unknown = EmployersHolder.getInstance().getUnknownEmployers();
-        for (EmployerResponse employerResponse : unknown) {
-            if (employerResponse.getName().equals(name))
-                return employerResponse;
-        }
-        return null;
-    }
-
-    public Collection<EmployerResponse> getUnknownEmployers() {
+    public Collection<UnknownEmployer> getUnknownEmployers() {
         return EmployersHolder.getInstance().getUnknownEmployers();
-    }
-
-    public void getUrls() {
-        EmployersHolder.getInstance().consolidateUrls();
     }
 
     public void setAuthorizationPlugin(AuthorizationPlugin authorizationPlugin) {
@@ -130,12 +115,12 @@ public class ApplicationFacade {
         return ServiceAsymmetricKeysHolder.getInstance().getPublicKeyString();
     }
 
-    public Page<EmployerResponse> getClassifiedEmployers(String token, EmployerType employerType, int page) throws EurecaException {
+    public Page<ConsolidatedEmployer> getClassifiedEmployers(String token, EmployerType employerType, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS);
         return EmployersHolder.getInstance().getClassifiedEmployersPage(employerType, page);
     }
 
-    public Page<EmployerResponse> getUnclassifiedEmployers(String token, int page) throws EurecaException {
+    public Page<ConsolidatedEmployer> getUnclassifiedEmployers(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
         return EmployersHolder.getInstance().getUnclassifiedEmployersPage(page);
     }
