@@ -48,6 +48,8 @@ public class ApiDocumentation {
                 "\"average\", " +
                 "\"likely\", " +
                 "\"very-likely\" ]";
+        public static final String CURRENT_LINKEDIN_ID = "https://www.linkedin.com/search/results/all/?keywords=Laborat%C3%B3rio%20Analytics";
+        public static final String CONSOLIDATED_LINKEDIN_ID = "https://www.linkedin.com/company/laborat%C3%B3rio-analytics/";
     }
 
     public static class Alumni {
@@ -87,7 +89,7 @@ public class ApiDocumentation {
         public static final String GET_OPERATION = "Returns the version of the service's API.";
     }
 
-    public class Token {
+    public static class Token {
         public static final String AUTHENTICATION_TOKEN = "Authentication token.";
     }
 
@@ -99,13 +101,15 @@ public class ApiDocumentation {
     public static class Employers {
         public static final String API = "Queries information about employers.";
         public static final String GET_EMPLOYER_OPERATION = "Lists information from organizations where alumni of a course work or have worked.";
-        public static final String GET_EMPLOYER_BY_TYPE_OPERATION = "Lists information from organizations of a type where alumni of a course work or have worked.";
         public static final String SET_EMPLOYER_TYPE = "Assign type to the organization whose identification is 'linkedinId'.";
+        public static final String SET_EMPLOYER_URL = "Assign a consolidated url to a unknown employer.";
         public static final String GET_EMPLOYERS_UNDEFINED = "Lists information about organizations where alumni of a course work or have worked, whose type is undefined.";
+        public static final String GET_UNKNOWN_EMPLOYERS = "Lists all employers that the url is not confirmed.";
         public static final String GET_EMPLOYER_TYPES = "Lists all employer types and respective descriptions.";
         public static final String DELETE_EMPLOYER_TYPE = "Sets employer type to undefined.";
         public static final String TYPE = "The type of the employer.";
         public static final String EMPLOYER_BODY = "The body of this request must be the linkedin id of the company and its type";
+        public static final String UNKNOWN_EMPLOYER_ID_DATA = "The current url of the unknown employer and the new url.";
     }
 
     public static class Statistics {

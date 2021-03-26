@@ -11,17 +11,17 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EmployerFinder {
-    private static Logger LOGGER = Logger.getLogger(EmployerFinder.class);
+public class EmployerMatcher {
+    private static Logger LOGGER = Logger.getLogger(EmployerMatcher.class);
 
-    private static EmployerFinder instance;
+    private static EmployerMatcher instance;
 
-    private EmployerFinder() {};
+    private EmployerMatcher() {};
 
-    public static EmployerFinder getInstance() {
-        synchronized (EmployerFinder.class) {
+    public static EmployerMatcher getInstance() {
+        synchronized (EmployerMatcher.class) {
             if (instance == null) {
-                instance = new EmployerFinder();
+                instance = new EmployerMatcher();
             }
             return instance;
         }

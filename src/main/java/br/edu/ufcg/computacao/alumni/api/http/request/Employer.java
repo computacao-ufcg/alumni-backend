@@ -1,6 +1,7 @@
 package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
+import br.edu.ufcg.computacao.alumni.api.parameters.EmployerIdData;
 import br.edu.ufcg.computacao.alumni.api.http.response.ConsolidatedEmployer;
 import br.edu.ufcg.computacao.alumni.api.http.response.EmployerTypeResponse;
 import br.edu.ufcg.computacao.alumni.api.parameters.EmployerClassification;
@@ -51,7 +52,7 @@ public class Employer {
 
             EmployerType employerType = EmployerType.getType(type);
             Page<ConsolidatedEmployer> employers = ApplicationFacade.getInstance().getClassifiedEmployers(token, employerType, p);
-            return new ResponseEntity(employers, HttpStatus.OK);
+            return new ResponseEntity<>(employers, HttpStatus.OK);
         } catch(EurecaException e) {
             LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
             throw e;
@@ -60,17 +61,24 @@ public class Employer {
     }
 
     @RequestMapping(value = "/unknown", method = RequestMethod.GET)
-    public ResponseEntity<Collection<UnknownEmployer>> getUnknownEmployers() {
-        Collection<UnknownEmployer> unknownEmployers = ApplicationFacade.getInstance().getUnknownEmployers();
+    @ApiOperation(value = ApiDocumentation.Employers.GET_UNKNOWN_EMPLOYERS)
+    public ResponseEntity<Collection<UnknownEmployer>> getUnknownEmployers(
+            @RequestHeader(value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token
+    ) throws EurecaException {
+        Collection<UnknownEmployer> unknownEmployers = ApplicationFacade.getInstance().getUnknownEmployers(token);
         return new ResponseEntity<>(unknownEmployers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/unclassified/name", method = RequestMethod.GET)
-    public ResponseEntity<ConsolidatedEmployer> getUnclassifiedByName(
-            @RequestParam String name
-    ) {
-        ConsolidatedEmployer employer = ApplicationFacade.getInstance().getUnclassifiedByName(name);
-        return new ResponseEntity<>(employer, HttpStatus.OK);
+    @RequestMapping(value = "/unknown/url", method = RequestMethod.PUT)
+    @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_URL)
+    public ResponseEntity<Void> setUnknownEmployerUrl(
+            @ApiParam(value = ApiDocumentation.Employers.UNKNOWN_EMPLOYER_ID_DATA)
+            @RequestBody EmployerIdData employerBody,
+            @RequestHeader(value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token
+    )
+        throws EurecaException {
+        ApplicationFacade.getInstance().setUnknownEmployerUrl(token, employerBody.getCurrentId(), employerBody.getNewId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/unclassified/{page}", method = RequestMethod.GET)
@@ -102,7 +110,7 @@ public class Employer {
     @ApiOperation(value = ApiDocumentation.Employers.DELETE_EMPLOYER_TYPE)
     public ResponseEntity<Void> deleteEmployerType(
             @ApiParam(value = ApiDocumentation.Linkedin.LINKEDIN_ID_PARAMETER)
-            @RequestParam String linkedinId,
+            @RequestBody String linkedinId,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {

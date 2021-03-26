@@ -5,7 +5,7 @@ import br.edu.ufcg.computacao.alumni.api.http.response.EmployerTypeResponse;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
-import br.edu.ufcg.computacao.alumni.core.EmployerFinder;
+import br.edu.ufcg.computacao.alumni.core.EmployerMatcher;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerModel;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.UnknownEmployer;
@@ -19,14 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.io.*;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EmployersHolder {
 	private final Logger LOGGER = Logger.getLogger(EmployersHolder.class);
@@ -66,6 +61,17 @@ public class EmployersHolder {
 		return Arrays.stream(EmployerType.values())
 				.map(EmployerTypeResponse::new)
 				.collect(Collectors.toList());
+	}
+
+	public void setUnknownEmployerUrl(String currentLinkedinId, String newLinkedinId) throws InvalidParameterException {
+		if (!this.unknownEmployers.containsKey(currentLinkedinId)) {
+			throw new InvalidParameterException(Messages.NO_SUCH_LINKEDIN_ID);
+		}
+
+		UnknownEmployer employer = this.unknownEmployers.get(currentLinkedinId);
+		ConsolidatedEmployer consolidatedEmployer = new ConsolidatedEmployer(newLinkedinId, employer.getName(), employer.getType());
+		this.unknownEmployers.remove(currentLinkedinId);
+		this.unclassifiedEmployers.put(newLinkedinId, consolidatedEmployer);
 	}
 
 	public synchronized void setEmployerType(String employerId, EmployerType type) throws FatalErrorException, InvalidParameterException {
@@ -199,7 +205,7 @@ public class EmployersHolder {
 			EmployerModel employer = entry.getValue();
 
 			UnknownEmployer unknownEmployer = new UnknownEmployer(linkedinId, employer.getName());
-			Set<ConsolidatedEmployer> possibleEmployers = EmployerFinder.getInstance().getPossibleEmployers(unknownEmployer);
+			Set<ConsolidatedEmployer> possibleEmployers = EmployerMatcher.getInstance().getPossibleEmployers(unknownEmployer);
 			unknownEmployer.setPossibleEmployers(possibleEmployers);
 
 			this.unknownEmployers.put(unknownEmployer.getLinkedinId(), unknownEmployer);

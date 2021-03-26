@@ -36,19 +36,6 @@ public class ApplicationFacade {
         }
     }
 
-    public ConsolidatedEmployer getUnclassifiedByName(String name) {
-        Collection<ConsolidatedEmployer> unknown = EmployersHolder.getInstance().getUnclassifiedEmployers();
-        for (ConsolidatedEmployer employerResponse : unknown) {
-            if (employerResponse.getName().equals(name))
-                return employerResponse;
-        }
-        return null;
-    }
-
-    public Collection<UnknownEmployer> getUnknownEmployers() {
-        return EmployersHolder.getInstance().getUnknownEmployers();
-    }
-
     public void setAuthorizationPlugin(AuthorizationPlugin authorizationPlugin) {
         this.authorizationPlugin = authorizationPlugin;
     }
@@ -84,7 +71,7 @@ public class ApplicationFacade {
     }
 
     public Page<LinkedinAlumnusData> getLinkedinAlumniData(String token, int page) throws EurecaException {
-//        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
+        authenticateAndAuthorize(token, AlumniOperation.GET_LINKEDIN_ALUMNI_DATA);
         return LinkedinDataHolder.getInstance().getLinkedinAlumniDataPage(page);
     }
 
@@ -96,6 +83,7 @@ public class ApplicationFacade {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
+
     public MatchData getAlumnusMatches(String token, String registration) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
         return MatchesHolder.getInstance().getAlumnusMatches(registration);
@@ -120,8 +108,18 @@ public class ApplicationFacade {
         return EmployersHolder.getInstance().getClassifiedEmployersPage(employerType, page);
     }
 
+    public Collection<UnknownEmployer> getUnknownEmployers(String token) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_UNKNOWN_EMPLOYERS);
+        return EmployersHolder.getInstance().getUnknownEmployers();
+    }
+
+    public void setUnknownEmployerUrl(String token, String currentLinkedinId, String newLinkedinId) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.SET_UNKNOWN_EMPLOYER_URL);
+        EmployersHolder.getInstance().setUnknownEmployerUrl(currentLinkedinId, newLinkedinId);
+    }
+
     public Page<ConsolidatedEmployer> getUnclassifiedEmployers(String token, int page) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
+//        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
         return EmployersHolder.getInstance().getUnclassifiedEmployersPage(page);
     }
 
