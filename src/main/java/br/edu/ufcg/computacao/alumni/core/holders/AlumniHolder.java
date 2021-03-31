@@ -41,8 +41,10 @@ public class AlumniHolder extends Thread {
     private static AlumniHolder instance;
     private long lastModificationDate;
     private Map<String, UfcgAlumnusData> alumni;
+
     private AlumniHolder() {
         this.lastModificationDate = 0;
+        this.alumni = new HashMap<>();
     }
 
     public static AlumniHolder getInstance() {
@@ -79,7 +81,6 @@ public class AlumniHolder extends Thread {
         } else {
             Gson gson = new Gson();
             alumniBasicData = gson.fromJson(response.getContent(), AlumniPerStudentSummary[].class);
-            this.alumni = new HashMap<>();
             for(int i = 0; i < alumniBasicData.length; i++) {
                 UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniBasicData[i]);
                 this.alumni.put(alumnus.getRegistration(), alumnus);
@@ -260,7 +261,6 @@ public class AlumniHolder extends Thread {
                 this.loadAlumni();
             } catch (EurecaException e) {
                 LOGGER.error(Messages.COULD_NOT_LOAD_ALUMNI_DATA, e);
-                this.alumni = new HashMap<>(); // If alumni data loading fails, initializes with an empty map
             } finally {
                 try {
                     Thread.sleep(Long.parseLong(Long.toString(TimeUnit.SECONDS.toMillis(30))));
