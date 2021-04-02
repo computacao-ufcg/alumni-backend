@@ -1,6 +1,5 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.LinkedinAlumnusData;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
@@ -12,7 +11,6 @@ import br.edu.ufcg.computacao.alumni.core.models.DateRange;
 import br.edu.ufcg.computacao.alumni.core.models.PendingMatch;
 import br.edu.ufcg.computacao.alumni.core.models.PossibleMatch;
 import br.edu.ufcg.computacao.alumni.core.models.SchoolName;
-import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniPerStudentSummary;
 import br.edu.ufcg.computacao.eureca.common.exceptions.FatalErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.HomeDir;
 import org.apache.log4j.Logger;

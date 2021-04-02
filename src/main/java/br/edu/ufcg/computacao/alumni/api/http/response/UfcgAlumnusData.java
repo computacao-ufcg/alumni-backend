@@ -6,10 +6,9 @@ import br.edu.ufcg.computacao.alumni.constants.LevelCode;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Degree;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
-import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniPerStudentSummary;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigestResponse;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class UfcgAlumnusData {
@@ -30,7 +29,7 @@ public class UfcgAlumnusData {
         this.degree = degree;
     }
 
-    public UfcgAlumnusData(AlumniPerStudentSummary alumnus) {
+    public UfcgAlumnusData(AlumniDigestResponse alumnus) {
         this.registration = alumnus.getRegistration();
         this.fullName = alumnus.getName();
 
