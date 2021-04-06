@@ -21,6 +21,7 @@ public class Messages {
     public static final String LOADING_ALUMNI_D_S = "Loading alumnus %d: %s.";
     public static final String LOADING_MATCH_D_S_S = "Loading match %d: %s -> %s.";
     public static final String NO_SUCH_MATCH_S = "There is no match for registration %s.";
+    public static final String NO_SUCH_PENDING_MATCH_S = "There is no pending match for registration %s.";
     public static final String PAGE_MUST_BE_AN_INTEGER = "Page parameter must be an integer.";
     public static final String NO_SUCH_LINKEDIN_ID = "LinkedinId must belong to an existing organization";
     public static final String PARSING_LIST_WITH_D_ALUMNI = "Parsing list with %d alumni.";

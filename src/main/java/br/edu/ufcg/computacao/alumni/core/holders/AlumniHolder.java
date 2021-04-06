@@ -61,6 +61,7 @@ public class AlumniHolder extends Thread {
         String backendPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_PORT_KEY);
         String suffix = Alumni.ENDPOINT;
         AlumniPerStudentSummary[] alumniBasicData;
+        this.alumni = new HashMap<>();
 
         URI uri = null;
         try {
