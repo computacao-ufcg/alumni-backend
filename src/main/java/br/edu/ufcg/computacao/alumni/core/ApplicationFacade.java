@@ -108,9 +108,9 @@ public class ApplicationFacade {
         return EmployersHolder.getInstance().getClassifiedEmployersPage(employerType, page);
     }
 
-    public Collection<UnknownEmployer> getUnknownEmployers(String token) throws EurecaException {
+    public Page<UnknownEmployer> getUnknownEmployers(String token, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_UNKNOWN_EMPLOYERS);
-        return EmployersHolder.getInstance().getUnknownEmployers();
+        return EmployersHolder.getInstance().getUnknownEmployers(page);
     }
 
     public void setUnknownEmployerUrl(String token, String currentLinkedinId, String newLinkedinId) throws EurecaException {

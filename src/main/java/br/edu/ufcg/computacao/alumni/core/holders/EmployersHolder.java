@@ -34,12 +34,20 @@ public class EmployersHolder {
 	private Map<String, ConsolidatedEmployer> classifiedEmployers;
 	private Map<String, ConsolidatedEmployer> unclassifiedEmployers;
 	private String employerFilePath;
+	private String consolidatedEmployerFilePath;
 
 	private EmployersHolder() {
 		this.employerFilePath = HomeDir.getPath() + PropertiesHolder.getInstance()
 			.getProperty(ConfigurationPropertyKeys.EMPLOYERS_FILE_KEY,
 					ConfigurationPropertyDefaults.DEFAULT_EMPLOYER_CLASSIFICATION_FILE_NAME);
-		this.loadClassifiedEmployers(this.employerFilePath);
+
+		this.consolidatedEmployerFilePath = HomeDir.getPath() + PropertiesHolder.getInstance()
+				.getProperty(ConfigurationPropertyKeys.CONSOLIDATED_EMPLOYERS_FILE_KEY,
+						ConfigurationPropertyDefaults.DEFAULT_CONSOLIDATED_EMPLOYERS_FILE_NAME);
+
+		this.loadEmployers(this.employerFilePath);
+		this.loadEmployers(this.consolidatedEmployerFilePath);
+
 		this.unclassifiedEmployers = new HashMap<>();
 		this.unknownEmployers = new HashMap<>();
 	}
@@ -53,8 +61,13 @@ public class EmployersHolder {
 		}
 	}
 
-	public Collection<UnknownEmployer> getUnknownEmployers() {
-		return this.unknownEmployers.values();
+	public Page<UnknownEmployer> getUnknownEmployers(int requiredPage) {
+		Pageable pageable= new PageRequest(requiredPage, 10);
+		List<UnknownEmployer> employers = new ArrayList<>(this.unknownEmployers.values());
+		int start = pageable.getOffset();
+		int end = (Math.min((start + pageable.getPageSize()), employers.size()));
+
+		return new PageImpl<>(employers.subList(start, end), pageable, employers.size());
 	}
 
 	public Collection<EmployerTypeResponse> getEmployerTypes() {
@@ -110,7 +123,7 @@ public class EmployersHolder {
 		return this.classifiedEmployers;
 	}
 	
-	public synchronized void loadClassifiedEmployers(String filePath) throws FatalErrorException {
+	private synchronized void loadEmployers(String filePath) throws FatalErrorException {
 		this.classifiedEmployers = new HashMap<>();
 		try {
 			BufferedReader csvReader = new BufferedReader(new FileReader(filePath));

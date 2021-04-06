@@ -38,6 +38,7 @@ public class Employer {
     public ResponseEntity<Page<ConsolidatedEmployer>> getClassifiedEmployers(
             @ApiParam(value = ApiDocumentation.Common.PAGE)
             @PathVariable String page,
+            @ApiParam(value = ApiDocumentation.Employers.TYPE)
             @RequestParam(required = false) String type,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
@@ -60,16 +61,32 @@ public class Employer {
 
     }
 
-    @RequestMapping(value = "/unknown", method = RequestMethod.GET)
+    @RequestMapping(value = "/unknown/{page}", method = RequestMethod.GET)
     @ApiOperation(value = ApiDocumentation.Employers.GET_UNKNOWN_EMPLOYERS)
-    public ResponseEntity<Collection<UnknownEmployer>> getUnknownEmployers(
+    public ResponseEntity<Page<UnknownEmployer>> getUnknownEmployers(
+            @ApiParam(value = ApiDocumentation.Common.PAGE)
+            @PathVariable String page,
             @RequestHeader(value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token
     ) throws EurecaException {
-        Collection<UnknownEmployer> unknownEmployers = ApplicationFacade.getInstance().getUnknownEmployers(token);
-        return new ResponseEntity<>(unknownEmployers, HttpStatus.OK);
+
+        try {
+
+            int requiredPage;
+            try {
+                requiredPage = Integer.parseInt(page);
+            } catch (NumberFormatException e) {
+                throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
+            }
+
+            Page<UnknownEmployer> unknownEmployers = ApplicationFacade.getInstance().getUnknownEmployers(token, requiredPage);
+            return new ResponseEntity<>(unknownEmployers, HttpStatus.OK);
+        } catch (EurecaException e) {
+            LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
+            throw e;
+        }
     }
 
-    @RequestMapping(value = "/unknown/url", method = RequestMethod.PUT)
+    @RequestMapping(value = "/unknown", method = RequestMethod.PUT)
     @ApiOperation(value = ApiDocumentation.Employers.SET_EMPLOYER_URL)
     public ResponseEntity<Void> setUnknownEmployerUrl(
             @ApiParam(value = ApiDocumentation.Employers.UNKNOWN_EMPLOYER_ID_DATA)
@@ -98,8 +115,7 @@ public class Employer {
                     throw new InvalidParameterException(Messages.PAGE_MUST_BE_AN_INTEGER);
                 }
                 Page<ConsolidatedEmployer> employers = ApplicationFacade.getInstance().getUnclassifiedEmployers(token, p);
-                return new ResponseEntity(employers, HttpStatus.OK);
-
+                return new ResponseEntity<>(employers, HttpStatus.OK);
             } catch (EurecaException e) {
                 LOGGER.info(String.format(Messages.SOMETHING_WENT_WRONG, e.getMessage()), e);
                 throw e;

@@ -45,7 +45,6 @@ public class Main implements ApplicationRunner {
             MatchesHolder.getInstance();
             new MatchesFinderProcessor().start();
             new EmployerFinderProcessor().start();
-//            new EmployerMatcherProcessor().start();
             new StatisticsProcessor().start();
             LOGGER.info(Messages.ALL_SET);
         } catch (Exception e) {
