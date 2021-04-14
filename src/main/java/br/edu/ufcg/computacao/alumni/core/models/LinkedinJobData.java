@@ -1,10 +1,11 @@
 package br.edu.ufcg.computacao.alumni.core.models;
 
+import br.edu.ufcg.computacao.alumni.api.http.response.ConsolidatedEmployer;
+
 import java.util.Objects;
 
 public class LinkedinJobData {
-    private String companyUrl;
-    private String companyName;
+    private EmployerModel employer;
     private String jobTitle;
     private String location;
     private String description;
@@ -12,28 +13,40 @@ public class LinkedinJobData {
 
     public LinkedinJobData(String companyUrl, String companyName, String jobTitle, String location, String description,
                            DateRange dateRange) {
-        this.companyUrl = companyUrl;
-        this.companyName = companyName;
+        this.employer = new ConsolidatedEmployer(companyName, companyUrl, EmployerType.UNDEFINED);
         this.jobTitle = jobTitle;
         this.location = location;
         this.description = description;
         this.dateRange = dateRange;
     }
 
+    public LinkedinJobData(ConsolidatedEmployer employer, String jobTitle, String location, String description,
+                           DateRange dateRange) {
+        this(employer.getLinkedinId(), employer.getName(), jobTitle, location, description, dateRange);
+    }
+
+    public EmployerModel getEmployer() {
+        return employer;
+    }
+
+    public void setEmployer(ConsolidatedEmployer employer) {
+        this.employer = employer;
+    }
+
     public String getCompanyUrl() {
-        return companyUrl;
+        return employer.getLinkedinId();
     }
 
     public void setCompanyUrl(String companyUrl) {
-        this.companyUrl = companyUrl;
+        this.employer.setLinkedinId(companyUrl);
     }
 
     public String getCompanyName() {
-        return companyName;
+        return employer.getName();
     }
 
     public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+        this.employer.setName(companyName);
     }
 
     public String getJobTitle() {
@@ -84,8 +97,8 @@ public class LinkedinJobData {
     @Override
     public String toString() {
         return "LinkedinJobData{" +
-                "companyUrl='" + companyUrl + '\'' +
-                ", companyName='" + companyName + '\'' +
+                "companyUrl='" + employer.getLinkedinId() + '\'' +
+                ", companyName='" + employer.getName() + '\'' +
                 ", jobTitle='" + jobTitle + '\'' +
                 ", location='" + location + '\'' +
                 ", description='" + description + '\'' +

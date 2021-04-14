@@ -1,7 +1,7 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
-import br.edu.ufcg.computacao.alumni.api.http.response.EmployerResponse;
+import br.edu.ufcg.computacao.alumni.api.http.response.ConsolidatedEmployer;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
@@ -44,10 +44,10 @@ public class StatisticsProcessor extends Thread {
 	}
 	
 	private int getNumberTypeEmployed(Collection<UfcgAlumnusData> alumni, EmployerType type) {
-		Collection<EmployerResponse> employers = EmployersHolder.getInstance().getClassifiedEmployers(type);
+		Collection<ConsolidatedEmployer> employers = EmployersHolder.getInstance().getClassifiedEmployers(type);
 
 		Collection<String> employersCompanyNames = employers.stream()
-				.map(EmployerResponse::getName)
+				.map(ConsolidatedEmployer::getName)
 				.collect(Collectors.toList());
 
 		int num = 0;

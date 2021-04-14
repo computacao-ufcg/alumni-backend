@@ -1,7 +1,6 @@
 package br.edu.ufcg.computacao.alumni.core;
 
 import br.edu.ufcg.computacao.alumni.api.http.response.*;
-import br.edu.ufcg.computacao.alumni.api.parameters.EmployerClassification;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyDefaults;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
@@ -14,11 +13,10 @@ import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InternalServerErrorException;
 import br.edu.ufcg.computacao.eureca.common.util.ServiceAsymmetricKeysHolder;
 import org.apache.log4j.Logger;
-
 import org.springframework.data.domain.Page;
 
 import java.security.interfaces.RSAPublicKey;
-import java.util.*;
+import java.util.Collection;
 
 public class ApplicationFacade {
     private static final Logger LOGGER = Logger.getLogger(ApplicationFacade.class);
@@ -85,6 +83,7 @@ public class ApplicationFacade {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
+
     public MatchData getAlumnusMatches(String token, String registration) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_MATCHES);
         return MatchesHolder.getInstance().getAlumnusMatches(registration);
@@ -104,18 +103,23 @@ public class ApplicationFacade {
         return ServiceAsymmetricKeysHolder.getInstance().getPublicKeyString();
     }
 
-    public Page<EmployerResponse> getClassifiedEmployers(String token, int page) throws EurecaException {
+    public Page<ConsolidatedEmployer> getClassifiedEmployers(String token, EmployerType employerType, int page) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS);
-        return EmployersHolder.getInstance().getClassifiedEmployersPage(page);
+        return EmployersHolder.getInstance().getClassifiedEmployersPage(employerType, page);
     }
 
-    public Page<EmployerResponse> getClassifiedEmployersByType(String token, int page, EmployerType type) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_BY_TYPE);
-        return EmployersHolder.getInstance().getClassifiedEmployersPage(page, type);
+    public Page<UnknownEmployer> getUnknownEmployers(String token, int page) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.GET_UNKNOWN_EMPLOYERS);
+        return EmployersHolder.getInstance().getUnknownEmployers(page);
     }
 
-    public Page<EmployerResponse> getUnclassifiedEmployers(String token, int page) throws EurecaException {
-        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
+    public void setUnknownEmployerUrl(String token, String currentLinkedinId, String newLinkedinId) throws EurecaException {
+        authenticateAndAuthorize(token, AlumniOperation.SET_UNKNOWN_EMPLOYER_URL);
+        EmployersHolder.getInstance().setUnknownEmployerUrl(currentLinkedinId, newLinkedinId);
+    }
+
+    public Page<ConsolidatedEmployer> getUnclassifiedEmployers(String token, int page) throws EurecaException {
+//        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
         return EmployersHolder.getInstance().getUnclassifiedEmployersPage(page);
     }
 

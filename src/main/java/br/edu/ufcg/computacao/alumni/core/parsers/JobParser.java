@@ -23,6 +23,8 @@ public class JobParser {
         String location = FieldLoaderUtil.load(job, JsonFields.LOCATION);
         String description = FieldLoaderUtil.load(job, JsonFields.DESCRIPTION);
         String range = FieldLoaderUtil.load(job, JsonFields.DATE_RANGE);
+//        String employerType = FieldLoaderUtil.load(job, "employerType");
+//        EmployerResponse employer = new EmployerResponse(companyName, companyUrl, EmployerType.getType(employerType));
         DateRange dateRange = new DateRange(range);
         LOGGER.debug(String.format(Messages.CREATING_JOB_S, companyName));
         return new LinkedinJobData(companyUrl, companyName, jobTitle, location, description, dateRange);

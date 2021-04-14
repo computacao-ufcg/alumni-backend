@@ -66,7 +66,7 @@ public class EmployerTest {
         // set up
         String classifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/classified/0";
 
-        Mockito.doReturn(createFakePage()).when(this.facade).getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
+        Mockito.doReturn(createFakePage()).when(this.facade).getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersEndpoint, getHttpHeaders(), "");
 
@@ -83,7 +83,7 @@ public class EmployerTest {
 //                result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
     }
 
     // Test case: Requests a page of employers with page value that is not a number and checks the response.
@@ -106,7 +106,7 @@ public class EmployerTest {
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
-                .getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
     }
 
 
@@ -115,10 +115,10 @@ public class EmployerTest {
     @Test
     public void getClassifiedEmployersByTypeTest() throws Exception {
         // set up
-        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
+        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classified/0?type=academy";
 
         Mockito.doReturn(createFakePage()).when(this.facade)
-                .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersByTypeEndpoint, getHttpHeaders(), "");
 
@@ -133,7 +133,7 @@ public class EmployerTest {
         Assert.assertEquals(EXPECTED_RESPONSE, result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .getClassifiedEmployersByType(Mockito.anyString(),Mockito.anyInt(), Mockito.any(EmployerType.class));
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
 
     }
 
@@ -141,7 +141,7 @@ public class EmployerTest {
     @Test
     public void getClassifiedByTypeEmployersWithInvalidTypeParameter() throws Exception {
         // set up
-        String classifiedEmployersEndpointWrongParameter = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=k";
+        String classifiedEmployersEndpointWrongParameter = EMPLOYERS_ENDPOINT + "/classified/0?type=k";
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersEndpointWrongParameter, getHttpHeaders(), "");
 
@@ -157,7 +157,7 @@ public class EmployerTest {
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))
-                .getClassifiedEmployers(Mockito.anyString(),Mockito.anyInt());
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
     }
 
     // Test case: Set employer type with invalid type parameter and checks the response.
@@ -316,7 +316,7 @@ public class EmployerTest {
         String classifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/classified/0";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
-                .getClassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersEndpoint, getHttpHeaders(), "");
 
@@ -328,7 +328,7 @@ public class EmployerTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
-                .getClassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
     }
 
     // Test case: Requests a page of classified employers by type with unauthorized user. Also call the
@@ -336,10 +336,10 @@ public class EmployerTest {
     @Test
     public void getClassifiedEmployersByTypeUnauthorizedExceptionTest() throws Exception {
         // set up
-        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
+        String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classified/0?type=academy";
 
         Mockito.doThrow(new UnauthorizedRequestException()).when(this.facade)
-                .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersByTypeEndpoint, getHttpHeaders(), "");
 
@@ -351,7 +351,7 @@ public class EmployerTest {
 
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
         Mockito.verify(this.facade, Mockito.times(1))
-                .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
     }
 
     // Test case: Requests a page of unclassified employers with unauthorized user. Also call the
@@ -431,7 +431,7 @@ public class EmployerTest {
         String classifiedEmployersEndpoint = EMPLOYERS_ENDPOINT + "/classified/0";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
-                .getClassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersEndpoint, getHttpHeaders(), "");
 
@@ -443,7 +443,7 @@ public class EmployerTest {
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .getClassifiedEmployers(Mockito.anyString(), Mockito.anyInt());
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
     }
 
     // Test case: Requests a page of employers classified by type with unauthenticated user. Also call the
@@ -454,7 +454,7 @@ public class EmployerTest {
         String classifiedEmployersByTypeEndpoint = EMPLOYERS_ENDPOINT + "/classifiedByType/0?type=academy";
 
         Mockito.doThrow(new UnauthenticatedUserException()).when(this.facade)
-                .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.GET, classifiedEmployersByTypeEndpoint, getHttpHeaders(), "");
 
@@ -466,7 +466,7 @@ public class EmployerTest {
         Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
 
         Mockito.verify(this.facade, Mockito.times(1))
-                .getClassifiedEmployersByType(Mockito.anyString(), Mockito.anyInt(), Mockito.any(EmployerType.class));
+                .getClassifiedEmployers(Mockito.anyString(), Mockito.any(EmployerType.class), Mockito.anyInt());
     }
 
     // Test case: Requests a page of unclassified employers with unauthenticated user. Also call the
