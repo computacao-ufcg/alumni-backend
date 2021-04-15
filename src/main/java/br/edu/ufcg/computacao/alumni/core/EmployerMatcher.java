@@ -36,7 +36,7 @@ public class EmployerMatcher {
             Matcher nameMatcher = namePattern.matcher(consolidatedEmployer.getName());
 
             if (nameMatcher.find()) {
-                LOGGER.info(String.format("%s is a possible match for %s\n", consolidatedEmployer.getName(), unknownEmployer.getName()));
+//                LOGGER.info(String.format("%s is a possible match for %s\n", consolidatedEmployer.getName(), unknownEmployer.getName()));
                 possibleEmployers.add(consolidatedEmployer);
             }
         }
