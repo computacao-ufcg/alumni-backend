@@ -86,7 +86,7 @@ public class MatchesFinderProcessor extends Thread {
 								MatchesFinder.getInstance().findMatches(alumnus, schoolName);
 
 						if (!possibleMatches.isEmpty()) {
-							LOGGER.info(String.format(Messages.FOUND_D_POSSIBLE_MATCHES_FOR_S, possibleMatches.size(), alumnus.getFullName()));
+							LOGGER.debug(String.format(Messages.FOUND_D_POSSIBLE_MATCHES_FOR_S, possibleMatches.size(), alumnus.getFullName()));
 							newPendingMatches.add(new PendingMatch(alumnus, possibleMatches));
 						}
 					}

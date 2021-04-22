@@ -8,10 +8,8 @@ import br.edu.ufcg.computacao.alumni.core.holders.LinkedinDataHolder;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerModel;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.alumni.core.models.LinkedinJobData;
-import br.edu.ufcg.computacao.alumni.core.models.UnknownEmployer;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +28,10 @@ public class EmployerFinderProcessor extends Thread {
 		while (isActive) {
 			try {
 				Map<String, ConsolidatedEmployer> classifiedEmployers = EmployersHolder.getInstance().getMapClassifiedEmployers();
+				Map<String, ConsolidatedEmployer> unclassifiedEmployers = EmployersHolder.getInstance().getMapUnclassifiedEmployers();
 				Map<String, ConsolidatedEmployer> newEmployers = new HashMap<>();
 				Map<String, EmployerModel> unknownEmployers = new HashMap<>();
+
 				Collection<LinkedinAlumnusData> linkedinProfiles = LinkedinDataHolder.getInstance().getLinkedinAlumniData();
 
 				for (LinkedinAlumnusData profile : linkedinProfiles) {
@@ -42,13 +42,12 @@ public class EmployerFinderProcessor extends Thread {
 						String linkedinId = job.getCompanyUrl();
 
 						if (!classifiedEmployers.containsKey(linkedinId)) {
-							if (!job.getEmployer().isConsolidated()) {
-								unknownEmployers.put(job.getCompanyUrl(), job.getEmployer());
-							} else {
+						  	if (!job.getEmployer().isConsolidated()) {
+								unknownEmployers.put(linkedinId, job.getEmployer());
+							} else if (!unclassifiedEmployers.containsKey(linkedinId)) {
 								newEmployers.put(linkedinId, new ConsolidatedEmployer(name, linkedinId, EmployerType.UNDEFINED));
 								LOGGER.debug(String.format(Messages.ADD_EMPLOYER_S, name));
 							}
-
 						}
 					}
 				}

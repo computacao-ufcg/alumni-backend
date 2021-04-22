@@ -13,7 +13,7 @@ public class ConfigurationPropertyKeys {
     public static final String BACKEND_PORT_KEY = "backend_port";
     public static final String AUTHORIZATION_PLUGIN_CLASS_KEY = "authorization_plugin_class";
     public static final String SCHOOL_INPUT_KEY = "school_input";
-    public static final String EMPLOYERS_FILE_KEY = "employers_file";
+    public static final String CLASSIFIED_EMPLOYERS_FILE_KEY = "employers_file";
     public static final String CONSOLIDATED_EMPLOYERS_FILE_KEY = "consolidated_employers_file";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
