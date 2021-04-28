@@ -43,3 +43,6 @@ src/test/resources/private
 *.log.*
 *.log.
 *.log
+
+### Mac OS files ###
+.DS_Store
