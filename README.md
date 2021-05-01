@@ -31,3 +31,30 @@ da atuação profissional dos egressos.
 - Execute o projeto no arquivo `AlumniApplication` na classe `main`
 - O projeto deve estar rodando na porta `8080`
 - Para verificar se obteve êxito, verifique no navegador o endereço `localhost:8080/alumni`
+
+## Enviando a aplicação para o DockerHub
+
+- A partir da raiz do projeto, digite:
+
+    `docker build -t alumni-backend:dev .`
+
+- Após o sucesso do build, esteja logado com sua conta do DockerHub para enviar a imagem.Para se conectar ao Docker:
+
+    `docker login`
+
+- Insira suas credenciais e faça o login.
+
+**Criando a tag para a imagem.**
+
+- Com a imagem montada, e o login efetuado, execute:
+
+    `docker images`
+
+- Recupere o id da imagem alumni-backend, pois iremos utilizar no próximo passo.
+
+    `docker tag "id_imagem" eureca/alumni-backend:dev`
+
+    `docker push eureca/alumni-backend:dev`
+
+- **"eureca/"** é o nome da organização que o docker enviará/atualizará a imagem.
+- **alumni-backend:dev** é o nome da imagem.
