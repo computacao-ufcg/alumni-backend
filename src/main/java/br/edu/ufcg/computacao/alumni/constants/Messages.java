@@ -25,6 +25,7 @@ public class Messages {
     public static final String PAGE_MUST_BE_AN_INTEGER = "Page parameter must be an integer.";
     public static final String NO_SUCH_LINKEDIN_ID = "LinkedinId must belong to an existing organization";
     public static final String PARSING_LIST_WITH_D_ALUMNI = "Parsing list with %d alumni.";
+    public static final String POST_REQUEST_S_S_S = "Endpoint (%s); header (%s); body (%s).";
     public static final String RANGE_S = "Range string: %s.";
     public static final String RECEIVING_GET_PUBLIC_KEY_REQUEST = "Received getPublicKey request.";
     public static final String SKIPING_ENTRY_D = "Invalid entry; skiping entry %d.";

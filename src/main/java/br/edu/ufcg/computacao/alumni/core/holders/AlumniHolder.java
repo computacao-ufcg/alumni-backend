@@ -112,6 +112,7 @@ public class AlumniHolder extends Thread {
         body.put("credentials", "{ \"" + ConfigurationPropertyKeys.USERNAME + "\" : \"" + username + "\", " +
                 "\"" + ConfigurationPropertyKeys.PASSWORD + "\" : \"" + password + "\" }");
         body.put("publicKey", ServiceAsymmetricKeysHolder.getInstance().getPublicKeyString());
+        LOGGER.debug(String.format(Messages.POST_REQUEST_S_S_S, endpoint, headers.toString(), body.toString()));
         HttpResponse response = HttpRequestClient.doGenericRequest(HttpMethod.POST, endpoint, headers, body);
         if (response.getHttpCode() >= HttpStatus.SC_BAD_REQUEST) {
             Throwable e = new HttpResponseException(response.getHttpCode(), response.getContent());
