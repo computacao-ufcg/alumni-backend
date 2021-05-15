@@ -32,29 +32,16 @@ da atuação profissional dos egressos.
 - O projeto deve estar rodando na porta `8080`
 - Para verificar se obteve êxito, verifique no navegador o endereço `localhost:8080/alumni`
 
-## Enviando a aplicação para o DockerHub
+## Criando um container Docker para deploy
 
-- A partir da raiz do projeto, digite:
+<p>É necessário adicionar o seu user ao grupo de usuários do docker, usando o seguinte comando e depois reiniciar a máquina.</p>
 
-    `docker build -t alumni-backend:dev .`
+<code>sudo usermod -aG docker $USER</code>
 
-- Após o sucesso do build, esteja logado com sua conta do DockerHub para enviar a imagem.Para se conectar ao Docker:
+<p>Depois é só executar o <I>script</I> build_tag_push.sh:</p>
 
-    `docker login`
+<code>bash build_tag_push.sh <git-branch> <docker-tag></code>
 
-- Insira suas credenciais e faça o login.
+<p>Onde <git-branch> é o nome do branch que será usado para todos os repositórios e <docker-tag> é o rótulo
+que será colocado na imagem construída e armazenada no Docker Hub.</p>
 
-**Criando a tag para a imagem.**
-
-- Com a imagem montada, e o login efetuado, execute:
-
-    `docker images`
-
-- Recupere o id da imagem alumni-backend, pois iremos utilizar no próximo passo.
-
-    `docker tag "id_imagem" eureca/alumni-backend:dev`
-
-    `docker push eureca/alumni-backend:dev`
-
-- **"eureca/"** é o nome da organização que o docker enviará/atualizará a imagem.
-- **alumni-backend:dev** é o nome da imagem.
