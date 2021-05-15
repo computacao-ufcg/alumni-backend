@@ -41,28 +41,4 @@ public class VersionTest {
         PowerMockito.mockStatic(ApplicationFacade.class);
         BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
     }
-
-    // Test case: Requests the version number and test a successfully return. Checks the response ans also call
-    // the facade to get the version number.
-    @Test
-    public void getVersionNumberTest() throws Exception {
-        // set up
-        Mockito.doReturn(SystemConstants.API_VERSION_NUMBER).when(this.facade).getVersionNumber();
-
-        HttpHeaders headers = new HttpHeaders();
-
-        // exercise
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(VERSION_END_POINT)
-                .headers(headers).contentType(MediaType.APPLICATION_JSON)).andReturn();
-
-        // verify
-        int expectedStatus = HttpStatus.OK.value();
-        String expectedResponse = String.format("{\"version\":\"%s\"}", SystemConstants.API_VERSION_NUMBER);
-
-        String versionNumber = result.getResponse().getContentAsString();
-
-        Assert.assertEquals(expectedResponse, versionNumber);
-        Assert.assertEquals(expectedStatus, result.getResponse().getStatus());
-
-    }
 }
