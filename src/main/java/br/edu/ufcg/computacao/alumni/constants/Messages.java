@@ -16,7 +16,6 @@ public class Messages {
     public static final String ERROR_READING_CONFIGURATION_FILE = "Error reading configuration file.";
     public static final String FINDING_MATCHES_FOR_S = "Finding matches for %s.";
     public static final String FOUND_D_POSSIBLE_MATCHES_FOR_S = "Found %d possible matches for %s.";
-    public static final String INVALID_INPUT_S = "Invalid input: %s.";
     public static final String INVALID_MATCH_CLASSIFICATION_S = "Invalid match classification: %s.";
     public static final String LOADING_ALUMNI_D_S = "Loading alumnus %d: %s.";
     public static final String LOADING_MATCH_D_S_S = "Loading match %d: %s -> %s.";
@@ -36,5 +35,4 @@ public class Messages {
     public static final String LEVEL_PARAM_MUST_BE_A_VALID_LEVEL = "Level must be one of Level options";
     public static final String UNABLE_TO_CLOSE_FILE_S = "Unable to close file: %s.";
     public static final String UNABLE_TO_FIND_CLASS_S = "Unable to find plugin class: %s.";
-    public static final String MIN_SCORE_MUST_BE_AN_INTEGER = "The minimum score parameter must be an integer.";
 }

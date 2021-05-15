@@ -160,18 +160,10 @@ public class ApplicationFacade {
         return this.asPublicKey;
     }
 
-
     private SystemUser authenticateAndAuthorize(String token, AlumniOperation operation) throws EurecaException {
         RSAPublicKey keyRSA = getAsPublicKey();
         SystemUser requester = AuthenticationUtil.authenticate(keyRSA, token);
         this.authorizationPlugin.isAuthorized(requester, operation);
         return requester;
-    }
-
-    public String getVersionNumber() {
-        String buildNumber = null;
-        buildNumber = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BUILD_NUMBER_KEY,
-                    ConfigurationPropertyDefaults.BUILD_NUMBER);
-        return SystemConstants.API_VERSION_NUMBER + "-" + buildNumber;
     }
 }

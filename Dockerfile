@@ -41,7 +41,16 @@ RUN \
 # Downloading Alumni Backend
 RUN \
   git clone https://github.com/computacao-ufcg/alumni-backend.git && \
-  (cd alumni-backend && git checkout $ALUMNI_BACKEND_BRANCH && mvn install -Dmaven.test.skip=true)  
+  (cd alumni-backend && git checkout $ALUMNI_BACKEND_BRANCH && mvn install -Dmaven.test.skip=true)
+
+# Generates the build number based on the commit checksum
+RUN \
+    (cd alumni-backend && alumni_build_number=$(git rev-parse --short 'HEAD') && \
+    cd ../eureca-as && as_build_number=$(git rev-parse --short 'HEAD') && \
+    cd ../eureca-common && common_build_number=$(git rev-parse --short 'HEAD') && \
+    cd ../eureca-backend && backend_build_number=$(git rev-parse --short 'HEAD') && \
+    cd ../alumni-backend && \
+    echo "build_number=alumni-$alumni_build_number-eureca-$backend_build_number-as-$as_build_number-common-$common_build_number" > build)
 
 WORKDIR /root/alumni-backend
 
