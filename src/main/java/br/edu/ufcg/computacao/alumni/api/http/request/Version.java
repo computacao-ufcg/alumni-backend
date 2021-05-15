@@ -1,9 +1,8 @@
 package br.edu.ufcg.computacao.alumni.api.http.request;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.VersionNumber;
+import br.edu.ufcg.computacao.alumni.api.http.response.VersionResponse;
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
-import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.eureca.common.util.BuildNumberHolder;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -28,9 +27,9 @@ public class Version {
 
     @ApiOperation(value = ApiDocumentation.Version.GET_OPERATION)
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<VersionNumber> getVersion() {
+    public ResponseEntity<VersionResponse> getVersion() {
         String buildNumber = BuildNumberHolder.getInstance().getBuildNumber();
         String versionNumber = SystemConstants.API_VERSION_NUMBER + "-" + buildNumber;
-        return new ResponseEntity<VersionNumber>(new VersionNumber(versionNumber), HttpStatus.OK);
+        return new ResponseEntity<VersionResponse>(new VersionResponse(versionNumber), HttpStatus.OK);
     }
 }

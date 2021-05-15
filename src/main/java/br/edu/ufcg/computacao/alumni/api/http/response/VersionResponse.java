@@ -2,14 +2,14 @@ package br.edu.ufcg.computacao.alumni.api.http.response;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class VersionNumber {
-    @ApiModelProperty(example = "v.2.0.0-ms-cd46c62-common-4e0d74e")
+public class VersionResponse {
+    @ApiModelProperty(example = "1.0.0-alumni-e1052fa-eureca-b2a2f14-as-3fc96f0-common-06d8761")
     private String version;
 
-    public VersionNumber() {
+    public VersionResponse() {
     }
 
-    public VersionNumber(String version) {
+    public VersionResponse(String version) {
         this.version = version;
     }
 

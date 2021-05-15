@@ -119,7 +119,7 @@ public class ApplicationFacade {
     }
 
     public Page<ConsolidatedEmployer> getUnclassifiedEmployers(String token, int page) throws EurecaException {
-//        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
+        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
         return EmployersHolder.getInstance().getUnclassifiedEmployersPage(page);
     }
 
