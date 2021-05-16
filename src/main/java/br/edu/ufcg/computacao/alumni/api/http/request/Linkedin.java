@@ -38,6 +38,7 @@ public class Linkedin {
             throws EurecaException {
 
         try {
+            LOGGER.info(Messages.RECEIVING_GET_LINKEDIN);
             int p;
             try {
                 p = Integer.parseInt(page);

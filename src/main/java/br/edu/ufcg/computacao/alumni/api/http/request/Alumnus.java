@@ -42,6 +42,7 @@ public class Alumnus {
             throws EurecaException {
 
         try {
+            LOGGER.info(Messages.RECEIVING_GET_ALUMNUS);
             int p;
             try {
                 p = Integer.parseInt(page);

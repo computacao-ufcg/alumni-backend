@@ -5,6 +5,7 @@ import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.constants.*;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.eureca.as.api.http.request.Token;
+import br.edu.ufcg.computacao.eureca.as.api.http.response.TokenResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.Alumni;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.PublicKey;
 import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigestResponse;
@@ -96,7 +97,7 @@ public class AlumniHolder extends Thread {
         String asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
         String asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
         String suffix = Token.ENDPOINT;
-        br.edu.ufcg.computacao.eureca.as.api.http.response.Token token = null;
+        TokenResponse token = null;
 
         URI uri = null;
         try {
@@ -120,7 +121,7 @@ public class AlumniHolder extends Thread {
             throw new UnavailableProviderException(e.getMessage());
         } else {
             Gson gson = new Gson();
-            token = gson.fromJson(response.getContent(), br.edu.ufcg.computacao.eureca.as.api.http.response.Token.class);
+            token = gson.fromJson(response.getContent(), TokenResponse.class);
         }
         return token.getToken();
     }

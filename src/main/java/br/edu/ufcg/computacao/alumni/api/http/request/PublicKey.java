@@ -27,7 +27,7 @@ public class PublicKey {
     public ResponseEntity<PublicKeyResponse> getPublicKey() throws EurecaException {
 
         try {
-            LOGGER.info(Messages.RECEIVING_GET_PUBLIC_KEY_REQUEST);
+            LOGGER.info(br.edu.ufcg.computacao.eureca.common.constants.Messages.RECEIVING_GET_PUBLIC_KEY_REQUEST);
             String publicKeyValue = ApplicationFacade.getInstance().getPublicKey();
             return new ResponseEntity<>(new PublicKeyResponse(publicKeyValue), HttpStatus.OK);
         } catch (EurecaException e) {

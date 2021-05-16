@@ -40,6 +40,7 @@ public class AlumniSiteStatistics {
             throws EurecaException {
 
         try {
+            LOGGER.info(Messages.RECEIVING_GET_ALUMNI_SITE_STATISTICS);
             CourseName c = CourseName.getCourseName(courseName.toLowerCase());
             Level l = Level.getLevel(level.toLowerCase());
 
