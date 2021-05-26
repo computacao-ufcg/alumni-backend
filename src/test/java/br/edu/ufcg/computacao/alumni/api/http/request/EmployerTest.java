@@ -153,7 +153,7 @@ public class EmployerTest {
 
         assertEquals(expectedStatus, result.getResponse().getStatus());
 
-        assertEquals("{\"details\":\"uri=/employer/classifiedByType/0\",\"message\":\"Type must be one of employer types\"}",
+        assertEquals("{\"details\":\"uri=alumni/employer/classifiedByType/0\",\"message\":\"Type must be one of employer types\"}",
                 result.getResponse().getContentAsString());
 
         Mockito.verify(this.facade, Mockito.times(0))

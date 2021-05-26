@@ -1,9 +1,9 @@
 FROM openjdk:8
 
-ARG EURECA_COMMON_BRANCH="develop"
-ARG EURECA_AS_BRANCH="develop"
-ARG EURECA_BACKEND_BRANCH="develop"
-ARG ALUMNI_BACKEND_BRANCH="develop"
+ARG EURECA_COMMON_BRANCH
+ARG EURECA_AS_BRANCH
+ARG EURECA_BACKEND_BRANCH
+ARG ALUMNI_BACKEND_BRANCH
 
 # Install.
 RUN \
@@ -41,6 +41,17 @@ RUN \
 # Downloading Alumni Backend
 RUN \
   git clone https://github.com/computacao-ufcg/alumni-backend.git && \
-  (cd alumni-backend && git checkout $ALUMNI_BACKEND_BRANCH && mvn install -Dmaven.test.skip=true)  
+  (cd alumni-backend && git checkout $ALUMNI_BACKEND_BRANCH && mvn install -Dmaven.test.skip=true)
+
+# Generates the build number based on the commit checksum
+RUN \
+    (cd eureca-common && common_build_number=$(git rev-parse --short 'HEAD') && \
+    cd ../eureca-as && as_build_number=$(git rev-parse --short 'HEAD') && \
+    cd ../eureca-backend && backend_build_number=$(git rev-parse --short 'HEAD') && \
+    cd ../alumni-backend && alumni_build_number=$(git rev-parse --short 'HEAD') && \
+    echo "build_number=alumni-$alumni_build_number-eureca-$backend_build_number-as-$as_build_number-common-$common_build_number" > build)
 
 WORKDIR /root/alumni-backend
+
+CMD \
+  mvn spring-boot:run -X > log.out 2> log.err

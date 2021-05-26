@@ -119,7 +119,7 @@ public class ApplicationFacade {
     }
 
     public Page<ConsolidatedEmployer> getUnclassifiedEmployers(String token, int page) throws EurecaException {
-//        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
+        authenticateAndAuthorize(token, AlumniOperation.GET_EMPLOYERS_UNDEFINED);
         return EmployersHolder.getInstance().getUnclassifiedEmployersPage(page);
     }
 
@@ -160,18 +160,10 @@ public class ApplicationFacade {
         return this.asPublicKey;
     }
 
-
     private SystemUser authenticateAndAuthorize(String token, AlumniOperation operation) throws EurecaException {
         RSAPublicKey keyRSA = getAsPublicKey();
         SystemUser requester = AuthenticationUtil.authenticate(keyRSA, token);
         this.authorizationPlugin.isAuthorized(requester, operation);
         return requester;
-    }
-
-    public String getVersionNumber() {
-        String buildNumber = null;
-        buildNumber = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BUILD_NUMBER_KEY,
-                    ConfigurationPropertyDefaults.BUILD_NUMBER);
-        return SystemConstants.API_VERSION_NUMBER + "-" + buildNumber;
     }
 }

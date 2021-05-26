@@ -39,6 +39,7 @@ public class Statistics {
             throws EurecaException {
 
         try {
+            LOGGER.info(Messages.RECEIVING_GET_STATISTICS);
             CourseName c = CourseName.getCourseName(courseName.toLowerCase());
             Level l = Level.getLevel(level.toLowerCase());
 

@@ -43,6 +43,7 @@ public class Match {
             throws EurecaException {
 
         try {
+            LOGGER.info(Messages.RECEIVING_GET_MATCH);
             ApplicationFacade.getInstance().setMatch(token, match.getRegistration(), match.getLinkedinId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch(EurecaException e) {

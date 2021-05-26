@@ -44,6 +44,7 @@ public class Employer {
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
         try {
+            LOGGER.info(Messages.RECEIVING_GET_EMPLOYER);
             int p;
             try{
                 p = Integer.parseInt(page);
