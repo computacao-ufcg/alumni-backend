@@ -3,6 +3,7 @@ package br.edu.ufcg.computacao.alumni.api.http.request;
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.api.http.response.AlumniSiteStatisticsResponse;
 import br.edu.ufcg.computacao.alumni.constants.ApiDocumentation;
+import br.edu.ufcg.computacao.alumni.constants.DefaultValues;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
@@ -32,9 +33,9 @@ public class AlumniSiteStatistics {
     @ApiOperation(value = ApiDocumentation.AlumniSiteStatistics.GET_ALUMNI_SITE_STATISTICS_OPERATION)
     public ResponseEntity<AlumniSiteStatisticsResponse> getAlumniSiteStatistics(
             @ApiParam(value = ApiDocumentation.AlumniSiteStatistics.LEVEL)
-            @RequestParam String level,
+            @RequestParam(defaultValue = DefaultValues.DEFAULT_LEVEL) String level,
             @ApiParam(value = ApiDocumentation.AlumniSiteStatistics.COURSE_NAME)
-            @RequestParam String courseName,
+            @RequestParam(defaultValue = DefaultValues.DEFAULT_COURSE_NAME) String courseName,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
@@ -46,7 +47,6 @@ public class AlumniSiteStatistics {
 
             if(c.getValue().equals("undefined")) {
                 throw new InvalidParameterException(Messages.COURSE_NAME_PARAM_MUST_BE_A_VALID_COURSE_NAME);
-
             } else if (l.getValue().equals("undefined")) {
                 throw new InvalidParameterException(Messages.LEVEL_PARAM_MUST_BE_A_VALID_LEVEL);
             }

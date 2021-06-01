@@ -32,9 +32,9 @@ public class Statistics {
     @ApiOperation(value = ApiDocumentation.Statistics.GET_STATISTICS_OPERATION)
     public ResponseEntity<StatisticsResponse> getStatistics(
             @ApiParam(value = ApiDocumentation.Model.LEVEL)
-            @RequestParam(defaultValue = DefaultValues.Level.DEFAULT_LEVEL) String level,
+            @RequestParam(defaultValue = DefaultValues.DEFAULT_LEVEL) String level,
             @ApiParam(value = ApiDocumentation.Model.COURSE_NAME)
-            @RequestParam(defaultValue = DefaultValues.CourseName.DEFAULT_COURSE_NAME) String courseName,
+            @RequestParam(defaultValue = DefaultValues.DEFAULT_COURSE_NAME) String courseName,
             @ApiParam(value = ApiDocumentation.Token.AUTHENTICATION_TOKEN)
             @RequestHeader(required = true, value = CommonKeys.AUTHENTICATION_TOKEN_KEY) String token)
             throws EurecaException {
