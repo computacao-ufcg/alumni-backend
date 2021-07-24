@@ -240,8 +240,28 @@ public class MatchesHolder {
             Matcher nameMatcher = namePattern.matcher(match.getName());
             Matcher admissionMatcher = admissionPattern.matcher(match.getAdmission());
             Matcher graduationMatcher = graduationPattern.matcher(match.getGraduation());
-            if(nameMatcher.find() || admissionMatcher.find() || graduationMatcher.find()) {
-                search.add(match);
+
+            List<Matcher> list = new ArrayList<>();
+            if(!name.equals("^$")) {
+                list.add(nameMatcher);
+            } if (!admission.equals("^$")) {
+                list.add(admissionMatcher);
+            } if (!graduation.equals("^$")) {
+                list.add(graduationMatcher);
+            }
+
+            if(list.size() == 1) {
+                if(list.get(0).find()) {
+                    search.add(match);
+                }
+            } else if (list.size() == 2) {
+                if(list.get(0).find() && list.get(1).find()) {
+                    search.add(match);
+                }
+            } else if(list.size() == 3) {
+                if(list.get(0).find() && list.get(1).find() && list.get(2).find()) {
+                    search.add(match);
+                }
             }
         }
         return search;
