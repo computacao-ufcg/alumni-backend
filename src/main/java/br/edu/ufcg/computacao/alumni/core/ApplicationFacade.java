@@ -140,17 +140,15 @@ public class ApplicationFacade {
 
     public StatisticsResponse getStatistics(String token, Level level, CourseName courseName) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_STATISTICS);
-        StatisticsModel statisticsCourse = StatisticsHolder.getInstance().getStatistics(courseName);
-        StatisticsModel statisticsLevel = StatisticsHolder.getInstance().getStatistics(level);
-        return new StatisticsResponse(statisticsCourse, statisticsLevel);
+        StatisticsModel statistics = StatisticsHolder.getInstance().getStatistics();
+        return new StatisticsResponse(statistics);
     }
 
     public AlumniSiteStatisticsResponse getAlumniSiteStatistics(String token, CourseName courseName, Level level) throws EurecaException {
         authenticateAndAuthorize(token, AlumniOperation.GET_ALUMNI_SITE_STATISTICS);
-        StatisticsModel statisticsCourse = StatisticsHolder.getInstance().getStatistics(courseName);
-        StatisticsModel statisticsLevel = StatisticsHolder.getInstance().getStatistics(level);
+        StatisticsModel statisticsCourse = StatisticsHolder.getInstance().getStatistics();
+        StatisticsModel statisticsLevel = StatisticsHolder.getInstance().getStatistics();
         return new AlumniSiteStatisticsResponse(statisticsCourse, statisticsLevel);
-
     }
 
     private RSAPublicKey getAsPublicKey() throws EurecaException {

@@ -3,191 +3,115 @@ package br.edu.ufcg.computacao.alumni.api.http.response;
 import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
 
 public class StatisticsResponse {
-    private int numberAlumniCourse;
-    private int numberMatchedAlumniCourse;
-    private int numberAcademyEmployedCourse;
-    private int numberGovernmentEmployedCourse;
-    private int numberOngEmployedCourse;
-    private int numberPublicCompanyEmployedCourse;
-    private int numberPrivateCompanyEmployedCourse;
-    private int numberMixedCompanyEmployedCourse;
+    private int numberAlumni;
+    private int numberMatchedAlumni;
+    private int numberAcademyEmployed;
+    private int numberGovernmentEmployed;
+    private int numberOngEmployed;
+    private int numberPublicCompanyEmployed;
+    private int numberPrivateCompanyEmployed;
+    private int numberMixedCompanyEmployed;
+    private int numberConsolidatedEmployers;
+    private int numberTotalEmployers;
 
-    private int numberAlumniLevel;
-    private int numberMatchedAlumniLevel;
-    private int numberAcademyEmployedLevel;
-    private int numberGovernmentEmployedLevel;
-    private int numberOngEmployedLevel;
-    private int numberPublicCompanyEmployedLevel;
-    private int numberPrivateCompanyEmployedLevel;
-    private int numberMixedCompanyEmployedLevel;
-
-    public StatisticsResponse(StatisticsModel statisticsCourse, StatisticsModel statisticsLevel) {
-        this.numberAlumniCourse = statisticsCourse.getNumberAlumni();
-        this.numberMatchedAlumniCourse = statisticsCourse.getNumberMatchedAlumni();
-        this.numberAcademyEmployedCourse = statisticsCourse.getNumberAcademyEmployed();
-        this.numberGovernmentEmployedCourse = statisticsCourse.getNumberGovernmentEmployed();
-        this.numberOngEmployedCourse = statisticsCourse.getNumberOngEmployed();
-        this.numberPublicCompanyEmployedCourse = statisticsCourse.getNumberPublicCompanyEmployed();
-        this.numberPrivateCompanyEmployedCourse = statisticsCourse.getNumberPrivateCompanyEmployed();
-        this.numberMixedCompanyEmployedCourse = statisticsCourse.getNumberMixedCompanyEmployed();
-
-        this.numberAlumniLevel = statisticsLevel.getNumberAlumni();
-        this.numberMatchedAlumniLevel = statisticsLevel.getNumberMatchedAlumni();
-        this.numberAcademyEmployedLevel = statisticsLevel.getNumberAcademyEmployed();
-        this.numberGovernmentEmployedLevel = statisticsLevel.getNumberGovernmentEmployed();
-        this.numberOngEmployedLevel = statisticsLevel.getNumberOngEmployed();
-        this.numberPublicCompanyEmployedLevel = statisticsLevel.getNumberPublicCompanyEmployed();
-        this.numberPrivateCompanyEmployedLevel = statisticsLevel.getNumberPrivateCompanyEmployed();
-        this.numberMixedCompanyEmployedLevel = statisticsLevel.getNumberMixedCompanyEmployed();
+    public StatisticsResponse(StatisticsModel statistics) {
+        this.numberAlumni = statistics.getNumberAlumni();
+        this.numberMatchedAlumni = statistics.getNumberMatchedAlumni();
+        this.numberAcademyEmployed = statistics.getNumberAcademyEmployed();
+        this.numberGovernmentEmployed = statistics.getNumberGovernmentEmployed();
+        this.numberOngEmployed = statistics.getNumberOngEmployed();
+        this.numberPublicCompanyEmployed = statistics.getNumberPublicCompanyEmployed();
+        this.numberPrivateCompanyEmployed = statistics.getNumberPrivateCompanyEmployed();
+        this.numberMixedCompanyEmployed = statistics.getNumberMixedCompanyEmployed();
+        this.numberConsolidatedEmployers = statistics.getNumberConsolidatedEmployers();
+        this.numberTotalEmployers = statistics.getNumberTotalEmployers();
     }
 
-    public int getNumberAlumniCourse() {
-        return numberAlumniCourse;
+    public int getNumberAlumni() {
+        return numberAlumni;
     }
 
-    public void setNumberAlumniCourse(int numberAlumniCourse) {
-        this.numberAlumniCourse = numberAlumniCourse;
+    public void setNumberAlumni(int numberAlumni) {
+        this.numberAlumni = numberAlumni;
     }
 
-    public int getNumberMatchedAlumniCourse() {
-        return numberMatchedAlumniCourse;
+    public int getNumberMatchedAlumni() {
+        return numberMatchedAlumni;
     }
 
-    public void setNumberMatchedAlumniCourse(int numberMatchedAlumniCourse) {
-        this.numberMatchedAlumniCourse = numberMatchedAlumniCourse;
+    public void setNumberMatchedAlumni(int numberMatchedAlumni) {
+        this.numberMatchedAlumni = numberMatchedAlumni;
     }
 
-    public int getNumberAcademyEmployedCourse() {
-        return numberAcademyEmployedCourse;
+    public int getNumberAcademyEmployed() {
+        return numberAcademyEmployed;
     }
 
-    public void setNumberAcademyEmployedCourse(int numberAcademyEmployedCourse) {
-        this.numberAcademyEmployedCourse = numberAcademyEmployedCourse;
+    public void setNumberAcademyEmployed(int numberAcademyEmployed) {
+        this.numberAcademyEmployed = numberAcademyEmployed;
     }
 
-    public int getNumberGovernmentEmployedCourse() {
-        return numberGovernmentEmployedCourse;
+    public int getNumberGovernmentEmployed() {
+        return numberGovernmentEmployed;
     }
 
-    public void setNumberGovernmentEmployedCourse(int numberGovernmentEmployedCourse) {
-        this.numberGovernmentEmployedCourse = numberGovernmentEmployedCourse;
+    public void setNumberGovernmentEmployed(int numberGovernmentEmployed) {
+        this.numberGovernmentEmployed = numberGovernmentEmployed;
     }
 
-    public int getNumberOngEmployedCourse() {
-        return numberOngEmployedCourse;
+    public int getNumberOngEmployed() {
+        return numberOngEmployed;
     }
 
-    public void setNumberOngEmployedCourse(int numberOngEmployedCourse) {
-        this.numberOngEmployedCourse = numberOngEmployedCourse;
+    public void setNumberOngEmployed(int numberOngEmployed) {
+        this.numberOngEmployed = numberOngEmployed;
     }
 
-    public int getNumberAlumniLevel() {
-        return numberAlumniLevel;
+    public int getNumberPublicCompanyEmployed() {
+        return numberPublicCompanyEmployed;
     }
 
-    public void setNumberAlumniLevel(int numberAlumniLevel) {
-        this.numberAlumniLevel = numberAlumniLevel;
+    public void setNumberPublicCompanyEmployed(int numberPublicCompanyEmployed) {
+        this.numberPublicCompanyEmployed = numberPublicCompanyEmployed;
     }
 
-    public int getNumberMatchedAlumniLevel() {
-        return numberMatchedAlumniLevel;
+    public int getNumberPrivateCompanyEmployed() {
+        return numberPrivateCompanyEmployed;
     }
 
-    public void setNumberMatchedAlumniLevel(int numberMatchedAlumniLevel) {
-        this.numberMatchedAlumniLevel = numberMatchedAlumniLevel;
+    public void setNumberPrivateCompanyEmployed(int numberPrivateCompanyEmployed) {
+        this.numberPrivateCompanyEmployed = numberPrivateCompanyEmployed;
     }
 
-    public int getNumberAcademyEmployedLevel() {
-        return numberAcademyEmployedLevel;
+    public int getNumberMixedCompanyEmployed() {
+        return numberMixedCompanyEmployed;
     }
 
-    public void setNumberAcademyEmployedLevel(int numberAcademyEmployedLevel) {
-        this.numberAcademyEmployedLevel = numberAcademyEmployedLevel;
+    public void setNumberMixedCompanyEmployed(int numberMixedCompanyEmployed) {
+        this.numberMixedCompanyEmployed = numberMixedCompanyEmployed;
     }
 
-    public int getNumberGovernmentEmployedLevel() {
-        return numberGovernmentEmployedLevel;
+    public int getNumberTotalEmployers() {
+        return numberTotalEmployers;
     }
 
-    public void setNumberGovernmentEmployedLevel(int numberGovernmentEmployedLevel) {
-        this.numberGovernmentEmployedLevel = numberGovernmentEmployedLevel;
-    }
-
-    public int getNumberOngEmployedLevel() {
-        return numberOngEmployedLevel;
-    }
-
-    public void setNumberOngEmployedLevel(int numberOngEmployedLevel) {
-        this.numberOngEmployedLevel = numberOngEmployedLevel;
-    }
-
-    public int getNumberPublicCompanyEmployedCourse() {
-        return numberPublicCompanyEmployedCourse;
-    }
-
-    public void setNumberPublicCompanyEmployedCourse(int numberPublicCompanyEmployedCourse) {
-        this.numberPublicCompanyEmployedCourse = numberPublicCompanyEmployedCourse;
-    }
-
-    public int getNumberPrivateCompanyEmployedCourse() {
-        return numberPrivateCompanyEmployedCourse;
-    }
-
-    public void setNumberPrivateCompanyEmployedCourse(int numberPrivateCompanyEmployedCourse) {
-        this.numberPrivateCompanyEmployedCourse = numberPrivateCompanyEmployedCourse;
-    }
-
-    public int getNumberMixedCompanyEmployedCourse() {
-        return numberMixedCompanyEmployedCourse;
-    }
-
-    public void setNumberMixedCompanyEmployedCourse(int numberMixedCompanyEmployedCourse) {
-        this.numberMixedCompanyEmployedCourse = numberMixedCompanyEmployedCourse;
-    }
-
-    public int getNumberPublicCompanyEmployedLevel() {
-        return numberPublicCompanyEmployedLevel;
-    }
-
-    public void setNumberPublicCompanyEmployedLevel(int numberPublicCompanyEmployedLevel) {
-        this.numberPublicCompanyEmployedLevel = numberPublicCompanyEmployedLevel;
-    }
-
-    public int getNumberPrivateCompanyEmployedLevel() {
-        return numberPrivateCompanyEmployedLevel;
-    }
-
-    public void setNumberPrivateCompanyEmployedLevel(int numberPrivateCompanyEmployedLevel) {
-        this.numberPrivateCompanyEmployedLevel = numberPrivateCompanyEmployedLevel;
-    }
-
-    public int getNumberMixedCompanyEmployedLevel() {
-        return numberMixedCompanyEmployedLevel;
-    }
-
-    public void setNumberMixedCompanyEmployedLevel(int numberMixedCompanyEmployedLevel) {
-        this.numberMixedCompanyEmployedLevel = numberMixedCompanyEmployedLevel;
+    public int getNumberConsolidatedEmployers() {
+        return numberConsolidatedEmployers;
     }
 
     @Override
     public String toString() {
         return "StatisticsResponse{" +
-                "numberAlumniCourse=" + numberAlumniCourse +
-                ", numberMatchedAlumniCourse=" + numberMatchedAlumniCourse +
-                ", numberAcademyEmployedCourse=" + numberAcademyEmployedCourse +
-                ", numberGovernmentEmployedCourse=" + numberGovernmentEmployedCourse +
-                ", numberOngEmployedCourse=" + numberOngEmployedCourse +
-                ", numberPublicCompanyEmployedCourse=" + numberPublicCompanyEmployedCourse +
-                ", numberPrivateCompanyEmployedCourse=" + numberPrivateCompanyEmployedCourse +
-                ", numberMixedCompanyEmployedCourse=" + numberMixedCompanyEmployedCourse +
-                ", numberAlumniLevel=" + numberAlumniLevel +
-                ", numberMatchedAlumniLevel=" + numberMatchedAlumniLevel +
-                ", numberAcademyEmployedLevel=" + numberAcademyEmployedLevel +
-                ", numberGovernmentEmployedLevel=" + numberGovernmentEmployedLevel +
-                ", numberOngEmployedLevel=" + numberOngEmployedLevel +
-                ", numberPublicCompanyEmployedLevel=" + numberPublicCompanyEmployedLevel +
-                ", numberPrivateCompanyEmployedLevel=" + numberPrivateCompanyEmployedLevel +
-                ", numberMixedCompanyEmployedLevel=" + numberMixedCompanyEmployedLevel +
+                "numberAlumni=" + numberAlumni +
+                ", numberMatchedAlumni=" + numberMatchedAlumni +
+                ", numberAcademyEmployed=" + numberAcademyEmployed +
+                ", numberGovernmentEmployed=" + numberGovernmentEmployed +
+                ", numberOngEmployed=" + numberOngEmployed +
+                ", numberPublicCompanyEmployed=" + numberPublicCompanyEmployed +
+                ", numberPrivateCompanyEmployed=" + numberPrivateCompanyEmployed +
+                ", numberMixedCompanyEmployed=" + numberMixedCompanyEmployed +
+                ", numberConsolidatedEmployers=" + numberConsolidatedEmployers +
+                ", numberTotalEmployers=" + numberTotalEmployers +
                 '}';
     }
 }

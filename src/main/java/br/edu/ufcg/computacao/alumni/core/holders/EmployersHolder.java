@@ -210,6 +210,14 @@ public class EmployersHolder {
 				.collect(Collectors.toList());
 	}
 
+	public int getTotalConsolidatedEmployers() {
+		return this.classifiedEmployers.size();
+	}
+
+	public int getTotalEmployers() {
+		return this.unclassifiedEmployers.values().size() + this.classifiedEmployers.values().size() + this.unknownEmployers.size();
+	}
+
 	public void setUnknownEmployers(Map<String, EmployerModel> employers) {
 		for (Entry<String, EmployerModel> entry : employers.entrySet()) {
 			String linkedinId = entry.getKey();

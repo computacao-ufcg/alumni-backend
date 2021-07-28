@@ -180,13 +180,8 @@ public class StatisticsTest {
     }
 
     private StatisticsResponse createFakeStatistics() {
-        StatisticsModel modelCourse =  new StatisticsModel(0,0,0
-                ,0, 0, 0, 0,
-                0);
-        StatisticsModel modelLevel = new StatisticsModel(0, 0
-                , 0, 0, 0, 0, 0,
-                0);
-        StatisticsResponse statistics = new StatisticsResponse(modelCourse, modelLevel);
+        StatisticsModel modelCourse =  new StatisticsModel();
+        StatisticsResponse statistics = new StatisticsResponse(modelCourse);
         return statistics;
     }
 
