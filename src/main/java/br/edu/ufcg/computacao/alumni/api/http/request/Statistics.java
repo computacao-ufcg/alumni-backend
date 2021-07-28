@@ -46,10 +46,10 @@ public class Statistics {
 
             if(c.getValue().equals("undefined")) {
                 throw new InvalidParameterException(Messages.COURSE_NAME_PARAM_MUST_BE_A_VALID_COURSE_NAME);
-
             } else if(l.getValue().equals("undefined")) {
                 throw new InvalidParameterException(Messages.LEVEL_PARAM_MUST_BE_A_VALID_LEVEL);
             }
+
             StatisticsResponse statistics = ApplicationFacade.getInstance().getStatistics(token, l, c);
             return new ResponseEntity<>(statistics, HttpStatus.OK);
         } catch(EurecaException e) {

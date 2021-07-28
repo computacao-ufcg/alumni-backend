@@ -1,17 +1,17 @@
 package br.edu.ufcg.computacao.alumni.core.processors;
 
-import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.api.http.response.ConsolidatedEmployer;
+import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.alumni.core.holders.*;
-import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
-import br.edu.ufcg.computacao.alumni.core.models.Level;
 import br.edu.ufcg.computacao.alumni.core.models.StatisticsModel;
 import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -20,19 +20,7 @@ public class StatisticsProcessor extends Thread {
 	
 	public StatisticsProcessor() {
 	}
-	
-	private Set<UfcgAlumnusData> filterAlumniByCourseName(Collection<UfcgAlumnusData> alumni, CourseName courseName) {
-		return alumni.stream()
-				.filter(alumnus -> alumnus.getDegree().getCourseName().equals(courseName))
-				.collect(Collectors.toSet());
-	}
-	
-	private Set<UfcgAlumnusData> filterAlumniByLevel(Collection<UfcgAlumnusData> alumni, Level level) {
-		return alumni.stream()
-				.filter(alumnus -> alumnus.getDegree().getLevel().equals(level))
-				.collect(Collectors.toSet());
-	}
-	
+
 	private int getNumberMappedAlumni(Collection<UfcgAlumnusData> alumni) {
 		Set<String> alumniRegistrations = alumni.stream().map(UfcgAlumnusData::getRegistration).collect(Collectors.toSet());
 		Set<String> matchesRegistrations = MatchesHolder.getInstance().getMatches().keySet();
@@ -73,55 +61,24 @@ public class StatisticsProcessor extends Thread {
 		while (isActive) {
 			try {
 				Collection<UfcgAlumnusData> alumni = AlumniHolder.getInstance().getAlumniData();
-				CourseName[] courseNames = CourseName.values();
-				Level[] levels = Level.values();
-				
-				Map<CourseName, StatisticsModel> courseStatistics = new HashMap<>();
-				Map<Level, StatisticsModel> levelStatistics = new HashMap<>();
-				
-				for (CourseName courseName : courseNames) {
-					Collection<UfcgAlumnusData> filteredAlumniByCourse = filterAlumniByCourseName(alumni, courseName);
-					
-					int numberAlumniCourse = filteredAlumniByCourse.size();
-					int numberMappedAlumniCourse = getNumberMappedAlumni(filteredAlumniByCourse);
-					int numberAcademyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.ACADEMY);
-					int numberGovernmentEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.GOVERNMENT);
-					int numberOngEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.ONG);
-					int numberPublicCompanyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.PUBLIC_COMPANY);
-					int numberPrivateCompanyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.PRIVATE_COMPANY);
-					int numberMixedCompanyEmployedCourse = getNumberTypeEmployed(filteredAlumniByCourse, EmployerType.MIXED_COMPANY);
 
-					StatisticsModel courseStatistic = new StatisticsModel(numberAlumniCourse, numberMappedAlumniCourse, numberAcademyEmployedCourse,
-							numberGovernmentEmployedCourse, numberOngEmployedCourse
-							, numberPublicCompanyEmployedCourse, numberPrivateCompanyEmployedCourse, numberMixedCompanyEmployedCourse);
-					
-					courseStatistics.put(courseName, courseStatistic);
-					
-					for (Level level : levels) {
-						Collection<UfcgAlumnusData> filteredAlumniByLevel = filterAlumniByLevel(alumni, level);
-						
-						int numberAlumniLevel = filteredAlumniByLevel.size();
-						int numberMappedAlumniLevel = getNumberMappedAlumni(filteredAlumniByLevel);
-						int numberAcademyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.ACADEMY);
-						int numberGovernmentEmployedLevel= getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.GOVERNMENT);
-						int numberOngEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.ONG);
-						int numberPublicCompanyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.PUBLIC_COMPANY);
-						int numberPrivateCompanyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.PRIVATE_COMPANY);
-						int numberMixedCompanyEmployedLevel = getNumberTypeEmployed(filteredAlumniByLevel, EmployerType.MIXED_COMPANY);
+				int numberAlumni = alumni.size();
+				int numberMappedAlumni = getNumberMappedAlumni(alumni);
+				int numberAcademyEmployed = getNumberTypeEmployed(alumni, EmployerType.ACADEMY);
+				int numberGovernmentEmployed = getNumberTypeEmployed(alumni, EmployerType.GOVERNMENT);
+				int numberOngEmployed = getNumberTypeEmployed(alumni, EmployerType.ONG);
+				int numberPublicCompanyEmployed = getNumberTypeEmployed(alumni, EmployerType.PUBLIC_COMPANY);
+				int numberPrivateCompanyEmployed = getNumberTypeEmployed(alumni, EmployerType.PRIVATE_COMPANY);
+				int numberMixedCompanyEmployed = getNumberTypeEmployed(alumni, EmployerType.MIXED_COMPANY);
+				int numberConsolidatedEmployers = EmployersHolder.getInstance().getTotalConsolidatedEmployers();
+				int numberTotalEmployers = EmployersHolder.getInstance().getTotalEmployers();
 
-						StatisticsModel levelStatistic = new StatisticsModel(numberAlumniLevel, numberMappedAlumniLevel, numberAcademyEmployedLevel,
-								numberGovernmentEmployedLevel, numberOngEmployedLevel,
-								numberPublicCompanyEmployedLevel, numberPrivateCompanyEmployedLevel, numberMixedCompanyEmployedLevel);
-						
-						levelStatistics.put(level, levelStatistic);
-					}
-				}
-				
-				StatisticsHolder.getInstance().setCourseNamesStatistics(courseStatistics);
-				StatisticsHolder.getInstance().setLevelsStatistics(levelStatistics);
-				
+				StatisticsModel statistics = new StatisticsModel(numberAlumni, numberMappedAlumni, numberAcademyEmployed, numberGovernmentEmployed,
+						numberOngEmployed, numberPublicCompanyEmployed, numberPrivateCompanyEmployed, numberMixedCompanyEmployed, numberConsolidatedEmployers, numberTotalEmployers);
+
+				StatisticsHolder.getInstance().setStatistics(statistics);
+
 				Thread.sleep(Long.parseLong(Long.toString(TimeUnit.MINUTES.toMillis(1))));
-				
 			} catch (InterruptedException e) {
 				isActive = false;
 				LOGGER.error(Messages.THREAD_HAS_BEEN_INTERRUPTED, e);
