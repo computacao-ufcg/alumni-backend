@@ -9,6 +9,7 @@ import br.edu.ufcg.computacao.eureca.as.api.http.response.TokenResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.Alumni;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.PublicKey;
 import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigestResponse;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.response.PublicKeyResponse;
 import br.edu.ufcg.computacao.eureca.common.constants.HttpMethod;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -131,7 +133,7 @@ public class AlumniHolder extends Thread {
         String backendAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_URL_KEY);
         String backendPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_PORT_KEY);
         String suffix = Alumni.ENDPOINT;
-        AlumniDigestResponse[] alumniBasicData;
+        AlumniResponse alumniBasicData;
 
         URI uri = null;
         try {
@@ -150,24 +152,15 @@ public class AlumniHolder extends Thread {
             throw new UnavailableProviderException(e.getMessage());
         } else {
             Gson gson = new Gson();
-            String alumniArray = this.getAlumniArrayFromResponse(response);
-            alumniBasicData = gson.fromJson(alumniArray, AlumniDigestResponse[].class);
-            for(int i = 0; i < alumniBasicData.length; i++) {
-                UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniBasicData[i]);
+            alumniBasicData = gson.fromJson(response.getContent(), AlumniResponse.class);
+            List<AlumniDigestResponse> alumniData = new ArrayList<>(alumniBasicData.getAlumniDigest());
+            for(int i = 0; i < alumniData.size(); i++) {
+                UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniData.get(i));
                 alumniMap.put(alumnus.getRegistration(), alumnus);
                 LOGGER.debug(String.format(Messages.LOADING_ALUMNI_D_S, i, alumnus.getFullName()));
             }
         }
         return alumniMap;
-    }
-
-    // get the alumni array content inside the http response returned from eureca
-    private String getAlumniArrayFromResponse(HttpResponse response) {
-        String content = response.getContent();
-        int indexOfFirstBracket = content.indexOf("[");
-        int indexOfLastBracket = content.indexOf("]");
-        String arrayContent = content.substring(indexOfFirstBracket, indexOfLastBracket + 1);
-        return arrayContent;
     }
 
     public synchronized  Map<String, UfcgAlumnusData> getAlumniMap() {
