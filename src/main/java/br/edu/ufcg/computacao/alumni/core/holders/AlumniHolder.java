@@ -2,13 +2,15 @@ package br.edu.ufcg.computacao.alumni.core.holders;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
 import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
-import br.edu.ufcg.computacao.alumni.constants.*;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
+import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
+import br.edu.ufcg.computacao.alumni.constants.Messages;
 import br.edu.ufcg.computacao.eureca.as.api.http.request.Token;
 import br.edu.ufcg.computacao.eureca.as.api.http.response.TokenResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.Alumni;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.PublicKey;
 import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigestResponse;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.response.PublicKeyResponse;
 import br.edu.ufcg.computacao.eureca.common.constants.HttpMethod;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
@@ -70,15 +72,9 @@ public class AlumniHolder extends Thread {
         String backendPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_PORT_KEY);
         String suffix = PublicKey.ENDPOINT;
 
-        URI uri = null;
-        try {
-            uri = new URI(backendAddress);
-        } catch (URISyntaxException e) {
-            throw new InternalServerErrorException(String.format(br.edu.ufcg.computacao.eureca.common.constants.Messages.INVALID_SERVICE_URL_S, backendAddress));
-        }
-        uri = UriComponentsBuilder.fromUri(uri).port(backendPort).path(suffix).build(true).toUri();
-
+        URI uri = this.buildURI(backendAddress, backendPort, suffix);
         String endpoint = uri.toString();
+
         HashMap<String, String> headers = new HashMap<>();
         HttpResponse response = HttpRequestClient.doGenericRequest(HttpMethod.GET, endpoint, headers, new HashMap<>());
         if (response.getHttpCode() > HttpStatus.SC_OK) {
@@ -91,6 +87,15 @@ public class AlumniHolder extends Thread {
         return eurecaBackendPublicKey.getPublicKey();
     }
 
+    private URI buildURI(String address, String port, String suffix) throws InternalServerErrorException {
+        try {
+            URI uri = new URI(address);
+            return UriComponentsBuilder.fromUri(uri).port(port).path(suffix).build(true).toUri();
+        } catch (URISyntaxException e) {
+            throw new InternalServerErrorException(String.format(br.edu.ufcg.computacao.eureca.common.constants.Messages.INVALID_SERVICE_URL_S, address));
+        }
+    }
+
     private synchronized String getToken(String eurecaBackendPublicKey) throws EurecaException {
         String username = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.USERNAME);
         String password = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.PASSWORD);
@@ -99,15 +104,9 @@ public class AlumniHolder extends Thread {
         String suffix = Token.ENDPOINT;
         TokenResponse token = null;
 
-        URI uri = null;
-        try {
-            uri = new URI(asAddress);
-        } catch (URISyntaxException e) {
-            throw new InternalServerErrorException(String.format(br.edu.ufcg.computacao.eureca.common.constants.Messages.INVALID_SERVICE_URL_S, asAddress));
-        }
-        uri = UriComponentsBuilder.fromUri(uri).port(asPort).path(suffix).build(true).toUri();
-
+        URI uri = this.buildURI(asAddress, asPort, suffix);
         String endpoint = uri.toString();
+
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         Map<String, String> body = new HashMap<>();
@@ -131,17 +130,11 @@ public class AlumniHolder extends Thread {
         String backendAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_URL_KEY);
         String backendPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_PORT_KEY);
         String suffix = Alumni.ENDPOINT;
-        AlumniDigestResponse[] alumniBasicData;
+        AlumniResponse alumniBasicData;
 
-        URI uri = null;
-        try {
-            uri = new URI(backendAddress);
-        } catch (URISyntaxException e) {
-            throw new InternalServerErrorException(String.format(br.edu.ufcg.computacao.eureca.common.constants.Messages.INVALID_SERVICE_URL_S, backendAddress));
-        }
-        uri = UriComponentsBuilder.fromUri(uri).port(backendPort).path(suffix).build(true).toUri();
-
+        URI uri = this.buildURI(backendAddress, backendPort, suffix);
         String endpoint = uri.toString();
+
         HashMap<String, String> headers = new HashMap<>();
         headers.put(CommonKeys.AUTHENTICATION_TOKEN_KEY, token);
         HttpResponse response = HttpRequestClient.doGenericRequest(HttpMethod.GET, endpoint, headers, new HashMap<>());
@@ -150,9 +143,10 @@ public class AlumniHolder extends Thread {
             throw new UnavailableProviderException(e.getMessage());
         } else {
             Gson gson = new Gson();
-            alumniBasicData = gson.fromJson(response.getContent(), AlumniDigestResponse[].class);
-            for(int i = 0; i < alumniBasicData.length; i++) {
-                UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniBasicData[i]);
+            alumniBasicData = gson.fromJson(response.getContent(), AlumniResponse.class);
+            List<AlumniDigestResponse> alumniData = new ArrayList<>(alumniBasicData.getAlumniDigest());
+            for(int i = 0; i < alumniData.size(); i++) {
+                UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniData.get(i));
                 alumniMap.put(alumnus.getRegistration(), alumnus);
                 LOGGER.debug(String.format(Messages.LOADING_ALUMNI_D_S, i, alumnus.getFullName()));
             }
