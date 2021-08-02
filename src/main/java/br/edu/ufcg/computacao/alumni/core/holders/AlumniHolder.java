@@ -150,8 +150,8 @@ public class AlumniHolder extends Thread {
             throw new UnavailableProviderException(e.getMessage());
         } else {
             Gson gson = new Gson();
-            String content = this.parseResponseContent(response);
-            alumniBasicData = gson.fromJson(content, AlumniDigestResponse[].class);
+            String alumniArray = this.getAlumniArrayFromResponse(response);
+            alumniBasicData = gson.fromJson(alumniArray, AlumniDigestResponse[].class);
             for(int i = 0; i < alumniBasicData.length; i++) {
                 UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniBasicData[i]);
                 alumniMap.put(alumnus.getRegistration(), alumnus);
@@ -161,11 +161,13 @@ public class AlumniHolder extends Thread {
         return alumniMap;
     }
 
-    private String parseResponseContent(HttpResponse response) {
+    // get the alumni array content inside the http response returned from eureca
+    private String getAlumniArrayFromResponse(HttpResponse response) {
         String content = response.getContent();
         int indexOfFirstBracket = content.indexOf("[");
         int indexOfLastBracket = content.indexOf("]");
-        return content.substring(indexOfFirstBracket, indexOfLastBracket + 1);
+        String arrayContent = content.substring(indexOfFirstBracket, indexOfLastBracket + 1);
+        return arrayContent;
     }
 
     public synchronized  Map<String, UfcgAlumnusData> getAlumniMap() {
