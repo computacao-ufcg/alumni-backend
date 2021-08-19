@@ -8,7 +8,7 @@ import br.edu.ufcg.computacao.eureca.as.api.http.request.Token;
 import br.edu.ufcg.computacao.eureca.as.api.http.response.TokenResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.Alumni;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.PublicKey;
-import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigestResponse;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigest;
 import br.edu.ufcg.computacao.eureca.backend.api.http.response.PublicKeyResponse;
 import br.edu.ufcg.computacao.eureca.common.constants.HttpMethod;
 import br.edu.ufcg.computacao.eureca.common.exceptions.EurecaException;
@@ -131,7 +131,7 @@ public class AlumniHolder extends Thread {
         String backendAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_URL_KEY);
         String backendPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_PORT_KEY);
         String suffix = Alumni.ENDPOINT;
-        AlumniDigestResponse[] alumniBasicData;
+        AlumniDigest[] alumniBasicData;
 
         URI uri = null;
         try {
@@ -150,7 +150,7 @@ public class AlumniHolder extends Thread {
             throw new UnavailableProviderException(e.getMessage());
         } else {
             Gson gson = new Gson();
-            alumniBasicData = gson.fromJson(response.getContent(), AlumniDigestResponse[].class);
+            alumniBasicData = gson.fromJson(response.getContent(), AlumniDigest[].class);
             for(int i = 0; i < alumniBasicData.length; i++) {
                 UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniBasicData[i]);
                 alumniMap.put(alumnus.getRegistration(), alumnus);
