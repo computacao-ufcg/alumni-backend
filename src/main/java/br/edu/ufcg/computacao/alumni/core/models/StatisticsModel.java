@@ -9,10 +9,12 @@ public class StatisticsModel {
     private int numberPublicCompanyEmployed;
     private int numberPrivateCompanyEmployed;
     private int numberMixedCompanyEmployed;
+    private int numberConsolidatedEmployers;
+    private int numberTotalEmployers;
 
     public StatisticsModel(int numberAlumni, int numberMatchedAlumni, int numberAcademyEmployed,
                            int numberGovernmentEmployed, int numberOngEmployed, int numberPublicCompanyEmployed,
-                           int numberPrivateCompanyEmployed, int numberMixedCompanyEmployed) {
+                           int numberPrivateCompanyEmployed, int numberMixedCompanyEmployed, int numberConsolidatedEmployers, int numberTotalEmployers) {
         this.numberAlumni = numberAlumni;
         this.numberMatchedAlumni = numberMatchedAlumni;
         this.numberAcademyEmployed = numberAcademyEmployed;
@@ -21,6 +23,12 @@ public class StatisticsModel {
         this.numberPublicCompanyEmployed = numberPublicCompanyEmployed;
         this.numberPrivateCompanyEmployed = numberPrivateCompanyEmployed;
         this.numberMixedCompanyEmployed = numberMixedCompanyEmployed;
+        this.numberConsolidatedEmployers = numberConsolidatedEmployers;
+        this.numberTotalEmployers = numberTotalEmployers;
+    }
+
+    public StatisticsModel() {
+        this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     public int getNumberAlumni() {
@@ -55,6 +63,14 @@ public class StatisticsModel {
         return numberMixedCompanyEmployed;
     }
 
+    public int getNumberConsolidatedEmployers() {
+        return numberConsolidatedEmployers;
+    }
+
+    public int getNumberTotalEmployers() {
+        return numberTotalEmployers;
+    }
+
     public void setNumberAlumni(int numberAlumni) {
         this.numberAlumni = numberAlumni;
     }
@@ -87,6 +103,14 @@ public class StatisticsModel {
         this.numberMixedCompanyEmployed = numberMixedCompanyEmployed;
     }
 
+    public void setNumberConsolidatedEmployers(int numberConsolidatedEmployers) {
+        this.numberConsolidatedEmployers = numberConsolidatedEmployers;
+    }
+
+    public void setNumberTotalEmployers(int numberTotalEmployers) {
+        this.numberTotalEmployers = numberTotalEmployers;
+    }
+
     @Override
     public String toString() {
         return "StatisticsModel{" +
@@ -98,6 +122,8 @@ public class StatisticsModel {
                 ", numberPublicCompanyEmployed=" + numberPublicCompanyEmployed +
                 ", numberPrivateCompanyEmployed=" + numberPrivateCompanyEmployed +
                 ", numberMixedCompanyEmployed=" + numberMixedCompanyEmployed +
+                ", numberConsolidatedEmployers=" + numberConsolidatedEmployers +
+                ", numberTotalEmployers=" + numberTotalEmployers +
                 '}';
     }
 }
