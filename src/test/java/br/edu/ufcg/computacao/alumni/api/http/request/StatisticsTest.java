@@ -49,6 +49,7 @@ public class StatisticsTest {
     public void setUp() {
         this.facade = Mockito.spy(ApplicationFacade.class);
         PowerMockito.mockStatic(ApplicationFacade.class);
+
         BDDMockito.given(ApplicationFacade.getInstance()).willReturn(this.facade);
     }
 

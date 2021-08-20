@@ -9,7 +9,7 @@ import br.edu.ufcg.computacao.eureca.as.api.http.request.Token;
 import br.edu.ufcg.computacao.eureca.as.api.http.response.TokenResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.Alumni;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.PublicKey;
-import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigestResponse;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigest;
 import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.response.PublicKeyResponse;
 import br.edu.ufcg.computacao.eureca.common.constants.HttpMethod;
@@ -144,7 +144,7 @@ public class AlumniHolder extends Thread {
         } else {
             Gson gson = new Gson();
             alumniBasicData = gson.fromJson(response.getContent(), AlumniResponse.class);
-            List<AlumniDigestResponse> alumniData = new ArrayList<>(alumniBasicData.getAlumniDigest());
+            List<AlumniDigest> alumniData = new ArrayList<>(alumniBasicData.getAlumniDigest());
             for(int i = 0; i < alumniData.size(); i++) {
                 UfcgAlumnusData alumnus = new UfcgAlumnusData(alumniData.get(i));
                 alumniMap.put(alumnus.getRegistration(), alumnus);
