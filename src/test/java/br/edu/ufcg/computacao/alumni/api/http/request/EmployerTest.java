@@ -1,7 +1,6 @@
 package br.edu.ufcg.computacao.alumni.api.http.request;
 
 import br.edu.ufcg.computacao.alumni.api.http.CommonKeys;
-import br.edu.ufcg.computacao.alumni.api.parameters.EmployerClassification;
 import br.edu.ufcg.computacao.alumni.core.ApplicationFacade;
 import br.edu.ufcg.computacao.alumni.core.models.EmployerType;
 import br.edu.ufcg.computacao.eureca.common.exceptions.InvalidParameterException;
@@ -241,7 +240,7 @@ public class EmployerTest {
         // set up
         String deleteEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?linkedinId=";
 
-        Mockito.doThrow(new InvalidParameterException()).when(this.facade)
+        Mockito.doThrow(new InvalidParameterException(Mockito.anyString())).when(this.facade)
                 .setEmployerTypeToUndefined(Mockito.anyString(), Mockito.anyString());
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.DELETE, deleteEmployerTypeEndpoint, getHttpHeaders(), "");
@@ -290,7 +289,7 @@ public class EmployerTest {
         // set up
         String setEmployerTypeEndpoint = EMPLOYERS_ENDPOINT + "?type=academy&linkedinId=";
 
-        Mockito.doThrow(new InvalidParameterException()).when(this.facade)
+        Mockito.doThrow(new InvalidParameterException(Mockito.anyString())).when(this.facade)
                 .setEmployerType(Mockito.anyString(), Mockito.anyString(), Mockito.any(EmployerType.class));
 
         RequestBuilder requestBuilder = createRequestBuilder(HttpMethod.PUT, setEmployerTypeEndpoint, getHttpHeaders(), "");
