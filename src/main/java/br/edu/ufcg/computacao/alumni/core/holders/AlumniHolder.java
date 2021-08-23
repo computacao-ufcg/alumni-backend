@@ -5,6 +5,7 @@ import br.edu.ufcg.computacao.alumni.api.http.response.CurrentJob;
 import br.edu.ufcg.computacao.alumni.api.http.response.UfcgAlumnusData;
 import br.edu.ufcg.computacao.alumni.constants.ConfigurationPropertyKeys;
 import br.edu.ufcg.computacao.alumni.constants.Messages;
+import br.edu.ufcg.computacao.alumni.constants.SystemConstants;
 import br.edu.ufcg.computacao.eureca.as.api.http.request.Token;
 import br.edu.ufcg.computacao.eureca.as.api.http.response.TokenResponse;
 import br.edu.ufcg.computacao.eureca.backend.api.http.request.Alumni;
@@ -71,8 +72,9 @@ public class AlumniHolder extends Thread {
         String backendAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_URL_KEY);
         String backendPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_PORT_KEY);
         String suffix = PublicKey.ENDPOINT;
+        String query = SystemConstants.EMPTY_QUERY;
 
-        URI uri = this.buildURI(backendAddress, backendPort, suffix);
+        URI uri = this.buildURI(backendAddress, backendPort, suffix, query);
         String endpoint = uri.toString();
 
         HashMap<String, String> headers = new HashMap<>();
@@ -87,10 +89,10 @@ public class AlumniHolder extends Thread {
         return eurecaBackendPublicKey.getPublicKey();
     }
 
-    private URI buildURI(String address, String port, String suffix) throws InternalServerErrorException {
+    private URI buildURI(String address, String port, String suffix, String query) throws InternalServerErrorException {
         try {
             URI uri = new URI(address);
-            return UriComponentsBuilder.fromUri(uri).port(port).path(suffix).build(true).toUri();
+            return UriComponentsBuilder.fromUri(uri).port(port).path(suffix).query(query).build(true).toUri();
         } catch (URISyntaxException e) {
             throw new InternalServerErrorException(String.format(br.edu.ufcg.computacao.eureca.common.constants.Messages.INVALID_SERVICE_URL_S, address));
         }
@@ -102,9 +104,10 @@ public class AlumniHolder extends Thread {
         String asAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_URL_KEY);
         String asPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.AS_PORT_KEY);
         String suffix = Token.ENDPOINT;
+        String query = SystemConstants.EMPTY_QUERY;
         TokenResponse token = null;
 
-        URI uri = this.buildURI(asAddress, asPort, suffix);
+        URI uri = this.buildURI(asAddress, asPort, suffix, query);
         String endpoint = uri.toString();
 
         Map<String, String> headers = new HashMap<>();
@@ -130,9 +133,10 @@ public class AlumniHolder extends Thread {
         String backendAddress = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_URL_KEY);
         String backendPort = PropertiesHolder.getInstance().getProperty(ConfigurationPropertyKeys.BACKEND_PORT_KEY);
         String suffix = Alumni.ENDPOINT;
+        String query = SystemConstants.ALUMNI_QUERY;
         AlumniResponse alumniBasicData;
 
-        URI uri = this.buildURI(backendAddress, backendPort, suffix);
+        URI uri = this.buildURI(backendAddress, backendPort, suffix, query);
         String endpoint = uri.toString();
 
         HashMap<String, String> headers = new HashMap<>();
