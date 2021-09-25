@@ -6,7 +6,7 @@ import br.edu.ufcg.computacao.alumni.constants.LevelCode;
 import br.edu.ufcg.computacao.alumni.core.models.CourseName;
 import br.edu.ufcg.computacao.alumni.core.models.Degree;
 import br.edu.ufcg.computacao.alumni.core.models.Level;
-import br.edu.ufcg.computacao.eureca.backend.api.http.response.AlumniDigest;
+import br.edu.ufcg.computacao.eureca.backend.api.http.response.alumni.AlumniDigest;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Objects;
